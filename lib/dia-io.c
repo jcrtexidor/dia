@@ -453,6 +453,13 @@ dia_io_save_document (const char *path,
   result = TRUE;
 
 out:
+  /* Closing flushes the compressor and commits GIO's replacement stream.
+   * A successful xmlSaveFlush alone does not establish a successful save. */
+  if (write_ctx->xml_ctx) {
+    if (xmlSaveClose (write_ctx->xml_ctx) < 0)
+      result = FALSE;
+    write_ctx->xml_ctx = NULL;
+  }
   g_clear_pointer (&write_ctx, write_context_free);
 
   return result;
