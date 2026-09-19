@@ -100,6 +100,36 @@ sólo de `width`/`height` solicitados.
 La [API interna](../docs/modernization/api.md) permite el mismo flujo sin MCP.
 [examples/workflow.py](examples/workflow.py) contiene un ejemplo ejecutable.
 
+## Galería de ejemplos complejos
+
+Con la imagen ya construida, `task mcp:showcase` genera esta galería mediante
+la API pública `Operations`, sin añadir tipos ni saltarse sus límites:
+
+| Archivo | Figuras | Conectores | Qué muestra |
+| --- | ---: | ---: | --- |
+| `01-servicios.dia` | 26 | 29 | Gateway, servicios, almacenes, eventos y consumidores |
+| `02-pedidos.dia` | 26 | 31 | Decisiones, revisión manual, reintentos y excepciones |
+| `03-malla-100.dia` | 100 | 200 | Malla con conexiones horizontales, verticales y diagonales; límite del MVP |
+
+Los resultados quedan en `artifacts/showcase/`, con SVG, PNG, JSON del estado y
+un manifiesto de tamaños, hashes y tiempos por ejecución. El script verifica que
+las figuras no se superpongan. En la ejecución del 19 de septiembre de 2026 se
+comprobaron 55, 57 y 300 objetos nativos, con 58, 62 y 400 extremos conectados.
+La generación completa con exportación tardó aproximadamente 7, 7 y 41 segundos
+en este equipo; no es una garantía ni un benchmark de otros entornos.
+
+Abrir los tres `.dia` en el editor conserva figuras y conexiones editables.
+**Ctrl+E** ajusta el diagrama a la ventana. El gráfico de pedidos es vertical:
+aumentar el zoom para leer cómodamente y desplazarse por sus decisiones.
+El blanco y negro, las tres figuras disponibles y los conectores rectos reflejan
+el alcance actual de la API; los cruces visibles no tienen enrutamiento automático.
+
+No se sobrescriben archivos existentes. Para otra ejecución, usar
+`task mcp:showcase SHOWCASE_DIR=/ruta/absoluta/nueva`; para retomar un solo
+ejemplo, [showcase.py](examples/showcase.py) admite
+`--only services`, `--only orders` o `--only mesh`. No hace falta reconstruir la
+imagen por editar el generador: la tarea monta los ejemplos de sólo lectura.
+
 ## Límites del MVP
 
 - Tres tipos de flujo con texto: caja, elipse y rombo; conectores rectos

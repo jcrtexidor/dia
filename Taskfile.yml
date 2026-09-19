@@ -48,3 +48,15 @@ tasks:
         docker run --rm --init -i --network=none --user "$(id -u):$(id -g)"
         -v "{{.ROOT_DIR}}/artifacts:/workspace" {{.MCP_IMAGE}}
         xvfb-run -a dia-mcp --workspace /workspace
+
+  mcp:showcase:
+    desc: Generate three complex diagrams, including 100 nodes and 200 connections
+    vars:
+      SHOWCASE_DIR: '{{.ROOT_DIR}}/artifacts/showcase'
+    cmds:
+      - mkdir -p "{{.SHOWCASE_DIR}}"
+      - >-
+        docker run --rm --init --network=none --user "$(id -u):$(id -g)"
+        -v "{{.ROOT_DIR}}/mcp/examples:/examples:ro"
+        -v "{{.SHOWCASE_DIR}}:/workspace" {{.MCP_IMAGE}}
+        xvfb-run -a python /examples/showcase.py --workspace /workspace
