@@ -21,8 +21,14 @@ sheet/type discovery. Baseline `77fe10bc0`; audit date 2026-09-19.
 
 ## In progress
 
-None for the audit and first discovery increment. Live integration remains the
-next development milestone; it is not claimed complete.
+M2 implementation in progress. Foundation: lazy runtime object tokens without an
+object ABI change, invalidation on detach/destruction/copy, document identity
+reset before import, conservative editor generation, and PyDia read accessors.
+No wrappers are retained between live requests. Initial running-GUI validation
+covers native Delete/Undo/Redo, mixed/custom types and concurrent reads.
+Foundation validation: 9/9 Meson suites and 136 MCP tests pass against the rebuilt
+native development container; the final packaged build and Wayland acceptance
+are still pending. M2 is not yet marked complete.
 
 ## Next
 

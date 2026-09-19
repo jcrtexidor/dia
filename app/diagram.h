@@ -30,6 +30,10 @@ typedef struct _Diagram Diagram;
 
 G_BEGIN_DECLS
 
+const char *diagram_live_id (Diagram *dia);
+guint64 diagram_live_generation (Diagram *dia);
+
+
 GType dia_diagram_get_type (void) G_GNUC_CONST;
 
 #define DIA_TYPE_DIAGRAM           (dia_diagram_get_type ())

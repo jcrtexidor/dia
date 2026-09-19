@@ -35,6 +35,7 @@
 #include "paper.h"
 #include "persistence.h"
 #include "dia-layer.h"
+#include "group.h"
 
 #include "dynamic_obj.h"
 #include "diamarshal.h"
@@ -967,12 +968,30 @@ data_get_sorted_selected_remove (DiagramData *data)
  * @param signal_name The name of the signal.
  * \memberof _DiagramData
  */
+static void
+live_invalidate_tree (DiaObject *obj)
+{
+  dia_object_live_invalidate (obj);
+  if (IS_GROUP (obj)) {
+    for (GList *l = group_objects (obj); l; l = l->next)
+      live_invalidate_tree (l->data);
+  }
+}
+
 void
 data_emit (DiagramData *data,
            DiaLayer    *layer,
            DiaObject   *obj,
 	  const char *signal_name)
 {
+  if (strcmp ("object_remove", signal_name) == 0) {
+    if (obj) {
+      live_invalidate_tree (obj);
+    } else if (layer) {
+      for (GList *l = dia_layer_get_object_list (layer); l; l = l->next)
+        live_invalidate_tree (l->data);
+    }
+  }
   /* check what signal it is */
   if (strcmp("object_add",signal_name) == 0)
     g_signal_emit(data, signals[OBJECT_ADD], 0, layer, obj);

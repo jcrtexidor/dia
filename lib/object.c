@@ -34,6 +34,31 @@
 
 #include "debug.h"
 
+/* Lazily populated: ordinary Dia use pays no allocation cost. No object ABI change.
+ * Access is restricted to the editor main context, like the object model itself. */
+static GHashTable *live_ids;
+
+const char *
+dia_object_live_id (DiaObject *obj)
+{
+  char *id;
+  if (!live_ids)
+    live_ids = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
+  id = g_hash_table_lookup (live_ids, obj);
+  if (!id) {
+    id = g_uuid_string_random ();
+    g_hash_table_insert (live_ids, obj, id);
+  }
+  return id;
+}
+
+void
+ dia_object_live_invalidate (DiaObject *obj)
+{
+  if (live_ids)
+    g_hash_table_remove (live_ids, obj);
+}
+
 /**
  * object_init:
  * @obj: A newly allocated object with no handles or connections
@@ -50,6 +75,7 @@ object_init (DiaObject *obj,
              int        num_handles,
              int        num_connections)
 {
+  dia_object_live_invalidate (obj);
   obj->num_handles = num_handles;
   obj->handles = g_new0 (Handle *, num_handles);
 
@@ -69,6 +95,7 @@ object_init (DiaObject *obj,
 void
 object_destroy (DiaObject *obj)
 {
+  dia_object_live_invalidate (obj);
   object_unconnect_all (obj);
 
   g_clear_pointer (&obj->handles, g_free);
@@ -104,6 +131,7 @@ object_destroy (DiaObject *obj)
 void
 object_copy (DiaObject *from, DiaObject *to)
 {
+  dia_object_live_invalidate (to);
   to->type = from->type;
   to->position = from->position;
   to->bounding_box = from->bounding_box;

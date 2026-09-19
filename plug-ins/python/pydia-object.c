@@ -22,6 +22,7 @@
 #include <glib/gi18n-lib.h>
 
 #include "pydia-object.h"
+#include "group.h"
 #include "pydia-cpoint.h"
 #include "pydia-handle.h"
 #include "pydia-geometry.h"
@@ -325,6 +326,18 @@ PyDiaObject_GetAttr (PyObject *obj, PyObject *arg)
     return Py_BuildValue ("[sssss]",
                           "bounding_box", "connections", "handles", "parent",
                           "properties", "type");
+  } else if (!g_strcmp0 (attr, "live_id")) {
+    return PyUnicode_FromString (dia_object_live_id (self->object));
+  } else if (!g_strcmp0 (attr, "position")) {
+    return PyDiaPoint_New (&self->object->position);
+  } else if (!g_strcmp0 (attr, "children") || !g_strcmp0 (attr, "group_members")) {
+    GList *items = !g_strcmp0 (attr, "children") ? self->object->children :
+                  (IS_GROUP (self->object) ? group_objects (self->object) : NULL);
+    PyObject *ret = PyTuple_New (g_list_length (items));
+    int i = 0;
+    for (GList *l = items; l; l = l->next)
+      PyTuple_SetItem (ret, i++, PyDiaObject_New (l->data));
+    return ret;
   } else if (!g_strcmp0 (attr, "type")) {
     return PyDiaObjectType_New (self->object->type);
   } else if (!g_strcmp0 (attr, "bounding_box")) {

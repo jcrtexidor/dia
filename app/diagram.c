@@ -156,6 +156,47 @@ dia_diagram_finalize (GObject *object)
 }
 
 
+typedef struct {
+  char *id;
+  guint64 generation;
+} LiveState;
+
+static void
+live_state_free (gpointer ptr)
+{
+  LiveState *state = ptr;
+  g_free (state->id);
+  g_free (state);
+}
+
+const char *
+diagram_live_id (Diagram *dia)
+{
+  LiveState *state = g_object_get_data (G_OBJECT (dia), "dia-live-state");
+  if (!state) {
+    state = g_new0 (LiveState, 1);
+    state->id = g_uuid_string_random ();
+    state->generation = 1;
+    g_object_set_data_full (G_OBJECT (dia), "dia-live-state", state, live_state_free);
+  }
+  return state->id;
+}
+
+guint64
+diagram_live_generation (Diagram *dia)
+{
+  diagram_live_id (dia);
+  return ((LiveState *) g_object_get_data (G_OBJECT (dia), "dia-live-state"))->generation;
+}
+
+static void
+live_changed (Diagram *dia)
+{
+  LiveState *state = g_object_get_data (G_OBJECT (dia), "dia-live-state");
+  if (state)
+    state->generation++;
+}
+
 static void
 _diagram_removed (Diagram* dia)
 {
@@ -296,6 +337,8 @@ diagram_load_into (Diagram         *diagram,
     ifilter = &dia_import_filter;
   }
 
+  /* Even a failed importer may have replaced part of the data. */
+  g_object_set_data (G_OBJECT (diagram), "dia-live-state", NULL);
   dia_context_set_filename (ctx, filename);
   if (ifilter->import_func (filename, diagram->data, ctx, ifilter->user_data)) {
     GFile *file = NULL;
@@ -500,6 +543,7 @@ diagram_modified (Diagram *dia)
 void
 diagram_set_modified (Diagram *dia, gboolean modified)
 {
+  live_changed (dia);
   if (dia->mollified != modified) {
     dia->mollified = modified;
   }
@@ -949,6 +993,7 @@ diagram_redraw_all (void)
 void
 diagram_add_update_all (Diagram *dia)
 {
+  live_changed (dia);
   GSList *l;
   DDisplay *ddisp;
 
@@ -966,6 +1011,7 @@ diagram_add_update_all (Diagram *dia)
 void
 diagram_add_update (Diagram *dia, const DiaRectangle *update)
 {
+  live_changed (dia);
   GSList *l;
   DDisplay *ddisp;
 

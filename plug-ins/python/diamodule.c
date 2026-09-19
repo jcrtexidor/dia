@@ -45,6 +45,7 @@
 #include "pydia-sheet.h"
 
 #include "lib/dialib.h"
+#include "dia-version-info.h"
 #include "lib/object.h"
 #include "lib/group.h"
 #include "app/diagram.h"
@@ -643,6 +644,8 @@ PyInit_dia (void)
   PyDiaDiagram_Type.tp_base = &PyDiaDiagramData_Type,
 
   module = PyModule_Create (&dia_module_def);
+
+  PyModule_AddStringConstant (module, "application_version", dia_version_string ());
 
   ADD_TYPE (Display);
   ADD_TYPE (Layer);

@@ -658,7 +658,16 @@ PyDiaDiagram_GetUnsaved (PyDiaDiagram *self, void *closure)
 }
 
 
+static PyObject *
+PyDiaDiagram_GetLiveState (PyDiaDiagram *self, void *closure)
+{
+  return Py_BuildValue ("(sK)", diagram_live_id (PYDIA_DIAGRAM (self)),
+                       diagram_live_generation (PYDIA_DIAGRAM (self)));
+}
+
 static PyGetSetDef PyDiaDiagram_GetSetters[] = {
+  { "live_state", (getter) PyDiaDiagram_GetLiveState, NULL,
+    "Main-thread-only ephemeral document ID and conservative generation.", NULL },
   { "data", (getter) PyDiaDiagram_GetData, NULL,
     "Backward-compatible base-class access", NULL },
   { "displays", (getter) PyDiaDiagram_GetDisplays, NULL,
