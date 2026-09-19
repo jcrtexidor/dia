@@ -293,9 +293,11 @@ PyDiaObject_PropertyDescriptors (PyDiaObject *self, PyObject *args)
   if (!items)
     return NULL;
   for (int i = 0; i < MIN (total, limit); i++) {
-    PyObject *item = Py_BuildValue ("{s:s,s:s,s:O}",
+    PyObject *item = Py_BuildValue ("{s:s,s:s,s:O,s:O}",
       "name", descs[i].name, "type", descs[i].type,
-      "visible", (descs[i].flags & PROP_FLAG_VISIBLE) ? Py_True : Py_False);
+      "visible", (descs[i].flags & PROP_FLAG_VISIBLE) ? Py_True : Py_False,
+      "load_only", (descs[i].flags & (PROP_FLAG_LOAD_ONLY | PROP_FLAG_WIDGET_ONLY))
+                   ? Py_True : Py_False);
     if (!item) {
       Py_DECREF (items);
       return NULL;

@@ -26,6 +26,8 @@
 
 #include "pydia.h"
 #include "pydia-diagram.h"
+#include "pydia-live.h"
+#include "pydia-live-files.h"
 #include "pydia-display.h"
 #include "pydia-layer.h"
 #include "pydia-object.h"
@@ -587,6 +589,9 @@ PyDia_RegisterShutdown (PyObject *self, PyObject *args)
 }
 
 static PyMethodDef dia_methods[] = {
+    { "live_apply", PyDia_LiveApply, METH_VARARGS, "Apply a native transaction." },
+    { "live_history", PyDia_LiveHistory, METH_VARARGS, "Use native undo or redo." },
+    { "live_file", PyDia_LiveFile, METH_VARARGS, "Native live document file operation." },
     { "register_shutdown", PyDia_RegisterShutdown, METH_VARARGS,
       "register_shutdown(Callback: func) -> None. Main-thread notification after confirmed exit." },
     { "group_create", PyDia_GroupCreate, METH_VARARGS,
@@ -676,6 +681,9 @@ PyMODINIT_FUNC
 PyInit_dia (void)
 {
   PyObject *module;
+
+  PyDia_LiveInit ();
+  PyDia_LiveFilesInit ();
 
   PyDiaDiagram_Type.tp_base = &PyDiaDiagramData_Type,
 

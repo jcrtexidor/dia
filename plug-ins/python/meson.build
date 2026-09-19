@@ -13,6 +13,8 @@ sources = files(
     'pydia-handle.c',
     'pydia-image.c',
     'pydia-layer.c',
+    'pydia-live.c',
+    'pydia-live-files.c',
     'pydia-menuitem.c',
     'pydia-object.c',
     'pydia-paperinfo.c',
