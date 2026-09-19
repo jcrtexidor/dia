@@ -12,7 +12,7 @@ provide the current worker inventory; never read this snapshot as runtime truth.
 | --- | --- | --- |
 | Repository source | 38 sheet files; 783 shape files; 17 object module directories in `objects/meson.build` | Build inputs, including compiled factories, custom/custom-line loaders and palette definitions. Files need not equal loaded types. |
 | Native worker runtime | 38 sheets; 887 registered types; 891 palette entries; no unavailable returned entry | Includes duplicate palette entries/variants, aliases and types outside sheets. Factory registration is not proof that every factory can be instantiated safely with default arguments. |
-| MCP editing contract | 13 node types; 4 connector types; 9 snapshot tools + 2 discovery tools + 9 live read tools | Creation is still bounded to the listed types. Every native type can be discovered; arbitrary properties/creation and live GUI editing are future work. |
+| MCP editing contract | 13 node types; 4 connector types; 9 snapshot tools + 2 discovery tools + 21 live tools | Snapshot creation is bounded to listed types. Live generic creation/edits are available with local write opt-in; see M3–M7 limits. |
 
 Dia supports mixed diagrams. Names in this table are palettes and visual languages,
 not a mandatory document type. A symbol catalog does not promise electrical,
@@ -92,8 +92,8 @@ guarantee of a normal zero-configuration factory operation.
 | Inspection | IDs, revision, node fields, bounds, auxiliary label bounds, point indices/positions/directions, chosen ports, connector endpoints | Session data, not arbitrary native document; no full handles, properties, grouping, layer/selection or graph queries. |
 | Discovery (new) | Native sheets/types, labels, membership, type versions, pagination, creatable marker | Read-only worker inventory. No default property schema or icon blobs. M2 reads GUI objects and returns the actual Dia version. |
 | Export | `.dia`, `.svg`, `.png` | Native serialization/renderers, safe basename publication and validation. Other native formats are not exposed by MCP. |
-| Live inspection (M2) | GUI documents, layers, selection, arbitrary objects, native connections and conservative properties | Read-only, opt-in, versioned local socket; no history/layout/write commands. |
-| MCP resources/prompts | None | Tools only. |
+| Live inspection (M2) | GUI documents, layers, selection, arbitrary objects, native connections and conservative properties | Versioned local socket; default read-only, separate opt-in adds native history/layout/writes. |
+| MCP resources/prompts | Document list and summary resources; explain_live_diagram prompt | Actual live state; read-only context. |
 
 ER/database, network, civil, logic, telecom, cybernetics, chemistry, process,
 organizational (using generic shapes) and other domains can be drawn in standalone

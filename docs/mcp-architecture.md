@@ -2,7 +2,8 @@
 
 Audit date: 2026-09-19. Repository baseline: `77fe10bc0`; upstream base:
 `ad68cc378b7a187706bc2648c48b44d16fb80819`. Source code is authoritative.
-This document separates implemented snapshot and M2 live reads from proposed M3 writes.
+M1–M7 are implemented. The original roadmap below is retained as design context;
+[M3–M7 implementation and acceptance](m3-m7-validation.md) is the current write contract.
 See [capability inventory](mcp-capabilities.md), [tool contract](mcp-tools.md),
 [development](mcp-development.md), [progress](progress.md) and
 [upstream differences](upstream-differences.md).
@@ -36,8 +37,9 @@ editor, a Python package imported into the server, or mouse automation.
 The nine initial MCP tools create, inspect, connect, move, update, export and
 close session diagrams. They expose 13 allowlisted node types and four connectors.
 `get_capabilities` describes this contract statically; it does not probe the
-installation. No resources or prompts are registered. No file-open, layer editing, delete, disconnect, group, duplicate, layout or undo
-tools exist. The separate M2 tools below read live selection and editor state.
+installation. These snapshot tools remain intentionally restricted. The separate live interface now
+adds native editing/history/files/layout, resources and a context prompt; group/layer
+mutation remains outside its exposed command set. See the current M3–M7 contract.
 
 ### Upstream model and existing integration surface
 
@@ -258,8 +260,9 @@ and selection. A changed stamp increments the returned monotonic generation.
 Multiple events between reads can coalesce; redraw-only events can advance it.
 This is an **observed conservative editor generation**, separate from snapshot
 revision, not an exact edit count. Arbitrary trusted plugin mutations that bypass
-editor notifications are outside this guarantee. M3 must establish comprehensive
-command/change coverage before treating generations as transactional preconditions.
+editor notifications are outside this guarantee. M3 fences commands against this
+stamp on the same GTK context; conservative false conflicts are safe. Native
+command commit/history also trigger editor invalidation.
 
 Object lookup enumerates current membership and group members (bounded traversal),
 then serializes only the requested object or page. It does not serialize a whole
@@ -302,20 +305,18 @@ shapes and factories retain Dia's existing trust: this is not an OS sandbox, and
 a faulty native getter can still crash the GUI. The snapshot backend retains its
 separate crash-isolated worker path.
 
-## Proposed M3 native write boundary
+## Implemented M3–M7 native write boundary
 
-M2 does not implement writes, Save/Save As, arbitrary open/import, GUI selection
-changes, native undo commands through MCP, layout or domain expansion. M3 must
-use native change objects and transaction points, define rollback and redraw,
-prove generation/write preconditions, and decide safe identity across undo.
-Do not rebuild live user documents using the restricted snapshot model or add a
-parallel undo stack. Generic setters and complete descriptor schemas remain M4.
+The [current contract](m3-m7-validation.md) documents native transaction staging,
+rollback, GUI history, scalar descriptors/editing, files, semantic helpers and
+layout/context surfaces. Native changes are staged synchronously and transferred
+to the original history on success; there is no second persistent history. Live
+user documents are never rebuilt using the restricted snapshot model.
 
 ### Versions and completed M1 discovery
 
 Existing document `api_version="1"` is the snapshot contract, not a stable native
-ABI. Package metadata is 0.2.0; `__init__.__version__` still says 0.1.0 (tracked
-technical debt). Dia's own version and plugin ABI are separate. The live
+ABI. Package metadata and `__init__.__version__` are both 0.2.0. Dia's own version and plugin ABI are separate. The live
 handshake must advertise its integration API version and actual capabilities,
 without pinning clients to a commit or versioning every semantic feature.
 
@@ -326,7 +327,7 @@ change the snapshot document schema. No cache is needed at this scale; the cost
 is one worker invocation per query. A later persistent registry can invalidate
 metadata on a catalog generation change.
 
-## Prioritized issues and milestones
+## Accepted roadmap (M1–M7 completed within documented bounds)
 
 | Priority / milestone | Concrete work and acceptance condition |
 | --- | --- |

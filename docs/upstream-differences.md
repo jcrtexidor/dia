@@ -15,7 +15,8 @@ The fork README/contribution policy keeps this AI-assisted work in
 | `objects/custom/custom_object.c`, `custom_update_data` / `custom_create` | Recompute connection routing directions from original shape geometry on every update, respecting flips, rather than setting them only at creation. | General custom-shape correctness supporting technical diagrams; medium risk in geometry/connection changes. |
 
 M1 discovery changed no C. M2 introduces the following narrow native hooks;
-there is no new object ABI layout, history wrapper or arbitrary remote execution.
+there is no new object ABI layout or arbitrary remote execution. M3 adds the
+separate native transaction bridge described below.
 
 | M2 files / hook | Actual behavior | Merge risk |
 | --- | --- | --- |
@@ -28,7 +29,7 @@ there is no new object ABI layout, history wrapper or arbitrary remote execution
 | `plug-ins/python/mcp-live.py`, `meson.build` | Install opt-in startup shim for the separate live package | No MCP dependency/import when disabled |
 
 The live listener/protocol/registry implementation lives in `mcp/src/dia_mcp/live/`.
-No native setters or remotely callable C dispatch were added. Installed trusted
+M3–M7 now add bounded native command/file dispatch. Installed trusted
 plugins still share Dia's process; this boundary is not a sandbox.
 
 ## MCP-specific additions
@@ -59,3 +60,22 @@ wrappers there, with protocol/semantics in `mcp/`, instead of spreading MCP name
 throughout upstream internals. Native type version numbers, plugin ABI and MCP
 API version must remain distinct. Preserve the existing C regressions when
 merging upstream equivalents of these fixes.
+
+## M3–M7 additions
+
+- `pydia-live.c/.h`: GTK-thread native transaction staging, typed property validation,
+  native history and existing align/distribute helpers. No persistent alternate history.
+- `pydia-live-files.c/.h`: native import/serialization and post-publication saved marker.
+- `diamodule.c` and Python Meson source list: register/init those explicit APIs.
+- `pydia-object.c`: descriptor load-only/widget flags for safe editability reporting.
+- `lib/dia-io.c`: propagate final XML-writer close errors; see the internal
+  [upstream candidate](upstream-save-close.md). No upstream submission is authorized.
+- `live/{operations,files}.py` and protocol/registry: receipts, native mutation dispatch,
+  generation fence, safe atomic file publication and context analysis.
+- `native/uml.py`, `semantics.py`, `recipes.py`: extracted snapshot UML policy and
+  evidence-based generic-command helpers; dependency locks and snapshot schemas intact.
+- Server: 32 total tools, two resources (one templated) and one prompt.
+
+Native undo stack internals, object property ABI and serializer/error semantics
+are the main future merge risks. Tests exercise actual GTK history and files,
+not only mocks of these interfaces.

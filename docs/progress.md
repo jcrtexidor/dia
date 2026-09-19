@@ -1,112 +1,46 @@
 # MCP Development Progress
 
-## Current objective
+## Current completion
 
-Deliver M2: an opt-in, bounded, read-only connection to the running Dia GUI,
-while preserving the completed M1 discovery and snapshot editing/export backend.
-Audit baseline `77fe10bc0`; implementation date 2026-09-19.
+M1–M7 are implemented in the fork. The latest increment completes native
+transactions, generic editing, native files, modular semantic helpers and native
+layout/context surfaces. See [M3–M7 acceptance, usage and limits](m3-m7-validation.md).
+M2's original evidence remains in [m2-validation.md](m2-validation.md).
 
-## Completed
+- M3: atomic batches with native undo/redo and rollback, generation preconditions,
+  bounded one-use receipts and explicit ambiguous-outcome recovery.
+- M4: generic native factories and safe scalar/text descriptors/properties,
+  move/delete/connect/disconnect, including unfamiliar and zero-port custom types.
+- M5: native open/Save/Save As/export and conservative dependency reporting;
+  unknown-to-MCP native model data is preserved by native serializers.
+- M6: extracted UML codec/validation, native topology/domain analysis and creation
+  recipes that compose ordinary commands for flowchart/UML/database/network.
+- M7: eight native align/distribute modes, summaries, resources, prompt, operation
+  timing/correlation and measured bounded-read performance.
 
-- Repository, fork diff, native/PyDia model, plugin/sheet loading, current MCP
-  communication, contracts, undo and concurrency audit.
-- Current and proposed [architecture](mcp-architecture.md), complete
-  [capability inventory](mcp-capabilities.md), all 887 runtime type names plus
-  38 sheets in [JSON](mcp-runtime-inventory.json), [tool reference](mcp-tools.md),
-  [development guide](mcp-development.md) and [upstream differences](upstream-differences.md).
-- First improvement: `list_sheets` / `list_object_types`, fresh native discovery,
-  pagination, palette labels and MCP creation markers; bounded response validation.
-- Unit, native multi-domain/custom-sheet discovery and actual stdio coverage.
-  Existing creation contract and native C files preserved.
+GTK3/Meson, snapshot APIs and dependency locks remain in place. Writes are a
+separate GUI opt-in (`DIA_MCP_WRITE=1`); files also require `DIA_MCP_FILES_ROOT`.
+The external SDK remains separate from the embedded stdlib-only adapter.
 
-## M2 completed
+## Explicit extension boundaries
 
-M2 acceptance passed against the final installed image under Xvfb and the real
-Ubuntu 26 Wayland compositor, including `GDK_SCALE=2`.
-Full [evidence and limitations](m2-validation.md).
+Compound property codecs, group-member editing, automatic connector routing,
+sheet-specific factory variants and engineering simulation are not advertised.
+Disconnect before deleting attached objects. Native plugins/types must be
+installed for lossless native round trips. Dependency completeness is not proven.
+Membership remains O(N), getters cannot be preempted, and the live interface is
+not a sandbox for hostile native plugins. Snapshot reconstruction costs are
+unchanged. Runtime catalogs describe their respective GUI/worker installation.
 
-Final review corrections are included: iterative traversal releases wrappers
-immediately without cyclic GC, and descriptor-only metadata avoids fetching
-unsupported native property values. All nine live tools are exercised over real
-MCP stdio; cross-document references are rejected.
+## Latest validation
 
-- Foundation: native ephemeral IDs, detach/destruction/copy invalidation,
-  pre-import document identity reset and conservative editor generation.
-- Transport: protocol v1, strict bounded JSON lines, same-user private Unix
-  socket, GLib I/O plus bounded idle dispatch, no receiver threads/locks.
-- Read registry: no wrappers retained, current membership resolution, mixed/custom
-  types, layers/selection, native connections and conservative properties.
-- Normal shutdown: confirmed application exit notification with GIL-safe Python
-  callback, closing clients/queue/socket before native document destruction.
-- Integration: nine `live_*` tools through Operations/LiveClient; existing snapshot
-  tools and M1 discovery preserved.
+147 portable tests; 199 tests against the installed native image; 9/9 Meson
+suites. Real Wayland: all 10 live tests passed at normal scale and all passed at
+scale 2 (two completed first, eight pending tests rerun with a fresh runtime).
+The [acceptance report](m3-m7-validation.md) records image digest, metrics and
+limits. All implementation/test/build/lock files were checked against the image.
 
-First checkpoint: 9/9 Meson suites and 136 MCP tests passed against a rebuilt
-native development container. Initial Xvfb and real Wayland GUI tests passed.
-The final tests additionally cover real File/Quit cleanup, wire rejection,
-endpoint recovery, unsupported getters and interaction during continuous reads.
-
-## Next
-
-1. M3: native atomic commands, rollback and coherent GUI undo/redo.
-2. M4: property introspection and safe generic editing across arbitrary factories.
-3. M5: native open/Save/Save As with dependency reporting and data preservation.
-4. M6: modular semantic helpers; M7: existing layout commands, summaries/resources/
-   prompts, observability and measured performance work.
-
-Each milestone has acceptance criteria in the architecture document. Do not start
-a broad rewrite or implement all domain tools before these foundations.
-
-## Architectural decisions
-
-Keep GTK3/Meson, locks, transactional snapshots, validated native exports, stdio
-SDK separation and current C fixes. Reuse PyDia discovery after plugin loading.
-M2 uses GLib nonblocking I/O and idle dispatch, not receiver threads. Lazy native
-UUID tokens avoid wrapper retention and object ABI changes. Detach/undo invalidates
-identity deliberately. Conservative generations detect editor invalidations, not
-exact edit counts; M3 must strengthen transactional preconditions. Runtime sheet
-membership reuses M1 sources but is cached per GUI session, while worker discovery
-stays fresh. Normal Dia shutdown does not finalize Python; an explicit confirmed
-shutdown notification replaces reliance on Python atexit.
-
-## Supported diagram domains
-
-Native: all 38 runtime palettes, including UML, flowchart, database/ER, network,
-electrical/electronic/logic, pneumatic/hydraulic, engineering/civil, telecom,
-process/control, requirements and custom shapes; mixed diagrams are valid.
-MCP editing: 13 nodes across Flowchart/UML/Electric/Pneum, four connectors.
-Other registered types are discoverable, not yet generically editable. Electrical
-symbols do not imply engineering simulation/validation.
-
-## Generic Dia capabilities
-
-Session create/inspect/close, allowlisted create/update/move/connect, native
-Dia/SVG/PNG export, runtime sheet/type enumeration, and M2 live document/layer/
-selection/object/connection reads with a conservative property subset. No live
-write commands, delete/disconnect/group/layout or native undo through MCP. Registry types outside sheets and duplicate palette labels are kept.
-
-## Known issues
-
-- Live GUI reads are implemented; native transactional mutations remain M3.
-- Live object membership resolution remains O(N); large native membership tuples
-  are allocated before the traversal limit. Arbitrary native getters cannot be
-  preempted. No constant-time lookup or untrusted-plugin isolation is claimed.
-- PyDia setters/moves do not supply a remote-safe native transaction/history layer.
-- Creation schema is fixed; the generic `properties` parameter is UML-only, and
-  connector labels/UML terminal policy leak domain assumptions into core service.
-- No file-open/import or preservation of unmodeled native data; do not rebuild
-  user diagrams with the restricted snapshot contract.
-- Native missing sheet entries can be pruned before discovery. Property schema,
-  entry creation data, icons and native export/version tools remain missing.
-- A runtime capture describes the worker installation, not the host GUI profile.
-
-## Technical debt
-
-Full snapshot reconstruction and full inspection response on each edit; no batch
-operations or targeted object reads. Limited structured logging and error detail.
-Public package metadata is 0.2.0 but `__init__.__version__` still says 0.1.0.
-Domain tuple conversions are native-specific; no automatic complete JSON property
-codec exists. Live wrappers remain callback-local; concurrent reads and native lifecycle are tested.
+## Validation history
 
 ## M2 final validation
 
@@ -122,7 +56,7 @@ codec exists. Live wrappers remain callback-local; concurrent reads and native l
 
 Nonfatal native text-cursor diagnostics during automated GUI actions are recorded
 for review in the validation report; they are not claimed as a proven upstream
-bug. M3 mutations remain unimplemented.
+bug. The M3–M7 completion below supersedes the historical M2 scope.
 
 ## Historical M1 tests
 
@@ -154,11 +88,12 @@ compositor socket, observed `GdkWaylandDisplay` inside Dia and passed runtime
 discovery, two-node creation, connection and SVG export (1450 bytes). This verifies
 the M1 CLI worker on Wayland. M2 now additionally verifies the running GUI,
 selection, native history actions and shutdown on this real compositor as recorded
-above. Dependencies and project locks remain unchanged.
+in the historical M2 report. M3–M7 real-GUI validation is recorded in the current
+acceptance report. Dependencies and project locks remain unchanged.
 
 ## Upstream compatibility risks
 
 Three preexisting native divergences: importer failure propagation, CLI export
 failure status and custom-shape connection directions after flips. M2 adds localized lifecycle, UUID, generation, shutdown and PyDia read hooks;
-see upstream differences. Native transactional undo/property wrappers remain the
-likely sensitive future merge areas. Work stays in the fork under its documented contribution policy.
+see upstream differences. M3–M7 adds native transaction/file wrappers and
+serializer-close error propagation; those are sensitive future merge areas. Work stays in the fork under its documented contribution policy.

@@ -52,7 +52,16 @@ is not the integration path.
 
 Standalone Dia remains a normal desktop application. `task mcp:serve` still starts
 isolated workers by default. M2 adds a separate opt-in live read path; snapshot
-edits do not update a GUI document. The live tools never modify it.
+edits do not update a GUI document. Live mutation requires a separate local opt-in.
+
+## Enable native editing and files
+
+Follow the normal live startup below, adding `DIA_MCP_WRITE=1` for editing and
+`DIA_MCP_FILES_ROOT=/absolute/trusted/directory` for native open/save/export.
+Read the [current command/receipt workflow](m3-m7-validation.md) before using
+mutations. A timeout is not proof that a native operation did not commit; query
+the prepared receipt. Run all `test_live*_native.py` files under Xvfb and real
+Wayland to validate M2–M7 together.
 
 ## Enable live inspection
 
@@ -243,4 +252,4 @@ For an interactive smoke check, select objects with the mouse while querying
 `live_get_selection`; drag them while querying `live_get_object`; close/reopen
 and confirm the previous IDs fail. M2 reads only document-space geometry, so no
 window-coordinate conversion or display scaling is involved. Native editing,
-rollback and undo through MCP are M3, not part of M2 acceptance.
+rollback and undo through MCP are tested separately by the M3–M7 native suites.

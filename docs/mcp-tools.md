@@ -1,5 +1,14 @@
 # MCP tool reference
 
+Current live write/context additions: [M3–M7 contract](m3-m7-validation.md).
+`live_prepare_operation`, `live_get_operation`, `live_apply_commands`, `live_history`,
+`live_open_document`, `live_save_document`, `live_save_document_as`,
+`live_export_document`, `live_get_dependencies`, `live_summarize_document`,
+`live_analyze_document` and `live_plan_objects` extend the nine M2 read tools.
+Resources: `dia://live/documents` and `dia://live/documents/{document_id}/summary`.
+Prompt: `explain_live_diagram(document_id)`. Existing snapshot tools are unchanged.
+
+
 The server now exposes 20 tools over local stdio. No resources/prompts are
 registered. `api_version="1"` describes the existing session document contract.
 Parameters and property definitions are authoritative in `server.py`, `models.py`
