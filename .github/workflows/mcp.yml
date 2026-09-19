@@ -1,0 +1,26 @@
+name: Ubuntu 26 Dia operations
+
+on:
+  push:
+    branches: [master, 'feature/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-and-mcp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compile and test Dia in Ubuntu 26.04
+        run: docker build --progress=plain -f build-aux/mcp/Dockerfile -t dia-mcp:ci .
+      - name: Test installed operations and actual MCP stdio
+        run: >-
+          docker run --rm --init --network=none --user "$(id -u):$(id -g)"
+          -e DIA_MCP_NATIVE=1 dia-mcp:ci
+          xvfb-run -a python -m pytest -q -p no:cacheprovider /src/dia/mcp/tests

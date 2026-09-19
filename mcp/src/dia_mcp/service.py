@@ -1,0 +1,217 @@
+"""Transactional operations API. Native success precedes a revision change."""
+
+import hashlib
+import logging
+import os
+import re
+import tempfile
+import threading
+from pathlib import Path
+from typing import get_args
+from uuid import uuid4
+
+from pydantic import ValidationError
+
+from .backend import Backend
+from .errors import DiaError
+from .models import Document, Edge, ExportFormat, Node, NodeType, Port
+
+
+class Operations:
+    def __init__(self, backend: Backend, workspace: Path):
+        self.backend = backend
+        self.workspace = workspace.resolve()
+        self.workspace.mkdir(parents=True, exist_ok=True)
+        self._documents: dict[str, Document] = {}
+        self._geometry: dict[str, dict] = {}
+        self._lock = threading.RLock()
+
+    @staticmethod
+    def capabilities() -> dict:
+        return {
+            "api_version": "1",
+            "object_types": list(get_args(NodeType)),
+            "ports": list(get_args(Port)),
+            "formats": list(get_args(ExportFormat)),
+            "units": "cm",
+            "max_documents": 32,
+            "max_nodes": 100,
+            "max_edges": 200,
+            "persistence": "session; export native .dia files to keep diagrams",
+        }
+
+    def _document(self, document_id: str) -> Document:
+        try:
+            return self._documents[document_id]
+        except KeyError as exc:
+            raise DiaError("NOT_FOUND", "Unknown document_id") from exc
+
+    def _commit(self, candidate: Document) -> dict:
+        # Enforce list limits again: appending to a Pydantic list bypasses assignment validation.
+        try:
+            candidate = Document.model_validate(candidate.model_dump())
+        except ValidationError as exc:
+            raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+        try:
+            with tempfile.TemporaryDirectory(prefix="dia-mcp-check-") as folder:
+                geometry = self.backend.render(candidate, Path(folder) / "check.dia", "dia")
+        except OSError as exc:
+            raise DiaError("IO_ERROR", str(exc)) from exc
+        candidate.revision += 1
+        self._documents[candidate.id] = candidate
+        self._geometry[candidate.id] = geometry
+        return self.inspect_document(candidate.id)
+
+    def create_document(self, name: str = "Diagram") -> dict:
+        with self._lock:
+            if len(self._documents) >= 32:
+                raise DiaError("LIMIT_EXCEEDED", "Close a document before creating another")
+            try:
+                doc = Document(id=uuid4().hex, name=name)
+            except ValidationError as exc:
+                raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+            # An empty document has no native objects. The first edit validates the backend.
+            self._documents[doc.id] = doc
+            self._geometry[doc.id] = {"nodes": {}, "edges": {}}
+            return self.inspect_document(doc.id)
+
+    def inspect_document(self, document_id: str) -> dict:
+        with self._lock:
+            document = self._document(document_id)
+            # Return independent JSON data, never mutable internal state.
+            import copy
+
+            return {
+                "document": document.model_dump(),
+                "geometry": copy.deepcopy(self._geometry[document_id]),
+            }
+
+    def create_object(
+        self,
+        document_id: str,
+        type: NodeType = "Flowchart - Box",
+        x: float = 0,
+        y: float = 0,
+        width: float = 4,
+        height: float = 2,
+        text: str = "",
+    ) -> dict:
+        with self._lock:
+            doc = self._document(document_id).model_copy(deep=True)
+            try:
+                node = Node(
+                    id=uuid4().hex, type=type, x=x, y=y, width=width, height=height, text=text
+                )
+            except ValidationError as exc:
+                raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+            doc.nodes.append(node)
+            result = self._commit(doc)
+            return {"object_id": node.id, **result}
+
+    def connect_objects(
+        self,
+        document_id: str,
+        source: str,
+        target: str,
+        source_port: Port = "auto",
+        target_port: Port = "auto",
+        arrow: bool = True,
+    ) -> dict:
+        with self._lock:
+            doc = self._document(document_id).model_copy(deep=True)
+            ids = {node.id for node in doc.nodes}
+            if source not in ids or target not in ids:
+                raise DiaError("NOT_FOUND", "Both endpoints must belong to this document")
+            if source == target:
+                raise DiaError("INVALID_ARGUMENT", "Self-connections are outside this MVP")
+            try:
+                edge = Edge(
+                    id=uuid4().hex,
+                    source=source,
+                    target=target,
+                    source_port=source_port,
+                    target_port=target_port,
+                    arrow=arrow,
+                )
+            except ValidationError as exc:
+                raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+            doc.edges.append(edge)
+            result = self._commit(doc)
+            return {"connection_id": edge.id, **result}
+
+    def move_object(self, document_id: str, object_id: str, x: float, y: float) -> dict:
+        with self._lock:
+            doc = self._document(document_id).model_copy(deep=True)
+            node = next((node for node in doc.nodes if node.id == object_id), None)
+            if node is None:
+                raise DiaError("NOT_FOUND", "Unknown object_id in this document")
+            try:
+                node.x, node.y = x, y
+            except ValidationError as exc:
+                raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+            return self._commit(doc)
+
+    def export_diagram(
+        self, document_id: str, filename: str, format: ExportFormat = "svg", overwrite: bool = False
+    ) -> dict:
+        with self._lock:
+            doc = self._document(document_id)
+            if not doc.nodes:
+                raise DiaError("EMPTY_DIAGRAM", "Create an object before exporting")
+            if format not in get_args(ExportFormat):
+                raise DiaError("INVALID_ARGUMENT", "Unsupported export format")
+            if (
+                not isinstance(filename, str)
+                or len(filename) > 120
+                or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", filename)
+                or not filename.endswith(f".{format}")
+            ):
+                raise DiaError(
+                    "INVALID_ARGUMENT", "Use a basename with the selected file extension"
+                )
+            destination = self.workspace / filename
+            if destination.is_symlink() or (destination.exists() and not overwrite):
+                raise DiaError("ALREADY_EXISTS", "Output exists; choose another name or overwrite")
+            # Staging on the same filesystem enables atomic publication after validation.
+            staged = None
+            try:
+                fd, stage = tempfile.mkstemp(prefix=".dia-mcp-", dir=self.workspace)
+                staged = Path(stage)
+                os.close(fd)
+                self.backend.render(doc, staged, format)
+                digest = hashlib.sha256(staged.read_bytes()).hexdigest()
+                size = staged.stat().st_size
+                if overwrite:
+                    os.replace(staged, destination)
+                else:
+                    # link() fails atomically if another process won the destination name.
+                    os.link(staged, destination)
+                return {
+                    "api_version": "1",
+                    "document_id": doc.id,
+                    "revision": doc.revision,
+                    "path": str(destination),
+                    "format": format,
+                    "bytes": size,
+                    "sha256": digest,
+                }
+            except FileExistsError as exc:
+                raise DiaError("ALREADY_EXISTS", "Output was created by another process") from exc
+            except OSError as exc:
+                raise DiaError("IO_ERROR", str(exc)) from exc
+            finally:
+                if staged is not None:
+                    try:
+                        staged.unlink(missing_ok=True)
+                    except OSError:
+                        # Cleanup must not mask a backend error or a published success.
+                        logging.getLogger(__name__).warning(
+                            "Could not remove temporary export %s", staged
+                        )
+
+    def close_document(self, document_id: str) -> dict:
+        with self._lock:
+            self._document(document_id)
+            del self._documents[document_id]
+            del self._geometry[document_id]
+            return {"api_version": "1", "closed": document_id}

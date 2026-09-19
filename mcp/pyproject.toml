@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dia-operations-mcp"
+version = "0.1.0"
+description = "Local MCP operations backed by GNOME Dia's native Python plug-in"
+requires-python = ">=3.12"
+license = "GPL-2.0-or-later"
+dependencies = ["mcp==1.30.0"]
+
+[project.scripts]
+dia-mcp = "dia_mcp.server:main"
+
+[dependency-groups]
+dev = ["pytest==9.1.1", "ruff==0.15.6"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dia_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["native: requires the fork's installed Dia executable and an X display"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

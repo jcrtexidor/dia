@@ -1,0 +1,50 @@
+version: '3'
+
+vars:
+  MCP_IMAGE: dia-mcp:ubuntu26
+
+tasks:
+  default:
+    cmds:
+      - task --list
+
+  mcp:build:
+    desc: Build Dia, run native tests and install MCP in Ubuntu 26.04
+    cmds:
+      - docker build --progress=plain -f build-aux/mcp/Dockerfile -t {{.MCP_IMAGE}} .
+
+  mcp:check:
+    desc: Check Python formatting and the operations contract without GTK
+    cmds:
+      - uv sync --directory mcp --locked
+      - uv run --directory mcp --locked ruff check .
+      - uv run --directory mcp --locked ruff format --check .
+      - uv run --directory mcp --locked pytest -q -m 'not native'
+
+  mcp:test:
+    desc: Test installed native Dia, Python API and MCP stdio in the built image
+    cmds:
+      - >-
+        docker run --rm --init --network=none --user "$(id -u):$(id -g)"
+        -e DIA_MCP_NATIVE=1 {{.MCP_IMAGE}}
+        xvfb-run -a python -m pytest -q -p no:cacheprovider /src/dia/mcp/tests
+
+  mcp:demo:
+    desc: Export a real workflow to artifacts/workflow.{dia,svg,png}
+    cmds:
+      - mkdir -p artifacts
+      - >-
+        docker run --rm --init --network=none --user "$(id -u):$(id -g)"
+        -v "{{.ROOT_DIR}}/artifacts:/workspace" {{.MCP_IMAGE}}
+        xvfb-run -a python /src/dia/mcp/examples/workflow.py --workspace /workspace
+
+  mcp:serve:
+    desc: Start local MCP stdio with artifacts as its output workspace
+    interactive: true
+    silent: true
+    cmds:
+      - mkdir -p artifacts
+      - >-
+        docker run --rm --init -i --network=none --user "$(id -u):$(id -g)"
+        -v "{{.ROOT_DIR}}/artifacts:/workspace" {{.MCP_IMAGE}}
+        xvfb-run -a dia-mcp --workspace /workspace

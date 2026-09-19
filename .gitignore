@@ -6,3 +6,11 @@ build-release/
 build-aux/flatpak/build/
 .flatpak-builder
 *.swp
+mcp/.venv/
+mcp/.pytest_cache/
+mcp/.ruff_cache/
+mcp/dist/
+mcp/exports/
+__pycache__/
+*.egg-info/
+artifacts/
