@@ -120,3 +120,22 @@ APT sigue usando repositorios actualizados, aunque la imagen base y xpm-pixbuf
 están fijados. Para reproducibilidad binaria se necesitaría además un snapshot
 de paquetes y un registro de imágenes publicadas. El plan GTK4 define las
 pruebas adicionales necesarias antes de sustituir el editor.
+
+## Ampliación 0.2: UML, electricidad y neumática (2026-09-19)
+
+- Compilación completa del motor en Ubuntu 26: **9 pruebas Meson aprobadas**.
+- Suite ampliada API/nativa/MCP: **103 pruebas aprobadas**.
+- Contrato sin GTK: **62 pruebas aprobadas**, 41 nativas excluidas.
+- Ruff y comprobación de formato sin errores.
+- Persistencia de miembros/parámetros UML, generalización y asociación;
+  conexiones técnicas con terminales exactos tras movimiento y recarga.
+- Regresión C de direcciones tras inversiones horizontal, vertical y doble,
+  restauración y lectura desde `.dia`.
+- MCP stdio con propiedades estructuradas, edición, terminales y rechazo de
+  índices booleanos sin consumir una revisión.
+- Ejemplos `04-uml-pedidos`, `05-mando-electrico` y `06-circuito-neumatico`:
+  exportación nativa/SVG/PNG y revisión visual; 6/7, 7/8 y 5/5 nodos/conectores.
+
+Los archivos se generan en `artifacts/engineering` mediante
+`task mcp:engineering`; los scripts y las instrucciones están versionados.
+[Recorrido de implementación y reproducción](technical-diagrams.md).

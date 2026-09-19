@@ -30,8 +30,9 @@ contrato y las mismas pruebas. Hoy el motor continúa enlazando GTK3.
 | --- | --- | --- |
 | `capabilities` / MCP `get_capabilities` | Ninguna | Versión, unidades, tipos, puertos, formatos y límites |
 | `create_document` | `name` | `document` vacío con ID y revisión 0; `geometry` vacío |
-| `create_object` | `document_id`, `type`, `x`, `y`, `width`, `height`, `text` | `object_id`, documento actualizado y geometría nativa |
-| `connect_objects` | `document_id`, `source`, `target`, puertos, `arrow` | `connection_id`, documento y geometría nativa |
+| `create_object` | `document_id`, `type`, coordenadas, dimensiones, `text`, `properties`, flips | `object_id`, documento actualizado y geometría nativa |
+| `connect_objects` | `document_id`, extremos, puertos/índices, `type`, `arrow`, `label` | `connection_id`, documento y geometría nativa |
+| `update_object` | ID de objeto y campos opcionales `text`, dimensiones, `properties`, flips | Documento y geometría actualizados de forma atómica |
 | `move_object` | `document_id`, `object_id`, `x`, `y` | Documento y geometría actualizados, mismas identidades |
 | `inspect_document` | `document_id` | Copia del estado lógico y geometría; sin mutación |
 | `export_diagram` | `document_id`, `filename`, `format`, `overwrite=false` | Ruta, revisión, formato, tamaño y SHA-256 |
@@ -44,8 +45,8 @@ pero el MVP no ofrece aún una operación para reimportarlo a la sesión.
 
 Las coordenadas aceptan valores finitos entre −1000 y 1000 cm. Las dimensiones
 solicitadas van de 0,1 a 100 cm; el texto, hasta 2000 caracteres XML válidos.
-Los tipos admitidos son `Flowchart - Box`, `Flowchart - Ellipse` y
-`Flowchart - Diamond`. No se aceptan propiedades o nombres de tipos arbitrarios.
+El catálogo exacto y los esquemas de nodos y conexiones están publicados en
+`capabilities`. No se aceptan propiedades o nombres de tipos arbitrarios.
 Los límites acotan esta interfaz inicial; no son límites generales de Dia.
 
 Los puertos son `north`, `east`, `south`, `west`, `center` o `auto`. El backend
@@ -54,6 +55,89 @@ el texto y resolver el tamaño. `auto` compara centros y el eje predominante,
 sin prometer evitación de obstáculos. Devuelve el índice elegido y las posiciones
 reales. La conexión ejecuta tanto `move_handle` como `Handle.connect`; el guardado
 conserva la referencia y no solamente la apariencia de una línea.
+
+## Ampliación compatible 0.2: objetos técnicos
+
+El paquete 0.2 conserva `api_version="1"`, las firmas posicionales originales y
+sus valores predeterminados. Añade una herramienta (`update_object`, nueve en
+total) y campos opcionales. El esquema de documento versionado debe actualizarse
+en clientes que validen estrictamente las respuestas: los nuevos campos se
+incluyen también con sus valores predeterminados.
+
+| Tipo/familia | Soporte |
+| --- | --- |
+| `Flowchart - Box`, `Ellipse`, `Diamond` | Texto y dimensiones con comportamiento previo |
+| `UML - Class` | `text` es el nombre; propiedades estructuradas indicadas abajo |
+| `Electric - contact_o`, `contact_f`, `relay`, `lamp`, `connpoint` | Contactos NO/NC, relé, lámpara y punto de conexión |
+| `Pneum - DEJack`, `dist52`, `presspn`, `drain` | Cilindro, distribuidor, presión y escape |
+
+Usar el prefijo completo de cada familia, por ejemplo `Electric - relay`.
+Las clases UML aceptan ancho mínimo con `allow_resizing`; la altura depende del
+contenido y el texto puede ampliar el ancho. Los símbolos técnicos conservan
+su proporción nativa dentro de `width`/`height`; su texto puede ampliar los
+límites visuales. Admiten `flip_horizontal` y `flip_vertical` (booleanos).
+Consultar siempre `geometry.nodes[id].bounds` y `label_bounds`.
+
+Ejemplo de creación UML, después de obtener `document_id`:
+
+```python
+base = api.create_object(
+    document_id, type="UML - Class", text="Entidad", x=1, y=1, width=8,
+    properties={
+        "stereotype": "persistente",
+        "abstract": True,
+        "attributes": [{"name": "id", "type": "UUID", "visibility": "protected"}],
+        "operations": [{
+            "name": "buscar", "type": "bool", "inheritance": "abstract",
+            "parameters": [{"name": "id", "type": "UUID", "kind": "in"}],
+        }],
+    },
+)
+```
+
+Máximos: 30 atributos, 30 operaciones y 20 parámetros por operación; cada
+cadena de esas estructuras admite 200 caracteres XML válidos. Visibilidad:
+`public`, `private`, `protected`, `package`. `class_scope=true` indica miembro
+estático. Atributos y parámetros admiten `value`; métodos admiten
+`inheritance=abstract|polymorphic|leaf` (predeterminado `leaf`, igual que Dia).
+Parámetros: `kind=unspecified|in|out|inout`. No se reciben tuplas nativas desde MCP.
+
+`update_object` conserva los campos omitidos o `null`; `properties` sustituye
+el conjunto UML completo, **no es una mezcla parcial**. Enviar `{}` para vaciar
+miembros y restablecer estereotipo/abstracción. `text=""` borra el texto.
+Se mantienen ID y conexiones; la operación recalcula tamaños y geometría.
+
+### Conectores y terminales
+
+- `Standard - Line`: comportamiento previo; `arrow` controla la flecha final.
+- `Standard - ZigZagLine`: trazado ortogonal nativo y flecha final opcional.
+- `UML - Generalization`: **source es la superclase**, donde está el triángulo;
+  target es la subclase. No confundir el orden con una flecha dirigida usual.
+- `UML - Association`: asociación nativa. Ambos conectores UML exigen clases
+  en sus extremos, admiten `label` y usan su propia simbología; ignoran `arrow`.
+
+`geometry.nodes[id].connection_points` expone `index`, `position`, `directions`
+(máscara nativa N=1, E=2, S=4, O=8) y `selectable`. Ejemplo eléctrico:
+
+```python
+api.connect_objects(document_id, contacto_id, rele_id,
+    type="Standard - ZigZagLine", arrow=False,
+    source_connection=1, target_connection=0)
+```
+
+Un índice explícito requiere `source_port="auto"` o `target_port="auto"` en ese
+extremo y tiene prioridad sobre la selección automática. Se comprueba contra
+el objeto existente antes de materializar. La geometría devuelve el índice
+efectivo; el campo `source_port`/`target_port` es `null` en un extremo seleccionado
+por índice. En UML sólo son seleccionables
+explícitamente los índices fijos 0–7; los puertos dinámicos de miembros y el
+centro cambian al editar atributos, por lo que se usan puertos semánticos.
+Esto evita que una actualización conecte silenciosamente un miembro diferente.
+
+Los símbolos sin texto (`dist52`, `presspn`, `drain`, `connpoint`) reciben una
+etiqueta nativa auxiliar con `meta.dia_mcp_parent`. No consume un nodo lógico;
+los conteos de objetos del archivo pueden superar nodos + conexiones. La API
+recrea/mueve/borra esas etiquetas al editar; en la GUI son objetos independientes.
 
 ## Transacciones, vida útil y errores
 
@@ -119,6 +203,6 @@ del dominio. Mensajes informativos y trazas van a stderr, nunca al stdout MCP.
 Las ampliaciones compatibles añaden operaciones o capacidades explícitas. Cambios
 de semántica, unidades o IDs requieren una versión de contrato nueva. Prioridades:
 abrir/exportar snapshots para recuperar sesiones; importar `.dia` con preservación
-de propiedades desconocidas; ediciones por lotes; estilos tipados; conectores
-ortogonales; undo del servicio; backend persistente si las medidas justifican su
+de propiedades desconocidas; ediciones por lotes; estilos tipados; más tipos UML y técnicos;
+undo del servicio; backend persistente si las medidas justifican su
 complejidad. No ampliar el MVP mediante evaluación de código recibido.

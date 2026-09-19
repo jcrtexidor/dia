@@ -4,17 +4,24 @@ import json
 import math
 import os
 from pathlib import Path
+from typing import get_args
 
-TYPES = {"Flowchart - Box", "Flowchart - Ellipse", "Flowchart - Diamond"}
-PORTS = {"auto", "north", "east", "south", "west", "center"}
+from catalog import ConnectionType, NodeType, Port, validate_uml, xml_text
+
+TYPES = set(get_args(NodeType))
+PORTS = set(get_args(Port))
 
 
 def point(position):
     return [position.x, position.y]
 
 
-def port(obj, side):
+def port(obj, side, index=None):
     cps = obj.connections
+    if index is not None:
+        if type(index) is not int or not 0 <= index < len(cps):
+            raise ValueError("connection point index does not exist on this object")
+        return index, cps[index]
     xs, ys = [cp.pos.x for cp in cps], [cp.pos.y for cp in cps]
     cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
     desired = {
@@ -75,6 +82,14 @@ def validate(spec):
             for c in text
         ):
             raise ValueError("invalid XML text")
+        if node.get("properties") is not None and node["type"] != "UML - Class":
+            raise ValueError("properties require UML - Class")
+        validate_uml(node.get("properties"))
+        for flag in ("flip_horizontal", "flip_vertical"):
+            if type(node.get(flag, False)) is not bool:
+                raise ValueError("invalid flip flag")
+            if node.get(flag) and not node["type"].startswith(("Electric - ", "Pneum - ")):
+                raise ValueError("flips require technical symbols")
     node_ids = identifiers.copy()
     for edge in edges:
         if (
@@ -85,9 +100,111 @@ def validate(spec):
             or edge["source_port"] not in PORTS
             or edge["target_port"] not in PORTS
             or type(edge["arrow"]) is not bool
+            or edge.get("type", "Standard - Line") not in get_args(ConnectionType)
         ):
             raise ValueError("invalid connection")
+        for endpoint in ("source", "target"):
+            index = edge.get(endpoint + "_connection")
+            if index is not None and (
+                type(index) is not int
+                or not 0 <= index <= 1023
+                or edge[endpoint + "_port"] != "auto"
+            ):
+                raise ValueError("invalid or ambiguous connection index")
+            if (
+                index is not None
+                and index >= 8
+                and next(n for n in nodes if n["id"] == edge[endpoint])["type"] == "UML - Class"
+            ):
+                raise ValueError("dynamic UML member ports require semantic selection")
+        if len(xml_text(edge.get("label", ""))) > 200:
+            raise ValueError("invalid connection label")
+        if edge.get("type", "").startswith("UML - "):
+            if any(
+                n["type"] != "UML - Class"
+                for n in nodes
+                if n["id"] in (edge["source"], edge["target"])
+            ):
+                raise ValueError("UML connections require UML classes")
+        elif edge.get("label"):
+            raise ValueError("labels require UML connections")
         identifiers.add(edge["id"])
+
+
+def configure_node(obj, node, layer):
+    import dia
+
+    if node["type"] == "UML - Class":
+        settings = node.get("properties") or {}
+        visibility = {"public": 0, "private": 1, "protected": 2, "package": 3}
+        obj.properties["name"] = node["text"]
+        obj.properties["stereotype"] = settings.get("stereotype", "")
+        obj.properties["abstract"] = settings.get("abstract", False)
+        obj.properties["attributes"] = [
+            (
+                a["name"],
+                a.get("type", ""),
+                a.get("value", ""),
+                "",
+                visibility[a.get("visibility", "private")],
+                False,
+                a.get("class_scope", False),
+            )
+            for a in settings.get("attributes", [])
+        ]
+        obj.properties["operations"] = [
+            (
+                o["name"],
+                o.get("type", ""),
+                "",
+                "",
+                visibility[o.get("visibility", "public")],
+                {"abstract": 0, "polymorphic": 1, "leaf": 2}[o.get("inheritance", "leaf")],
+                False,
+                o.get("class_scope", False),
+                [
+                    (
+                        p["name"],
+                        p.get("type", ""),
+                        p.get("value", ""),
+                        "",
+                        {"unspecified": 0, "in": 1, "out": 2, "inout": 3}[
+                            p.get("kind", "unspecified")
+                        ],
+                    )
+                    for p in o.get("parameters", [])
+                ],
+            )
+            for o in settings.get("operations", [])
+        ]
+        obj.properties["allow_resizing"] = True
+        obj.properties["elem_width"] = node["width"]
+    elif node["type"].startswith("Flowchart - "):
+        obj.properties["elem_width"] = node["width"]
+        obj.properties["elem_height"] = node["height"]
+        obj.properties["text"] = node["text"]
+    else:
+        for flag in ("flip_horizontal", "flip_vertical"):
+            obj.properties[flag] = node.get(flag, False)
+        # Preserve each technical symbol's native aspect within the requested box.
+        ratio = obj.properties["elem_width"].value / obj.properties["elem_height"].value
+        obj.properties["elem_height"] = min(node["height"], node["width"] / ratio)
+        if "text" in obj.properties.keys():
+            obj.properties["text"] = node["text"]
+    obj.move(node["x"], node["y"])
+    if node["text"] and "text" not in obj.properties.keys() and node["type"] != "UML - Class":
+        box = obj.bounding_box
+        label_x, label_y = box.left, box.bottom + 0.5
+        if node["type"] == "Pneum - dist52":
+            # Both upper and lower sides carry terminals; keep its caption to the right.
+            label_x, label_y = box.right + 0.5, (box.top + box.bottom) / 2
+        label, _, _ = dia.get_object_type("Standard - Text").create(label_x, label_y)
+        layer.add_object(label)
+        label.properties["text"] = node["text"]
+        label.properties["meta"] = {"dia_mcp_parent": node["id"]}
+        bounds = label.bounding_box
+        return [bounds.left, bounds.top, bounds.right, bounds.bottom]
+    return None
 
 
 def materialize(spec, data):
@@ -99,15 +216,22 @@ def materialize(spec, data):
     for node in spec["nodes"]:
         obj, _, _ = dia.get_object_type(node["type"]).create(node["x"], node["y"])
         layer.add_object(obj)
-        obj.properties["elem_width"] = node["width"]
-        obj.properties["elem_height"] = node["height"]
-        obj.properties["text"] = node["text"]
-        obj.move(node["x"], node["y"])
+        label_bounds = configure_node(obj, node, layer)
         obj.properties["meta"] = {"dia_mcp_id": node["id"]}
         objects[node["id"]] = obj
         box = obj.bounding_box
         geometry["nodes"][node["id"]] = {
             "bounds": [box.left, box.top, box.right, box.bottom],
+            "label_bounds": label_bounds,
+            "connection_points": [
+                {
+                    "index": i,
+                    "position": point(cp.pos),
+                    "directions": cp.directions,
+                    "selectable": node["type"] != "UML - Class" or i < 8,
+                }
+                for i, cp in enumerate(obj.connections)
+            ],
             "ports": {
                 side: {"index": port(obj, side)[0], "position": point(port(obj, side)[1].pos)}
                 for side in sorted(PORTS - {"auto"})
@@ -118,21 +242,26 @@ def materialize(spec, data):
         source_side, target_side = automatic_ports(source, target)
         source_side = source_side if edge["source_port"] == "auto" else edge["source_port"]
         target_side = target_side if edge["target_port"] == "auto" else edge["target_port"]
-        source_index, start = port(source, source_side)
-        target_index, end = port(target, target_side)
-        obj, h1, h2 = dia.get_object_type("Standard - Line").create(start.pos.x, start.pos.y)
+        source_index, start = port(source, source_side, edge.get("source_connection"))
+        target_index, end = port(target, target_side, edge.get("target_connection"))
+        connection_type = edge.get("type", "Standard - Line")
+        obj, h1, h2 = dia.get_object_type(connection_type).create(start.pos.x, start.pos.y)
         layer.add_object(obj)
-        obj.properties["end_arrow"] = (3 if edge["arrow"] else 0, 0.5, 0.5)
+        if connection_type.startswith("Standard - "):
+            obj.properties["end_arrow"] = (3 if edge["arrow"] else 0, 0.5, 0.5)
+        else:
+            obj.properties["name"] = edge.get("label", "")
         obj.properties["meta"] = {"dia_mcp_id": edge["id"]}
         # object_connect alone does not move a handle to its connection point.
         for handle, cp in ((h1, start), (h2, end)):
             obj.move_handle(handle, tuple(point(cp.pos)), 0, 0)
             handle.connect(cp)
         geometry["edges"][edge["id"]] = {
-            "source_port": source_side,
-            "target_port": target_side,
+            "source_port": source_side if edge.get("source_connection") is None else None,
+            "target_port": target_side if edge.get("target_connection") is None else None,
             "source_index": source_index,
             "target_index": target_index,
+            "type": connection_type,
             "start": point(h1.pos),
             "end": point(h2.pos),
         }

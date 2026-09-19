@@ -14,7 +14,16 @@ from pydantic import ValidationError
 
 from .backend import Backend
 from .errors import DiaError
-from .models import Document, Edge, ExportFormat, Node, NodeType, Port
+from .models import (
+    ConnectionType,
+    Document,
+    Edge,
+    ExportFormat,
+    Node,
+    NodeType,
+    Port,
+    UMLClassProperties,
+)
 
 
 class Operations:
@@ -31,6 +40,13 @@ class Operations:
         return {
             "api_version": "1",
             "object_types": list(get_args(NodeType)),
+            "connection_types": list(get_args(ConnectionType)),
+            "object_schema": Node.model_json_schema(),
+            "connection_schema": Edge.model_json_schema(),
+            "terminal_selection": (
+                "inspect connection_points; pass a selectable index with port=auto"
+            ),
+            "uml_direction": "Generalization: source is superclass, target is subclass",
             "ports": list(get_args(Port)),
             "formats": list(get_args(ExportFormat)),
             "units": "cm",
@@ -95,12 +111,24 @@ class Operations:
         width: float = 4,
         height: float = 2,
         text: str = "",
+        properties: UMLClassProperties | dict | None = None,
+        flip_horizontal: bool = False,
+        flip_vertical: bool = False,
     ) -> dict:
         with self._lock:
             doc = self._document(document_id).model_copy(deep=True)
             try:
                 node = Node(
-                    id=uuid4().hex, type=type, x=x, y=y, width=width, height=height, text=text
+                    id=uuid4().hex,
+                    type=type,
+                    x=x,
+                    y=y,
+                    width=width,
+                    height=height,
+                    text=text,
+                    properties=properties,
+                    flip_horizontal=flip_horizontal,
+                    flip_vertical=flip_vertical,
                 )
             except ValidationError as exc:
                 raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
@@ -116,6 +144,10 @@ class Operations:
         source_port: Port = "auto",
         target_port: Port = "auto",
         arrow: bool = True,
+        type: ConnectionType = "Standard - Line",
+        source_connection: int | None = None,
+        target_connection: int | None = None,
+        label: str = "",
     ) -> dict:
         with self._lock:
             doc = self._document(document_id).model_copy(deep=True)
@@ -132,12 +164,72 @@ class Operations:
                     source_port=source_port,
                     target_port=target_port,
                     arrow=arrow,
+                    type=type,
+                    source_connection=source_connection,
+                    target_connection=target_connection,
+                    label=label,
                 )
             except ValidationError as exc:
                 raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+            if type.startswith("UML - ") and any(
+                node.type != "UML - Class" for node in doc.nodes if node.id in (source, target)
+            ):
+                raise DiaError("INVALID_ARGUMENT", "UML connectors require two UML classes")
+            for object_id, side, index in (
+                (source, source_port, source_connection),
+                (target, target_port, target_connection),
+            ):
+                if index is not None:
+                    points = self._geometry[document_id]["nodes"][object_id].get(
+                        "connection_points"
+                    )
+                    if side != "auto" or points is not None and index >= len(points):
+                        raise DiaError("INVALID_ARGUMENT", "Invalid or ambiguous connection index")
+                    node = next(n for n in doc.nodes if n.id == object_id)
+                    if node.type == "UML - Class" and index >= 8:
+                        raise DiaError(
+                            "INVALID_ARGUMENT",
+                            "Dynamic UML member ports require semantic selection",
+                        )
             doc.edges.append(edge)
             result = self._commit(doc)
             return {"connection_id": edge.id, **result}
+
+    def update_object(
+        self,
+        document_id: str,
+        object_id: str,
+        text: str | None = None,
+        width: float | None = None,
+        height: float | None = None,
+        properties: UMLClassProperties | dict | None = None,
+        flip_horizontal: bool | None = None,
+        flip_vertical: bool | None = None,
+    ) -> dict:
+        """Replace supplied fields atomically; properties replaces the full UML property set."""
+        with self._lock:
+            doc = self._document(document_id).model_copy(deep=True)
+            index = next((i for i, node in enumerate(doc.nodes) if node.id == object_id), None)
+            if index is None:
+                raise DiaError("NOT_FOUND", "Unknown object_id in this document")
+            values = doc.nodes[index].model_dump()
+            for key, value in (
+                ("text", text),
+                ("width", width),
+                ("height", height),
+                ("properties", properties),
+                ("flip_horizontal", flip_horizontal),
+                ("flip_vertical", flip_vertical),
+            ):
+                if value is not None:
+                    values[key] = (
+                        value.model_dump() if isinstance(value, UMLClassProperties) else value
+                    )
+            try:
+                doc.nodes[index] = Node.model_validate(values)
+            except ValidationError as exc:
+                raise DiaError("INVALID_ARGUMENT", str(exc)) from exc
+            return self._commit(doc)
 
     def move_object(self, document_id: str, object_id: str, x: float, y: float) -> dict:
         with self._lock:

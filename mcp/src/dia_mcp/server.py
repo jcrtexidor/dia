@@ -10,7 +10,14 @@ from mcp.types import ToolAnnotations
 
 from .backend import NativeBackend
 from .errors import DiaError
-from .models import ExportFormat, NodeType, Port
+from .models import (
+    ConnectionIndex,
+    ConnectionType,
+    ExportFormat,
+    NodeType,
+    Port,
+    UMLClassProperties,
+)
 from .service import Operations
 
 
@@ -52,9 +59,24 @@ def build_server(operations: Operations) -> FastMCP:
         width: float = 4,
         height: float = 2,
         text: str = "",
+        properties: UMLClassProperties | None = None,
+        flip_horizontal: bool = False,
+        flip_vertical: bool = False,
     ) -> dict:
         """Create a native labeled shape; return object_id and actual geometry in cm."""
-        return call(operations.create_object, document_id, type, x, y, width, height, text)
+        return call(
+            operations.create_object,
+            document_id,
+            type,
+            x,
+            y,
+            width,
+            height,
+            text,
+            properties,
+            flip_horizontal,
+            flip_vertical,
+        )
 
     @server.tool(annotations=edit)
     def connect_objects(
@@ -64,10 +86,56 @@ def build_server(operations: Operations) -> FastMCP:
         source_port: Port = "auto",
         target_port: Port = "auto",
         arrow: bool = True,
+        type: ConnectionType = "Standard - Line",
+        source_connection: ConnectionIndex | None = None,
+        target_connection: ConnectionIndex | None = None,
+        label: str = "",
     ) -> dict:
-        """Connect two shape IDs using an attached native line; auto selects facing ports."""
+        """Attach native endpoints; inspect connection_points to select exact terminal indices.
+
+        Explicit indices require the corresponding port=auto. UML generalization points from
+        target (subclass) to source (superclass). UML symbols control their own arrowheads.
+        """
         return call(
-            operations.connect_objects, document_id, source, target, source_port, target_port, arrow
+            operations.connect_objects,
+            document_id,
+            source,
+            target,
+            source_port,
+            target_port,
+            arrow,
+            type,
+            source_connection,
+            target_connection,
+            label,
+        )
+
+    @server.tool(annotations=edit)
+    def update_object(
+        document_id: str,
+        object_id: str,
+        text: str | None = None,
+        width: float | None = None,
+        height: float | None = None,
+        properties: UMLClassProperties | None = None,
+        flip_horizontal: bool | None = None,
+        flip_vertical: bool | None = None,
+    ) -> dict:
+        """Update supplied object fields; properties replaces the entire UML property set.
+
+        Omitted/null fields stay unchanged. Send properties={} to reset UML members.
+        Geometry and attached connectors are rebuilt before the change is committed.
+        """
+        return call(
+            operations.update_object,
+            document_id,
+            object_id,
+            text,
+            width,
+            height,
+            properties,
+            flip_horizontal,
+            flip_vertical,
         )
 
     @server.tool(annotations=edit)

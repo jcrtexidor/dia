@@ -45,6 +45,7 @@ def test_stdio_workflow(tmp_path):
                     "create_object",
                     "connect_objects",
                     "move_object",
+                    "update_object",
                     "inspect_document",
                     "export_diagram",
                     "close_document",

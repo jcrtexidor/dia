@@ -1,4 +1,4 @@
-# Dia operations MCP — MVP del fork
+# Dia operations MCP — versión 0.2 del fork
 
 Este módulo expone operaciones reales de Dia mediante el SDK oficial MCP
 1.30.0 y transporte local `stdio`. Cada edición materializa un documento con
@@ -121,8 +121,8 @@ en este equipo; no es una garantía ni un benchmark de otros entornos.
 Abrir los tres `.dia` en el editor conserva figuras y conexiones editables.
 **Ctrl+E** ajusta el diagrama a la ventana. El gráfico de pedidos es vertical:
 aumentar el zoom para leer cómodamente y desplazarse por sus decisiones.
-El blanco y negro, las tres figuras disponibles y los conectores rectos reflejan
-el alcance actual de la API; los cruces visibles no tienen enrutamiento automático.
+Esta primera galería utiliza tres figuras de flujo y conectores rectos. La
+ampliación 0.2 añade los tipos técnicos y conectores de la siguiente sección.
 
 No se sobrescriben archivos existentes. Para otra ejecución, usar
 `task mcp:showcase SHOWCASE_DIR=/ruta/absoluta/nueva`; para retomar un solo
@@ -130,11 +130,50 @@ ejemplo, [showcase.py](examples/showcase.py) admite
 `--only services`, `--only orders` o `--only mesh`. No hace falta reconstruir la
 imagen por editar el generador: la tarea monta los ejemplos de sólo lectura.
 
+## UML, electricidad y neumática
+
+Después de reconstruir la imagen con `task mcp:build`, ejecutar:
+
+```sh
+task mcp:engineering
+# Para repetir conservando las salidas anteriores:
+task mcp:engineering ENGINEERING_DIR=/ruta/absoluta/nueva
+```
+
+Genera `.dia`, SVG, PNG y JSON de los tres ejemplos en `artifacts/engineering/`:
+
+| Archivo | Nodos | Conectores | Contenido |
+| --- | ---: | ---: | --- |
+| `04-uml-pedidos` | 6 | 7 | Clases, atributos, métodos con parámetros, herencia y asociaciones |
+| `05-mando-electrico` | 7 | 8 | Marcha/paro, retención, bobina, señalización, alimentación y retorno |
+| `06-circuito-neumatico` | 5 | 5 | Cilindro de doble efecto, distribuidor 5/2, presión y escapes |
+
+[engineering.py](examples/engineering.py) usa la API pública, incluyendo edición
+posterior de una clase UML. Admite `--only uml|electrical|pneumatic` para retomar
+un ejemplo. Los esquemas técnicos son ilustrativos; este módulo no realiza
+simulación, cálculo eléctrico/neumático ni comprobación de normas de diseño.
+
+`create_object` acepta `properties` estructuradas para `UML - Class`:
+atributos, operaciones, parámetros, visibilidad, ámbito de clase y estereotipo.
+`update_object` reemplaza los campos suministrados de forma transaccional.
+`connect_objects` añade `type`, etiquetas UML y selección de terminales por
+`source_connection`/`target_connection`; obtener sus índices mediante
+`inspect_document`. Los símbolos técnicos admiten inversión horizontal/vertical.
+Consultar [el contrato y sus ejemplos](../docs/modernization/api.md) y
+[la implementación paso a paso](../docs/modernization/technical-diagrams.md).
+
 ## Límites del MVP
 
-- Tres tipos de flujo con texto: caja, elipse y rombo; conectores rectos
-  `Standard - Line`, con flecha opcional. No incluye curvas, conexiones a
-  conectores, lazos al mismo objeto, estilos arbitrarios ni selección GUI.
+- Catálogo explícito de 13 tipos: tres de flujo, clase UML, cinco eléctricos
+  y cuatro neumáticos. Conectores rectos, ortogonales, generalización y
+  asociación UML; `get_capabilities` publica tipos exactos y esquemas JSON.
+  No incluye todo el catálogo de Dia, curvas, conexiones a conectores, lazos
+  al mismo objeto, estilos arbitrarios ni selección GUI.
+- El enrutamiento ortogonal nativo respeta las direcciones de los terminales,
+  pero no garantiza evitar objetos, etiquetas ni cruces. Revisar la distribución.
+- Las etiquetas de símbolos sin texto nativo son objetos `Standard - Text`
+  auxiliares. La API los mueve junto al símbolo; en el editor son objetos
+  independientes, que pueden seleccionarse conjuntamente.
 - Estado en memoria por sesión, máximo 32 documentos, 100 nodos y 200 conexiones
   por documento. Exportar antes de cerrar el cliente. Todavía no importa archivos
   `.dia` arbitrarios al servicio ni restaura una sesión; el editor sí abre los

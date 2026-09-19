@@ -60,3 +60,15 @@ tasks:
         -v "{{.ROOT_DIR}}/mcp/examples:/examples:ro"
         -v "{{.SHOWCASE_DIR}}:/workspace" {{.MCP_IMAGE}}
         xvfb-run -a python /examples/showcase.py --workspace /workspace
+
+  mcp:engineering:
+    desc: Generate native UML, electrical and pneumatic diagrams
+    vars:
+      ENGINEERING_DIR: '{{.ROOT_DIR}}/artifacts/engineering'
+    cmds:
+      - mkdir -p "{{.ENGINEERING_DIR}}"
+      - >-
+        docker run --rm --init --network=none --user "$(id -u):$(id -g)"
+        -v "{{.ROOT_DIR}}/mcp/examples:/examples:ro"
+        -v "{{.ENGINEERING_DIR}}:/workspace" {{.MCP_IMAGE}}
+        xvfb-run -a python /examples/engineering.py --workspace /workspace

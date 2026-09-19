@@ -45,6 +45,51 @@
           "default": true,
           "title": "Arrow",
           "type": "boolean"
+        },
+        "type": {
+          "default": "Standard - Line",
+          "enum": [
+            "Standard - Line",
+            "Standard - ZigZagLine",
+            "UML - Generalization",
+            "UML - Association"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "source_connection": {
+          "anyOf": [
+            {
+              "maximum": 1023,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Connection"
+        },
+        "target_connection": {
+          "anyOf": [
+            {
+              "maximum": 1023,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Connection"
+        },
+        "label": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Label",
+          "type": "string"
         }
       },
       "required": [
@@ -67,7 +112,17 @@
           "enum": [
             "Flowchart - Box",
             "Flowchart - Ellipse",
-            "Flowchart - Diamond"
+            "Flowchart - Diamond",
+            "UML - Class",
+            "Electric - contact_o",
+            "Electric - contact_f",
+            "Electric - relay",
+            "Electric - lamp",
+            "Electric - connpoint",
+            "Pneum - DEJack",
+            "Pneum - dist52",
+            "Pneum - presspn",
+            "Pneum - drain"
           ],
           "title": "Type",
           "type": "string"
@@ -103,6 +158,27 @@
           "maxLength": 2000,
           "title": "Text",
           "type": "string"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UMLClassProperties"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "flip_horizontal": {
+          "default": false,
+          "title": "Flip Horizontal",
+          "type": "boolean"
+        },
+        "flip_vertical": {
+          "default": false,
+          "title": "Flip Vertical",
+          "type": "boolean"
         }
       },
       "required": [
@@ -111,6 +187,176 @@
         "y"
       ],
       "title": "Node",
+      "type": "object"
+    },
+    "UMLAttribute": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Value",
+          "type": "string"
+        },
+        "visibility": {
+          "default": "private",
+          "enum": [
+            "public",
+            "private",
+            "protected",
+            "package"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "class_scope": {
+          "default": false,
+          "title": "Class Scope",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "UMLAttribute",
+      "type": "object"
+    },
+    "UMLClassProperties": {
+      "additionalProperties": false,
+      "properties": {
+        "stereotype": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Stereotype",
+          "type": "string"
+        },
+        "abstract": {
+          "default": false,
+          "title": "Abstract",
+          "type": "boolean"
+        },
+        "attributes": {
+          "items": {
+            "$ref": "#/$defs/UMLAttribute"
+          },
+          "maxItems": 30,
+          "title": "Attributes",
+          "type": "array"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/UMLOperation"
+          },
+          "maxItems": 30,
+          "title": "Operations",
+          "type": "array"
+        }
+      },
+      "title": "UMLClassProperties",
+      "type": "object"
+    },
+    "UMLOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Type",
+          "type": "string"
+        },
+        "visibility": {
+          "default": "public",
+          "enum": [
+            "public",
+            "private",
+            "protected",
+            "package"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "class_scope": {
+          "default": false,
+          "title": "Class Scope",
+          "type": "boolean"
+        },
+        "inheritance": {
+          "default": "leaf",
+          "enum": [
+            "abstract",
+            "polymorphic",
+            "leaf"
+          ],
+          "title": "Inheritance",
+          "type": "string"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/UMLParameter"
+          },
+          "maxItems": 20,
+          "title": "Parameters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "UMLOperation",
+      "type": "object"
+    },
+    "UMLParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Value",
+          "type": "string"
+        },
+        "kind": {
+          "default": "unspecified",
+          "enum": [
+            "unspecified",
+            "in",
+            "out",
+            "inout"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "UMLParameter",
       "type": "object"
     }
   },
