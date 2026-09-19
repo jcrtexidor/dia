@@ -2,12 +2,12 @@
 
 Audit date: 2026-09-19. Repository baseline: `77fe10bc0`; upstream base:
 `ad68cc378b7a187706bc2648c48b44d16fb80819`. Source code is authoritative.
-This document separates the current implementation from the proposed live API.
+This document separates implemented snapshot and M2 live reads from proposed M3 writes.
 See [capability inventory](mcp-capabilities.md), [tool contract](mcp-tools.md),
 [development](mcp-development.md), [progress](progress.md) and
 [upstream differences](upstream-differences.md).
 
-## Current architecture, before this increment
+## Preserved snapshot architecture
 
 ```mermaid
 flowchart TD
@@ -26,7 +26,7 @@ flowchart TD
     GUI[Independent Dia GUI session]
 ```
 
-There is **no connection to an open GUI document**. `Operations` owns an in-memory
+This snapshot path does not connect to an open GUI document. `Operations` owns an in-memory
 Pydantic document; each edit clones it, validates it, and reconstructs the entire
 diagram in a fresh Dia subprocess. A temporary native `.dia` export and a JSON
 geometry report must succeed before revision/state are replaced. This is native
@@ -36,8 +36,8 @@ editor, a Python package imported into the server, or mouse automation.
 The nine initial MCP tools create, inspect, connect, move, update, export and
 close session diagrams. They expose 13 allowlisted node types and four connectors.
 `get_capabilities` describes this contract statically; it does not probe the
-installation. No resources or prompts are registered. No file-open, selection,
-layer editing, delete, disconnect, group, duplicate, layout or undo tools exist.
+installation. No resources or prompts are registered. No file-open, layer editing, delete, disconnect, group, duplicate, layout or undo
+tools exist. The separate M2 tools below read live selection and editor state.
 
 ### Upstream model and existing integration surface
 
@@ -153,86 +153,173 @@ Simply changing `NodeType` from an enum to a string would bypass these assumptio
 and is unsafe. Domain tuple conversion belongs behind the integration adapter;
 the generic model needs a typed property schema and optional geometry operations.
 
-## Smallest target architecture
+## Implemented M2 live read boundary
 
 ```mermaid
 flowchart TD
-    Client[ChatGPT / Codex] -->|MCP stdio| Adapter[MCP adapter: tools / resources / prompts]
-    Adapter --> Core[Dia operations contracts]
-    Domains[Optional semantic domains] --> Core
-    Core --> Snapshot[Existing snapshot backend]
-    Core -->|versioned local messages - proposed| Live[Dia live integration boundary]
-    Live --> Dispatch[GTK main-context dispatcher]
-    Dispatch --> Commands[Document registry / native commands / history]
-    Commands --> Model[Dia model and GUI]
+    Client[ChatGPT / Codex] -->|MCP stdio| Adapter[server.py]
+    Adapter --> Ops[Operations]
+    Ops --> Snapshot[Preserved NativeBackend / snapshot workers]
+    Ops --> LiveClient[live/client.py]
+    LiveClient -->|v1 JSON lines / private Unix socket| IO[GLib nonblocking I/O callbacks]
+    IO --> Queue[Bounded FIFO of validated requests]
+    Queue -->|one idle callback per request| Registry[Main-context live registry]
+    Registry --> Native[Current Dia documents / layers / objects]
 ```
 
-Keep `server.py` as the protocol adapter, `Operations` as the transport-independent
-service, `NativeBackend` for isolated generation/tests, and the stdlib-only native
-adapter. Preserve Meson, GTK3, locks, C fixes, native rendering/serialization,
-transactional publication and working tests. Do not restructure upstream directories
-or add an application-independent engineering framework.
+The normal installed `mcp-live.py` plugin does nothing unless `DIA_MCP_LIVE=1`.
+It imports the stdlib-only `dia_mcp.live` package and PyGObject, then defers startup
+until the GTK loop, after plugins/shapes/sheets have loaded. FastMCP stays outside
+Dia. The dedicated snapshot Python startup is unchanged and never enables live IPC.
+`Operations.inspect_live` delegates to `LiveClient`; MCP handlers manage neither
+sockets nor native wrappers. The nine `live_*` tools cannot modify documents.
 
-First add read-only runtime discovery using existing PyDia. Next prototype a
-narrow live boundary in the Dia process, reusing PyDia for proven read operations
-and adding small app-level wrappers where command/history/lifetime access is
-missing. A full stable public C ABI is not required for that prototype.
+### Lifecycle assumptions revalidated against source
 
-For live mode, prefer a separately restartable stdio MCP server and opt-in Unix
-domain socket in a private user runtime directory. A socket reader must validate
-bounded requests and enqueue them onto the GTK main context; it must never touch
-native wrappers. The main thread owns registry lookups, reads and commands.
-Bound the queue, define timeout/cancellation before commit, track document
-revisions and reject stale preconditions. Do not hold a transport lock while
-waiting for a GTK callback that needs it. Same-user connection checks and socket
-permissions are part of the boundary. This is a proposal, not implemented IPC.
+- `dia_open_diagrams` is populated in `dia_diagram_init`; `DiaApplication` also
+  maintains its GUI list and add/remove/change signals. M2 resolves a fresh
+  `dia.diagrams()` list and includes only documents with displays. A new/opened
+  GUI document is visible on the next read; headless data is excluded.
+- `dia.active_display().diagram` identifies the active document; multiple displays
+  can share one document. No active display returns null.
+- Closing the last display removes/destroys the diagram. The registry retains no
+  wrappers, so it cannot extend document life or dereference a closed object.
+- `diagram_load_into` can reuse the initial empty diagram. Its live document token
+  is reset **before** import, even on failure, since an importer may change data
+  before failing. Native object ownership is not inferred from filenames.
+- `DiagramData` owns layers and selections; layers own object lists. Ordinary
+  `PyDiaObject` wrappers have no ownership protection. Diagram/layer wrappers
+  reference GObjects, but keeping them would alter lifetime. Every wrapper in M2
+  is local to one main-context dispatch and is discarded before returning bytes.
+- Existing object add/remove and selection signals are incomplete as a monotonic
+  revision API. M2 adds conservative invalidation, not native write transactions.
+- GLib I/O watches, idle callbacks and a periodic expiry callback suffice; no new
+  receiver threads or custom thread synchronization are needed.
 
-Alternatives: embedding FastMCP adds SDK/event-loop dependencies to Dia; exposing
-raw PyDia to the server risks dangling pointers and undo bypass; repeatedly loading
-files loses live edits. The current subprocess design remains valuable for batch
-work and crash isolation, but cannot satisfy selection-aware editing.
+### Protocol, limits and dispatch
 
-### Live identity, properties and commands (proposed)
+Wire protocol **1** uses one UTF-8 JSON object per line. Every connection starts
+with `{"protocol_version":1,"action":"handshake"}`. Subsequent requests name an
+allowlisted read action and its explicit fields. Unknown fields/actions, invalid
+IDs/pagination and incompatible versions fail before model access. Responses have
+`protocol_version` and exactly a result or structured error. Handshake returns
+`integration_api_version=1`, actual `dia_version`, process `session_id`, read
+capabilities, limits, identity and generation semantics. These versions are
+independent of snapshot `api_version="1"`, the MCP package and native plugin ABI.
+No commit hash is a compatibility contract.
 
-Use opaque document-session IDs, per-object registry IDs and document generations.
-Invalidate IDs on close/reload; distinguish stale from unknown/wrong-document IDs.
-Define deletion/undo tombstones so restored objects can recover their logical ID;
-duplicates receive new IDs. Persistent metadata may assist reopening but must
-handle collisions and must not expose C addresses. All lifecycle events, including
-manual GUI edits, must update the registry before promising stable references.
+Defaults (`live.protocol.Limits`, configurable by the embedding caller): 16 KiB
+requests, 1 MiB responses, 16 queued requests, 32 clients, 100 items/page, 32
+properties, 256 handles/points/fanout entries, 10,000 traversed objects, nesting
+32, timeout 5 seconds. Timeouts may be configured up to 30 seconds. The MCP
+`--timeout` is capped to 30 for its live client; it does not reconfigure the GUI.
+Property/name text is capped at 2,048 characters. Oversized responses return
+`LIVE_LIMIT_EXCEEDED`; pagination uses offset/limit/total/next_offset like M1.
 
-Expose generic object/type/property/handle/connection/layer reads first. Convert
-native values to bounded JSON records; represent unsupported property types
-explicitly, omit unsafe setters and file-reference values until validated. Add
-small native descriptor accessors only for metadata PyDia cannot safely supply
-(enum alternatives, flags, constraints). Do not infer read/write permissions from
-visibility or serializability. Reading arbitrary properties must not instantiate
-all factories during a catalog listing.
+I/O callbacks only receive, validate, queue and transmit serializable messages.
+A separate GLib idle callback executes one FIFO request, verifies main-thread
+identity, resolves native state, creates a plain result and bounds JSON output.
+Nothing native reaches an external process or receiver callback. There are no
+thread locks; the only lock is a nonblocking process-lifetime endpoint file lock.
+No callback waits for a client or holds a lock while waiting for GTK.
 
-Commands should use native change objects, transaction points, connection updates,
-modified state and redraw. Define and test partial-failure rollback before batch
-editing. Do not implement a parallel undo stack. Generic operations address
-runtime types only after their required capabilities have been inspected. Semantic
-UML, flowchart, database and network helpers then compose those primitives; visual
-electrical symbols do not imply circuit simulation or engineering validation.
+One request may be outstanding per connection; pipelining is rejected. The client
+performs handshake on each fresh connection and then its read, so reconnects do
+not retain stale transport state. Disconnect removes queued work; expired queued
+requests never run. An executing native getter cannot be preempted: it finishes
+on the main thread, and an overdue result becomes a timeout. No read changes a
+document. The 100 ms expiry timer closes stalled readers/writers. Queue saturation
+returns `LIVE_QUEUE_FULL`; excess connections are closed. Shutdown closes clients,
+discards queued work and removes the owned socket. Confirmed application exit
+emits a new native shutdown notification, exposed as `dia.register_shutdown`;
+Python `atexit` alone is insufficient because normal Dia exit does not finalize
+its embedded interpreter. Crashes may leave a stale socket, recovered only under
+the endpoint lock after verifying owner, socket type and absence of a listener.
 
-Alignment/distribution should wrap existing model/editor commands before adding
-layout dependencies. Layout preserves native attachments and domain properties.
-Optional classification returns unknown/generic/mixed or several candidate domains
-with supporting type/sheet evidence, and never gates generic edits. Resources
-could expose current document summary, selection and inventory; prompts could
-compose explain/inspect/layout workflows. Add them with live context, not as
-redundant copies of every tool.
+### Identity, generations and read scope
 
-### Versions and first increment
+Document IDs are process-session UUID + document UUID; object IDs add a native
+runtime UUID scoped by that document. No address, wrapper identity or persisted
+metadata is exposed. Lazy native object token storage is cleared on initialization,
+copy, destruction and detach (including group descendants and layer removal).
+Movement and property changes preserve tokens. Duplication gets a distinct token.
+Delete/Undo/Redo restoration gets a **new** reference, deliberately: M2 promises
+safe invalidation, not persistent identity through history. No unbounded remote
+reference tombstone list is maintained. Unknown and expired references in the
+current session therefore share stale-reference errors; other sessions/snapshot
+IDs return `WRONG_SESSION`, and another document's object returns `OBJECT_NOT_FOUND`.
+Layer UUIDs are GObject lifetime tokens, scoped by document; they are returned in
+ordered paginated lists, not a separate layer getter.
+
+Each document has a native invalidation counter, advanced on editor update-all,
+region updates and explicit modified-state calls. The registry also observes
+filename, modified status, ordered layer identity/name/visibility, active layer
+and selection. A changed stamp increments the returned monotonic generation.
+Multiple events between reads can coalesce; redraw-only events can advance it.
+This is an **observed conservative editor generation**, separate from snapshot
+revision, not an exact edit count. Arbitrary trusted plugin mutations that bypass
+editor notifications are outside this guarantee. M3 must establish comprehensive
+command/change coverage before treating generations as transactional preconditions.
+
+Object lookup enumerates current membership and group members (bounded traversal),
+then serializes only the requested object or page. It does not serialize a whole
+document for a single read. Membership resolution remains O(N), and PyDia layer
+getters allocate native membership tuples before the traversal limit is checked;
+this is a documented scaling limit, not a constant-time registry. Large-document
+indexing and cancellable native getters remain future work. Offsets can shift
+between requests while the user edits; compare returned generations and restart
+pagination on change. There is no cross-request read transaction.
+
+Generic inspection exposes native type, document-space bounds/position, layer,
+selection, parenting/group membership, handle/point counts, and all known runtime
+sheet memberships up to the structural limit. Sheet metadata uses the same PyDia
+sources as M1, cached for this GUI session after startup. Restart after changing
+installed sheets; no live plugin-loading API is exposed. A type may have several
+or no sheets. Mixed/custom types are independent of the snapshot creation allowlist.
+Handles expose actual `connected_to` target and point index; points expose actual
+connected objects, directions and flags. Visual proximity is never a connection.
+
+Opt-in property detail reads scalar bool/int/enum/real/string and text values.
+A bounded native descriptor-only accessor runs before ordinary PyDia property
+lookup (which would already fetch the value). Other descriptors are returned
+with `supported=false` without evaluating values;
+images, file-backed and aggregate getters are excluded. No generic setters,
+factory instantiation or inference of writability from visibility is implemented.
+
+### Security boundary
+
+The socket is `$XDG_RUNTIME_DIR/dia-mcp/live-<pid>.sock`: runtime and endpoint
+directories must be owned by the user and private; symlink directory components
+are rejected. Endpoint mode is 0600, directory mode 0700, and Linux `SO_PEERCRED`
+rejects other UIDs. A separate private lock inode prevents concurrent replacement;
+it is intentionally retained after shutdown to avoid lock-inode races. Only an
+owned stale socket is removed, never an ordinary file, symlink or active listener.
+The MCP client must be explicitly configured with the GUI socket path.
+
+There is no TCP listener, request-supplied environment, Python evaluation, shell
+execution, native address dispatch or plugin loading. Same-user installed plugins,
+shapes and factories retain Dia's existing trust: this is not an OS sandbox, and
+a faulty native getter can still crash the GUI. The snapshot backend retains its
+separate crash-isolated worker path.
+
+## Proposed M3 native write boundary
+
+M2 does not implement writes, Save/Save As, arbitrary open/import, GUI selection
+changes, native undo commands through MCP, layout or domain expansion. M3 must
+use native change objects and transaction points, define rollback and redraw,
+prove generation/write preconditions, and decide safe identity across undo.
+Do not rebuild live user documents using the restricted snapshot model or add a
+parallel undo stack. Generic setters and complete descriptor schemas remain M4.
+
+### Versions and completed M1 discovery
 
 Existing document `api_version="1"` is the snapshot contract, not a stable native
 ABI. Package metadata is 0.2.0; `__init__.__version__` still says 0.1.0 (tracked
-technical debt). Dia's own version and plugin ABI are separate. A future live
+technical debt). Dia's own version and plugin ABI are separate. The live
 handshake must advertise its integration API version and actual capabilities,
 without pinning clients to a commit or versioning every semantic feature.
 
-This increment adds `list_sheets` and `list_object_types`: fresh worker discovery,
+M1 added `list_sheets` and `list_object_types`: fresh worker discovery,
 pagination, labels/membership and an explicit marker for currently supported MCP
 creation. It does not grant arbitrary factory creation, claim live access or
 change the snapshot document schema. No cache is needed at this scale; the cost
@@ -243,8 +330,8 @@ metadata on a catalog generation change.
 
 | Priority / milestone | Concrete work and acceptance condition |
 | --- | --- |
-| P0 / M1: discovery (this increment) | Distinguish installed from MCP-creatable types; publish runtime sheets/types without C changes. Unit, native, custom-sheet and actual stdio tests prove discovery and no document mutation. |
-| P0 / M2: live reads and lifecycle | Opt-in live handshake, main-thread dispatcher, document/object registry, selection/layers/connection/geometry reads. Test manual deletion, close/reload and stale references; GUI remains responsive. |
+| P0 / M1: discovery (completed) | Distinguish installed from MCP-creatable types; publish runtime sheets/types without C changes. Unit, native, custom-sheet and actual stdio tests prove discovery and no document mutation. |
+| P0 / M2: live reads and lifecycle (implemented) | Opt-in live handshake, main-thread dispatcher, document/object registry, selection/layers/connection/geometry reads. Test manual deletion, close/reload and stale references; GUI remains responsive. |
 | P0 / M3: native transactions | One move/property/connection operation through native history, with rollback, modified state and redraw. Prove GUI undo/redo and concurrency ordering before expanding mutations. |
 | P1 / M4: generic properties and editing | Inspect descriptors; create/move/delete/connect unknown valid types with optional capabilities. Test UML, flowchart, ER/database, network and custom technical symbols, including zero-port objects and custom sheets. |
 | P1 / M5: native documents | Open/Save/Save As/export with explicit overwrite policy, dependency reporting and preservation of unknown types/properties/layers. Test reload, copies and recovery. |
@@ -252,7 +339,7 @@ metadata on a catalog generation change.
 | P2 / M7: layout/context/observability | Existing alignment/distribution first; summaries, mixed classification, resources/prompts, request correlation and measured performance improvements. Real Wayland GUI acceptance alongside Xvfb tests. |
 
 Highest risks are native wrapper lifetime across GUI events, bypassed native undo,
-mutating off the GTK thread in a future live backend, unsafe generic property
+future writes off the GTK main thread, unsafe generic property
 conversion and silent data loss from rebuilding arbitrary documents with today's
 limited schema. Current snapshot workers avoid the live-thread problem; do not
 present a hypothetical future race as a reproduced current defect.

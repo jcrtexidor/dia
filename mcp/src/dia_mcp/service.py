@@ -28,13 +28,22 @@ from .models import (
 
 
 class Operations:
-    def __init__(self, backend: Backend, workspace: Path):
+    def __init__(self, backend: Backend, workspace: Path, live=None):
+        self.live = live
         self.backend = backend
         self.workspace = workspace.resolve()
         self.workspace.mkdir(parents=True, exist_ok=True)
         self._documents: dict[str, Document] = {}
         self._geometry: dict[str, dict] = {}
         self._lock = threading.RLock()
+
+    def inspect_live(self, action: str, **params) -> dict:
+        """Transport-independent live reads; no snapshot IDs are resolved here."""
+        if self.live is None:
+            raise DiaError(
+                "LIVE_BACKEND_UNAVAILABLE", "Configure --live-socket to inspect a running GUI"
+            )
+        return self.live.request(action, **params)
 
     @staticmethod
     def capabilities() -> dict:
@@ -59,7 +68,12 @@ class Operations:
                 "tools": ["list_sheets", "list_object_types"],
                 "scope": "fresh native worker; not an open GUI session",
             },
-            "live_documents": False,
+            "live_documents": True,
+            "live_integration": {
+                "mode": "opt-in read-only; configure --live-socket",
+                "handshake_tool": "live_handshake",
+                "scope": "running GUI; distinct from snapshots",
+            },
             "generic_creation": False,
         }
 

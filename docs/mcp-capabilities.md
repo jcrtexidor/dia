@@ -12,7 +12,7 @@ provide the current worker inventory; never read this snapshot as runtime truth.
 | --- | --- | --- |
 | Repository source | 38 sheet files; 783 shape files; 17 object module directories in `objects/meson.build` | Build inputs, including compiled factories, custom/custom-line loaders and palette definitions. Files need not equal loaded types. |
 | Native worker runtime | 38 sheets; 887 registered types; 891 palette entries; no unavailable returned entry | Includes duplicate palette entries/variants, aliases and types outside sheets. Factory registration is not proof that every factory can be instantiated safely with default arguments. |
-| MCP editing contract | 13 node types; 4 connector types; 9 original tools + 2 discovery tools | Creation is still bounded to the listed types. Every native type can be discovered; arbitrary properties/creation and live GUI editing are future work. |
+| MCP editing contract | 13 node types; 4 connector types; 9 snapshot tools + 2 discovery tools + 9 live read tools | Creation is still bounded to the listed types. Every native type can be discovered; arbitrary properties/creation and live GUI editing are future work. |
 
 Dia supports mixed diagrams. Names in this table are palettes and visual languages,
 not a mandatory document type. A symbol catalog does not promise electrical,
@@ -81,7 +81,7 @@ guarantee of a normal zero-configuration factory operation.
 
 | Area | Implemented behavior / exact types | Boundaries |
 | --- | --- | --- |
-| Documents | Create named empty session, inspect full logical state/geometry, close session | No open/import, Save/Save As, list open GUI documents or persistence recovery. |
+| Documents | Create named empty session, inspect full logical state/geometry, close session | No MCP-triggered open/import, Save/Save As or persistence recovery. M2 separately lists live GUI documents. |
 | Flowchart nodes | `Flowchart - Box`, `Flowchart - Ellipse`, `Flowchart - Diamond` | Text and dimensions; no semantic branch/termination validation. |
 | UML node | `UML - Class` | Name, stereotype, abstract, typed attributes/methods/parameters and width; height derives from contents. |
 | Electrical nodes | `Electric - contact_o`, `contact_f`, `relay`, `lamp`, `connpoint` (full `Electric - ` prefix for each) | Visual native symbols, aspect-preserving size, flips, text/auxiliary labels; no circuit validation. |
@@ -90,9 +90,9 @@ guarantee of a normal zero-configuration factory operation.
 | UML connectors | `UML - Generalization`, `UML - Association` | Two class endpoints, native name/label; source of generalization is superclass. No dedicated aggregation/composition/dependency/realization tool. |
 | Edits | Move node; replace supported text/dimensions/UML properties/flips | Full materialization on each call; no delete, disconnect, arbitrary property change, resize handles, duplicate, retype or batching. |
 | Inspection | IDs, revision, node fields, bounds, auxiliary label bounds, point indices/positions/directions, chosen ports, connector endpoints | Session data, not arbitrary native document; no full handles, properties, grouping, layer/selection or graph queries. |
-| Discovery (new) | Native sheets/types, labels, membership, type versions, pagination, creatable marker | Read-only worker inventory. No default property schema, icon blobs, native version tool or GUI inventory. |
+| Discovery (new) | Native sheets/types, labels, membership, type versions, pagination, creatable marker | Read-only worker inventory. No default property schema or icon blobs. M2 reads GUI objects and returns the actual Dia version. |
 | Export | `.dia`, `.svg`, `.png` | Native serialization/renderers, safe basename publication and validation. Other native formats are not exposed by MCP. |
-| History/selection/layout | None through MCP | Dia has native facilities; they are not yet wrapped. |
+| Live inspection (M2) | GUI documents, layers, selection, arbitrary objects, native connections and conservative properties | Read-only, opt-in, versioned local socket; no history/layout/write commands. |
 | MCP resources/prompts | None | Tools only. |
 
 ER/database, network, civil, logic, telecom, cybernetics, chemistry, process,
@@ -135,6 +135,8 @@ palette labels, orphan factories, missing sheets, pagination, invalid metadata,
 custom shape/sheet discovery and freshness after a sheet is removed.
 
 Discovery tests do not establish editing correctness for ER/network/custom shapes.
-No live document, GUI selection/history, generic properties, unknown-object edits,
-semantic database/network fixtures or manual Wayland editing suite exists yet.
-Those remain explicit milestones rather than skipped promises.
+M2 adds live document/selection reads and conservative properties, with actual GUI
+and stdio tests for UML, flowchart, ER, database, Cisco/network, electrical and a
+custom shape. Real native Delete/Undo/Redo and File/Quit are exercised from trusted
+GUI-side test code under Xvfb and real Wayland. There are still no MCP history/write
+commands, unknown-type creation or database/network semantic validation.

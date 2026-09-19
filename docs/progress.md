@@ -19,13 +19,16 @@ Audit baseline `77fe10bc0`; implementation date 2026-09-19.
 - Unit, native multi-domain/custom-sheet discovery and actual stdio coverage.
   Existing creation contract and native C files preserved.
 
-## M2 final verification
+## M2 completed
 
-A final review removed a recursive Python closure cycle from membership traversal.
-The iterative traversal now has an immediate-wrapper-release regression test.
-A descriptor-only native accessor also prevents fetching unsupported values when
-inspecting property metadata.
-Packaged and Wayland revalidation of this last correction is in progress. Full [evidence and limitations](m2-validation.md).
+M2 acceptance passed against the final installed image under Xvfb and the real
+Ubuntu 26 Wayland compositor, including `GDK_SCALE=2`.
+Full [evidence and limitations](m2-validation.md).
+
+Final review corrections are included: iterative traversal releases wrappers
+immediately without cyclic GC, and descriptor-only metadata avoids fetching
+unsupported native property values. All nine live tools are exercised over real
+MCP stdio; cross-document references are rejected.
 
 - Foundation: native ephemeral IDs, detach/destruction/copy invalidation,
   pre-import document identity reset and conservative editor generation.
@@ -107,14 +110,14 @@ codec exists. Live wrappers remain callback-local; concurrent reads and native l
 
 ## M2 final validation
 
-- `task mcp:check`: Ruff lint/format pass, 99 passed, 44 native deselected.
-- `task mcp:build`: 9/9 Meson suites, 143 MCP tests, `pip check` passed.
-- `task mcp:test`: 143 passed as UID/GID 1000:1000, network disabled, Xvfb.
+- `task mcp:check`: Ruff lint/format pass, 100 passed, 44 native deselected.
+- `task mcp:build`: 9/9 Meson suites, 144 MCP tests, `pip check` passed.
+- `task mcp:test`: 144 passed as UID/GID 1000:1000, network disabled, Xvfb.
 - Installed live tests on real Wayland: 2 passed; repeated with `GDK_SCALE=2`:
   2 passed. Actual `GdkWaylandDisplay`, concurrent reads plus GTK interaction,
   native Delete/Undo/Redo, default-document replacement and File/Quit cleanup.
 - 46 implementation/test/build/lock files match the validated image exactly.
-- Final image: `sha256:d6a1e264a09d72285d66030af1912437a26066f519b3c5591fb38da84ee94d37`.
+- Final image: `sha256:347896bf8accacec7b9f6490634c0703a3ed07c1af733dcd2cac3315bd33c029`.
 - No dependency-lock, snapshot schema or GTK version changes.
 
 Nonfatal native text-cursor diagnostics during automated GUI actions are recorded

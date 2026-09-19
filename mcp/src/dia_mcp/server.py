@@ -11,6 +11,7 @@ from mcp.types import ToolAnnotations
 from .backend import NativeBackend
 from .discovery import Offset, PageSize
 from .errors import DiaError
+from .live.client import LiveClient
 from .models import (
     ConnectionIndex,
     ConnectionType,
@@ -67,6 +68,77 @@ def build_server(operations: Operations) -> FastMCP:
         This queries a fresh worker, not the open GUI; no objects are instantiated.
         """
         return call(operations.list_object_types, sheet, offset, limit)
+
+    @server.tool(annotations=read)
+    def live_handshake() -> dict:
+        """Connect to the configured running Dia GUI; return version, capabilities and limits."""
+        return call(operations.inspect_live, "handshake")
+
+    @server.tool(annotations=read)
+    def live_list_documents(offset: Offset = 0, limit: PageSize = 100) -> dict:
+        """List open GUI documents, distinct from MCP-owned snapshot documents."""
+        return call(operations.inspect_live, "list_documents", offset=offset, limit=limit)
+
+    @server.tool(annotations=read)
+    def live_get_active_document() -> dict:
+        """Read the actual active GUI document, or null when there is none."""
+        return call(operations.inspect_live, "get_active_document")
+
+    @server.tool(annotations=read)
+    def live_get_document(document_id: str) -> dict:
+        """Read a live document summary, modified status and conservative generation."""
+        return call(operations.inspect_live, "get_document", document_id=document_id)
+
+    @server.tool(annotations=read)
+    def live_list_layers(document_id: str, offset: Offset = 0, limit: PageSize = 100) -> dict:
+        """Read GUI layers in native order with visibility and active layer."""
+        return call(
+            operations.inspect_live,
+            "list_layers",
+            document_id=document_id,
+            offset=offset,
+            limit=limit,
+        )
+
+    @server.tool(annotations=read)
+    def live_get_selection(document_id: str, offset: Offset = 0, limit: PageSize = 100) -> dict:
+        """Explain what the user selected in Dia using current object IDs and geometry."""
+        return call(
+            operations.inspect_live,
+            "get_selection",
+            document_id=document_id,
+            offset=offset,
+            limit=limit,
+        )
+
+    @server.tool(annotations=read)
+    def live_list_objects(document_id: str, offset: Offset = 0, limit: PageSize = 100) -> dict:
+        """Read bounded summaries of arbitrary native types, including group members."""
+        return call(
+            operations.inspect_live,
+            "list_objects",
+            document_id=document_id,
+            offset=offset,
+            limit=limit,
+        )
+
+    @server.tool(annotations=read)
+    def live_get_object(document_id: str, object_id: str, properties: bool = False) -> dict:
+        """Inspect a live object, relations, sheets and optional safe properties."""
+        return call(
+            operations.inspect_live,
+            "get_object",
+            document_id=document_id,
+            object_id=object_id,
+            properties=properties,
+        )
+
+    @server.tool(annotations=read)
+    def live_get_connections(document_id: str, object_id: str) -> dict:
+        """Read actual native handle attachments and connection points, not visual proximity."""
+        return call(
+            operations.inspect_live, "get_connections", document_id=document_id, object_id=object_id
+        )
 
     @server.tool(annotations=edit)
     def create_document(name: str = "Diagram") -> dict:
@@ -198,10 +270,15 @@ def main():
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--dia-binary", default="dia")
     parser.add_argument("--timeout", type=float, default=30)
+    parser.add_argument("--live-socket", type=Path, help="Opt-in running Dia Unix socket")
     args = parser.parse_args()
     if not 0 < args.timeout <= 300:
         parser.error("--timeout must be between 0 and 300 seconds")
-    operations = Operations(NativeBackend(args.dia_binary, args.timeout), args.workspace)
+    operations = Operations(
+        NativeBackend(args.dia_binary, args.timeout),
+        args.workspace,
+        live=LiveClient(args.live_socket, min(args.timeout, 30)) if args.live_socket else None,
+    )
     build_server(operations).run(transport="stdio")
 
 

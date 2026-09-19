@@ -14,11 +14,22 @@ The fork README/contribution policy keeps this AI-assisted work in
 | `app/app_procs.c`, `do_convert` | Check native exporter boolean result and exit nonzero on failure. Prevents treating failed output as success. | Generally useful CLI correctness; localized conversion-flow conflict risk. |
 | `objects/custom/custom_object.c`, `custom_update_data` / `custom_create` | Recompute connection routing directions from original shape geometry on every update, respecting flips, rather than setting them only at creation. | General custom-shape correctness supporting technical diagrams; medium risk in geometry/connection changes. |
 
-No new public C automation ABI, live socket, history wrapper or arbitrary code
-execution hook exists. Runtime discovery in this increment reuses upstream
-`dia.registered_types` and `dia.registered_sheets`; it changes no native files.
-Native model, object catalog, standard sheets/shapes, rendering and GUI remain
-upstream-shaped. Keep those working components untouched during this increment.
+M1 discovery changed no C. M2 introduces the following narrow native hooks;
+there is no new object ABI layout, history wrapper or arbitrary remote execution.
+
+| M2 files / hook | Actual behavior | Merge risk |
+| --- | --- | --- |
+| `lib/object.{c,h}` | Lazy UUID lifetime tokens outside `DiaObject`; reset at init/copy/destruction | Localized object lifecycle helpers; no struct/serialized metadata change |
+| `lib/diagramdata.c::data_emit` | Invalidate detached objects, group members and removed-layer contents before removal notifications | Localized membership notification path |
+| `app/diagram.{c,h}` | GObject-owned document UUID/generation; reset before load/import; conservative counters at editor redraw/modified entry points | Localized editor lifecycle/invalidation helpers |
+| `plug-ins/python/pydia-{diagram,layer,object}.c` | Read-only live state/IDs plus object position, children, group membership and bounded descriptor-only inspection | Small PyDia accessor changes; existing ownership is unchanged |
+| `plug-ins/python/diamodule.c` | Actual application version and a trusted local shutdown callback registration | Python module initialization/method table |
+| `app/dia-application.{c,h}`, `app/app_procs.c` | Confirmed shutdown signal, before diagrams are released | Small application lifecycle hook; canceling quit does not emit it |
+| `plug-ins/python/mcp-live.py`, `meson.build` | Install opt-in startup shim for the separate live package | No MCP dependency/import when disabled |
+
+The live listener/protocol/registry implementation lives in `mcp/src/dia_mcp/live/`.
+No native setters or remotely callable C dispatch were added. Installed trusted
+plugins still share Dia's process; this boundary is not a sandbox.
 
 ## MCP-specific additions
 
@@ -28,7 +39,7 @@ upstream-shaped. Keep those working components untouched during this increment.
 | `mcp/src/dia_mcp/backend.py` | Restartable native CLI worker per render or discovery, dedicated Python startup, timeout and artifact/report validation. |
 | `mcp/src/dia_mcp/native/{bridge,catalog,python-startup}.py` | Embedded stdlib-only importer, narrow factories, UML tuple adaptation, technical-symbol geometry and native attachments. Main area for adapting future PyDia changes. |
 | `mcp/src/dia_mcp/{discovery.py,native/discovery.py}` (this increment) | Bounded metadata contract and generic factory/sheet enumeration. No duplicated native object catalog or factories instantiated by listing. |
-| `mcp/src/dia_mcp/server.py` | FastMCP stdio adapter, tool schemas and annotations. Two read-only discovery tools added to the original nine. |
+| `mcp/src/dia_mcp/server.py` | FastMCP stdio adapter, tool schemas and annotations. Two discovery tools and nine opt-in live read tools alongside the original nine. |
 | `mcp/tests`, `mcp/examples` | Unit/native/protocol regression tests and editable diagram examples. New tests cover runtime metadata, custom sheets and pagination. |
 | `mcp/pyproject.toml`, `uv.lock`, `requirements.lock` | Independently pinned external SDK environment; no SDK dependency injected into native Dia. |
 

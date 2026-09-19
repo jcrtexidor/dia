@@ -50,10 +50,58 @@ needed even for CLI operations; use Xvfb in headless CI. The embedded interprete
 is Dia's system Python, not the MCP venv; `import dia` in an ordinary shell Python
 is not the integration path.
 
-Standalone Dia remains a normal desktop application. **There is no current command
-that attaches MCP to its open window.** `task mcp:serve` starts isolated workers,
-not a live plugin or GUI listener. Opening an exported `.dia` in the GUI works,
-but further MCP edits do not update that open document.
+Standalone Dia remains a normal desktop application. `task mcp:serve` still starts
+isolated workers by default. M2 adds a separate opt-in live read path; snapshot
+edits do not update a GUI document. The live tools never modify it.
+
+## Enable live inspection
+
+Build/install the fork (`task mcp:build` for the supported image) including its new
+PyDia lifetime hooks and normal `mcp-live.py` plugin. The embedded system Python
+must be able to import `dia_mcp.live` and PyGObject; it does not need FastMCP.
+For a native development install, from the checkout:
+
+```sh
+DIA_MCP_LIVE=1 PYTHONPATH="$PWD/mcp/src" /absolute/path/to/installed/dia
+```
+
+Keep the normal Dia Python startup. Do **not** set `DIA_PYTHON_PATH` to the snapshot
+worker's `native/` directory. Normal user plugins and sheets still load normally.
+Without `DIA_MCP_LIVE=1`, the new startup plugin imports no MCP code and creates
+no endpoint. Older Dia builds without the new hooks fail clearly at startup.
+
+Stderr prints the endpoint `$XDG_RUNTIME_DIR/dia-mcp/live-<pid>.sock` after GTK
+startup. The runtime must exist, be owned by the user and private (0700). M2
+creates its own 0700 subdirectory and 0600 Unix socket, verifies peer UID and
+never listens on TCP. Keep the printed PID-specific path; do not guess the active
+process when several Dia instances are open.
+
+Start the external stdio server, using that printed path:
+
+```sh
+uv run --directory mcp --locked dia-mcp --workspace "$PWD/artifacts" \
+  --dia-binary /absolute/path/to/installed/dia \
+  --live-socket "$XDG_RUNTIME_DIR/dia-mcp/live-<actual-pid>.sock"
+```
+
+Call `live_handshake`, `live_list_documents`, then `live_get_selection` for a live
+document ID. All original snapshot tools remain available. If either process
+restarts, reconnect; after a GUI restart enumerate fresh IDs. The current client
+opens a bounded handshake/read connection per operation.
+
+A containerized GUI additionally needs access to the compositor socket under its
+own private runtime directory, matching the host UID, and an explicit shared
+socket directory if MCP runs outside that container. Do not mount arbitrary host
+runtime contents or use privileged/network modes. The live test below can run
+with the GUI and external MCP client together inside the validation container.
+
+The embedding `Limits` object configures queue/client/message/page/property/
+traversal limits. Defaults are documented in the architecture; no request may
+change them. MCP `--timeout` controls the client (maximum live timeout 30 seconds),
+not the GUI listener. Debug with `live_handshake` and the Dia stderr startup line;
+never log full document contents or native wrapper reprs. A `.sock.lock` inode is
+intentionally retained after shutdown; do not remove an active listener's lock.
+Stale endpoint recovery verifies type/ownership and takes the lock first.
 
 ## Inspect the installed runtime
 
@@ -162,8 +210,37 @@ observed `GdkWaylandDisplay` inside Dia, and passed discovery/create/connect/SVG
 export without Xvfb. That validates the CLI worker on this desktop stack, not the
 future interactive live integration.
 
-For the future live backend, also open the GUI and test manual selection, remote
-inspection, one atomic edit, undo/redo from the GUI, document close while requests
-are queued, redraw and continued manual interaction. That live acceptance cannot
-be satisfied by today's snapshot worker. Record separately: host session, actual
-GTK backend, native stack versions, subprocess tests and interactive behavior.
+M2 automated live tests are in `test_live_native.py`, using the normal installed
+startup plugin, a real GTK GUI and a **separate** MCP stdio process. The fixture
+uses trusted local test code to manipulate Dia and activate native GTK actions;
+none of its control commands exist in the production live protocol.
+
+```sh
+# Headless native acceptance against installed fork/package:
+DIA_MCP_NATIVE=1 xvfb-run -a python -m pytest -q mcp/tests/test_live_native.py
+
+# Repeat in the actual Ubuntu 26 Wayland session, without Xvfb:
+DIA_MCP_NATIVE=1 GDK_BACKEND=wayland python -m pytest -q mcp/tests/test_live_native.py
+```
+
+Run these inside the supported image or the matching native environment; when
+using source Python, set `PYTHONPATH` to the absolute `mcp/src` directory. For an
+installed package the fixture passes its actual package location to the embedded
+interpreter. Wayland mode requires the actual compositor socket, not merely the
+session environment label. The test asserts `GdkWaylandDisplay`.
+
+Coverage includes GUI document creation/opening, layers, mixed built-in and custom
+objects, native attachment versus proximity, selection, property/move changes,
+duplication, removal/restore, real GTK Delete/Undo/Redo, groups, default-document
+replacement, concurrent reads with an active GTK timer, stdio MCP, reconnect and
+confirmed File/Quit socket cleanup. Separate tests reject incompatible versions,
+missing handshakes and unsupported actions, and disconnect clients with pending
+reads. Unit tests cover bounds, timeout/cancellation, wrong session, generation,
+unsafe property getters, endpoint permissions/locking and stale socket recovery.
+No MCP tool mutates the fixture: writes happen exclusively on the trusted GUI side.
+
+For an interactive smoke check, select objects with the mouse while querying
+`live_get_selection`; drag them while querying `live_get_object`; close/reopen
+and confirm the previous IDs fail. M2 reads only document-space geometry, so no
+window-coordinate conversion or display scaling is involved. Native editing,
+rollback and undo through MCP are M3, not part of M2 acceptance.

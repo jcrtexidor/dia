@@ -40,6 +40,15 @@ def test_stdio_workflow(tmp_path):
                 listing = await session.list_tools()
                 tools = {tool.name: tool for tool in listing.tools}
                 assert set(tools) == {
+                    "live_handshake",
+                    "live_list_documents",
+                    "live_get_active_document",
+                    "live_get_document",
+                    "live_list_layers",
+                    "live_get_selection",
+                    "live_list_objects",
+                    "live_get_object",
+                    "live_get_connections",
                     "get_capabilities",
                     "list_sheets",
                     "list_object_types",

@@ -18,7 +18,9 @@ See the [architecture](../docs/mcp-architecture.md),
 [complete inventory](../docs/mcp-capabilities.md),
 [tool reference](../docs/mcp-tools.md), [development](../docs/mcp-development.md)
 and [progress](../docs/progress.md). The existing snapshot editing contract below
-is preserved. MCP does not yet attach to an open GUI document or its undo history.
+is preserved. M2 can inspect an opted-in running GUI through `--live-socket`; see the
+[live setup guide](../docs/mcp-development.md#enable-live-inspection). Live tools
+are read-only and do not edit GUI documents or drive their undo history.
 
 ## Inicio reproducible en Ubuntu 26
 

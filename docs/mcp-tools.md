@@ -1,12 +1,12 @@
 # MCP tool reference
 
-The server now exposes 11 tools over local stdio. No resources/prompts are
+The server now exposes 20 tools over local stdio. No resources/prompts are
 registered. `api_version="1"` describes the existing session document contract.
 Parameters and property definitions are authoritative in `server.py`, `models.py`
 and the [JSON document schema](modernization/document.schema.json).
 Examples below are MCP `arguments` objects; substitute IDs from earlier results.
 
-## Shared contract
+## Snapshot contract
 
 Coordinates are finite document-space cm, x/y in [-1000,1000]; width/height in
 [0.1,100]. Node text permits up to 2000 XML-valid characters; connector labels
@@ -19,7 +19,7 @@ and `geometry` (nodes indexed by ID with bounds/label_bounds/connection_points/p
 edges indexed by ID with type, selected indices/ports and start/end coordinates).
 Creation adds `object_id` or `connection_id`. Geometry reflects native text fitting.
 Successful edits increment revision; failed edits preserve it. There is no GUI
-undo effect and no open-GUI document ID.
+undo effect. Snapshot IDs are never live GUI references.
 
 Domain errors are MCP `isError=true`, with JSON text `{api_version,code,message}`.
 SDK parameter errors can precede domain validation. Shared native errors are
@@ -49,7 +49,7 @@ session state. Hints do not replace application validation.
 
 Parameters: none. Returns the snapshot API version, allowed object/connection
 names and JSON schemas, ports, formats, cm units, limits (32 documents/100 nodes/
-200 edges), persistence description, discovery tool names/scope, `live_documents=false`
+200 edges), persistence description, discovery tool names/scope, `live_documents=true` (support, not connection status)
 and `generic_creation=false`. This is **the editing contract, not a runtime probe**.
 No operation-specific domain error. Example: `{}`.
 
@@ -174,3 +174,70 @@ native errors. An export is not saving a currently open GUI document.
 Required: `document_id`. Returns `{api_version,closed:document_id}`. Discards session
 state/geometry; already exported files remain. Example: `{"document_id":"D"}`.
 Error: `NOT_FOUND`. There is no close-undo, so export first if needed.
+
+
+## Live GUI read tools (M2)
+
+These tools require `--live-socket PATH` and an opted-in running GUI. They never
+create or modify native documents. All results have `scope="live"` and
+`session_id`; document reads also return `document_id` and `generation`.
+Snapshot operations keep their original ownership, errors and IDs.
+
+| Tool | Inputs | Result |
+| --- | --- | --- |
+| `live_handshake` | none | `integration_api_version: 1`, actual Dia version, session ID, capabilities, limits and identity/generation semantics |
+| `live_list_documents` | `offset=0`, `limit=100` | Paged open displayed documents: ID, name, filename, active/modified, generation, active layer ID, units |
+| `live_get_active_document` | none | `document` summary or null |
+| `live_get_document` | `document_id` | `document` summary |
+| `live_list_layers` | `document_id`, pagination | ID, name, visibility, bottom-to-top order, active flag, direct object count |
+| `live_get_selection` | `document_id`, pagination | Actual GUI selected objects, as object summaries |
+| `live_list_objects` | `document_id`, pagination | Arbitrary native types, including nested group members, as object summaries |
+| `live_get_object` | `document_id`, `object_id`, `properties=false` | `object`: bounds, position, type, selection, layer, parenting/group relations, handle/point counts, known sheet entries; optional bounded property detail |
+| `live_get_connections` | `document_id`, `object_id` | Native handles (index, native handle ID/type/connect type, position, attached target/point or null) and points (index, position, flags, directions, connected IDs) |
+
+Paged results contain `items`, `total`, and nullable `next_offset`. Limits are
+1..100 and offsets nonnegative; request/response sizes and traversal also have
+[explicit limits](mcp-architecture.md#protocol-limits-and-dispatch). Geometry is
+native document-space cm; snapshot creation coordinate restrictions do not apply
+to live reads. Bounds are independent of zoom, window position and display scale.
+
+Example: call `live_get_active_document` with `{}`, then
+`live_get_selection` with `{"document_id":"<returned live ID>"}`. Pass a selected
+`object_id` to `live_get_object`, optionally with `"properties":true`, or to
+`live_get_connections`. A handle is attached only when `attached_to` is non-null.
+There is no assumption of two handles or of any connection points at all.
+
+Group/child detail includes total counts and explicit truncation flags for the
+256-entry detail limit; paginated object listing also includes group associations.
+
+Property detail returns `items`, `total`, `truncated`; each descriptor has
+`name`, `type`, `visible`, `supported`, and a value only for supported safe types.
+Long strings are explicitly truncated. Unsupported values are not evaluated.
+Visibility says nothing about writability. No property-write tool is present.
+
+References expire on document close/reload or object detach/delete. Native undo
+restores with a fresh object ID; duplicates are distinct. Generations are
+conservative editor observations, not edit counts or snapshot revisions. If the
+generation changes during pagination, start over; pages are not frozen snapshots.
+
+Live errors use the existing MCP structured-error envelope:
+
+| Code | Meaning |
+| --- | --- |
+| `LIVE_BACKEND_UNAVAILABLE` | No configured listener, disconnected GUI, or socket cannot be reached |
+| `LIVE_PROTOCOL_MISMATCH` | Incompatible protocol/API or missing initial handshake |
+| `WRONG_SESSION` | Snapshot reference or reference from another live process |
+| `STALE_DOCUMENT_REFERENCE` | Closed, replaced, or unknown current-session document |
+| `STALE_OBJECT_REFERENCE` | Detached, deleted, or unknown current-document object |
+| `OBJECT_NOT_FOUND` | Object ID belongs to a different document |
+| `REQUEST_TIMEOUT` | Client deadline or queued/executing read deadline exceeded |
+| `LIVE_QUEUE_FULL` | Bounded pending request queue is full |
+| `LIVE_LIMIT_EXCEEDED` | Message, traversal or structure exceeds supported budget |
+| `UNSUPPORTED_LIVE_CAPABILITY` | Unknown wire action |
+| `INVALID_ARGUMENT` | Invalid fields, reference shape or pagination |
+| `LIVE_READ_FAILED` / `LIVE_INVALID_RESPONSE` | Inspection failed safely / malformed result |
+
+Unknown and formerly valid references intentionally share stale errors; the
+registry does not keep unbounded tombstones. Reconnect and enumerate current IDs
+when the GUI restarts. Live APIs expose no Save, open/import, delete, setters,
+selection changes, undo/redo or native write transaction.
