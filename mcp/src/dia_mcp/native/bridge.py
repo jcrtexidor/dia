@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import get_args
 
 from catalog import ConnectionType, NodeType, Port, validate_uml, xml_text
+from uml import configure_class
 
 TYPES = set(get_args(NodeType))
 PORTS = set(get_args(Port))
@@ -135,50 +136,7 @@ def configure_node(obj, node, layer):
     import dia
 
     if node["type"] == "UML - Class":
-        settings = node.get("properties") or {}
-        visibility = {"public": 0, "private": 1, "protected": 2, "package": 3}
-        obj.properties["name"] = node["text"]
-        obj.properties["stereotype"] = settings.get("stereotype", "")
-        obj.properties["abstract"] = settings.get("abstract", False)
-        obj.properties["attributes"] = [
-            (
-                a["name"],
-                a.get("type", ""),
-                a.get("value", ""),
-                "",
-                visibility[a.get("visibility", "private")],
-                False,
-                a.get("class_scope", False),
-            )
-            for a in settings.get("attributes", [])
-        ]
-        obj.properties["operations"] = [
-            (
-                o["name"],
-                o.get("type", ""),
-                "",
-                "",
-                visibility[o.get("visibility", "public")],
-                {"abstract": 0, "polymorphic": 1, "leaf": 2}[o.get("inheritance", "leaf")],
-                False,
-                o.get("class_scope", False),
-                [
-                    (
-                        p["name"],
-                        p.get("type", ""),
-                        p.get("value", ""),
-                        "",
-                        {"unspecified": 0, "in": 1, "out": 2, "inout": 3}[
-                            p.get("kind", "unspecified")
-                        ],
-                    )
-                    for p in o.get("parameters", [])
-                ],
-            )
-            for o in settings.get("operations", [])
-        ]
-        obj.properties["allow_resizing"] = True
-        obj.properties["elem_width"] = node["width"]
+        configure_class(obj, node)
     elif node["type"].startswith("Flowchart - "):
         obj.properties["elem_width"] = node["width"]
         obj.properties["elem_height"] = node["height"]

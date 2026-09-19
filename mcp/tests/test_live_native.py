@@ -63,6 +63,18 @@ def gui(tmp_path):
 <name>Live custom</name><description>Fixture</description><contents>
 <object name="Live - Unfamiliar"><description>Unfamiliar</description></object>
 </contents></sheet>""")
+    (shapes / "zero.shape").write_text(
+        (shapes / "custom.shape")
+        .read_text()
+        .replace("Live - Unfamiliar", "Live - ZeroPort")
+        .replace('<connections><point x="0" y="0"/></connections>', "<connections/>")
+    )
+    (sheets / "zero.sheet").write_text(
+        (sheets / "custom.sheet")
+        .read_text()
+        .replace("Live - Unfamiliar", "Live - ZeroPort")
+        .replace("Live custom", "Live zero")
+    )
     import shutil
 
     binary = shutil.which(os.environ.get("DIA_BINARY", "dia"))

@@ -20,6 +20,7 @@ from .models import (
     Port,
     UMLClassProperties,
 )
+from .recipes import plan_native
 from .service import Operations
 
 
@@ -31,7 +32,8 @@ def build_server(operations: Operations) -> FastMCP:
             "then export .dia, .svg or .png into the configured workspace. State lasts for this "
             "server session. Inspect geometry for actual text-expanded bounds and native ports."
             " Use list_sheets/list_object_types to discover installed native types; only those "
-            "with a creatable_as marker can be created through the current MCP contract."
+            "with a creatable_as marker can be created in snapshots. The opt-in "
+            "live_apply_commands supports installed native factories."
         ),
     )
 
@@ -64,7 +66,8 @@ def build_server(operations: Operations) -> FastMCP:
         """Discover registered Dia types, optionally filtered by an exact list_sheets name.
 
         Includes native version, sheet labels and creatable_as (object/connection/null).
-        Installed types with null are not yet creatable through MCP. Follow next_offset.
+        Installed types with null are not creatable in snapshots; live generic creation
+        is separate. Follow next_offset.
         This queries a fresh worker, not the open GUI; no objects are instantiated.
         """
         return call(operations.list_object_types, sheet, offset, limit)
@@ -138,6 +141,189 @@ def build_server(operations: Operations) -> FastMCP:
         """Read actual native handle attachments and connection points, not visual proximity."""
         return call(
             operations.inspect_live, "get_connections", document_id=document_id, object_id=object_id
+        )
+
+    @server.tool(annotations=read)
+    def live_plan_objects(domain: str, nodes: list[dict]) -> dict:
+        """Preview generic create commands for flowchart, UML, database or network objects.
+
+        nodes contain x,y and optional type,label. Does not mutate; apply returned
+        commands using a prepared operation and a current document generation.
+        Inspect created native handles before planning connections.
+        """
+        try:
+            return plan_native(domain, nodes)
+        except ValueError as exc:
+            raise ToolError(json.dumps(DiaError("INVALID_ARGUMENT", str(exc)).as_dict())) from exc
+
+    @server.tool(annotations=edit)
+    def live_prepare_operation() -> dict:
+        """Reserve a one-use request_id before a GUI mutation (requires DIA_MCP_WRITE=1).
+
+        Retain it to query/retry identical input after transport failure. Receipts last
+        at most 30 minutes/256 operations; unknown IDs never execute mutations.
+        """
+        return call(operations.inspect_live, "prepare_operation")
+
+    @server.tool(annotations=read)
+    def live_get_operation(request_id: str) -> dict:
+        """Query a reserved operation receipt after success, failure or lost response."""
+        return call(operations.inspect_live, "get_operation", request_id=request_id)
+
+    @server.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorldHint=False)
+    )
+    def live_apply_commands(
+        document_id: str, expected_generation: int, request_id: str, commands: list[dict]
+    ) -> dict:
+        """Apply 1..64 commands as one native undo transaction.
+
+        op=create: type,x,y,optional properties/layer_id; move: object_id,x,y;
+        set_properties: object_id,properties (safe scalar/text values only);
+        delete: object_id (disconnect first); connect: object_id,handle,target_id,point;
+        disconnect: object_id,handle; layout: object_ids,mode (left,center,right,top,
+        middle,bottom,distribute_horizontal,distribute_vertical).
+        IDs must exist before the batch; create returns IDs for subsequent transactions.
+        Read current generation first. After failure reread IDs/state; rollback may
+        invalidate runtime IDs. Duplicate identical request_id returns its receipt.
+        """
+        return call(
+            operations.inspect_live,
+            "apply_commands",
+            document_id=document_id,
+            expected_generation=expected_generation,
+            request_id=request_id,
+            commands=commands,
+        )
+
+    @server.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorldHint=False)
+    )
+    def live_history(
+        document_id: str, expected_generation: int, request_id: str, direction: str
+    ) -> dict:
+        """Undo or redo a native transaction; direction is undo or redo.
+
+        This is the GUI's shared history, including the user's edits. Read state first.
+        """
+        return call(
+            operations.inspect_live,
+            "history",
+            document_id=document_id,
+            expected_generation=expected_generation,
+            request_id=request_id,
+            direction=direction,
+        )
+
+    @server.tool(annotations=edit)
+    def live_open_document(path: str, request_id: str) -> dict:
+        """Open a .dia file under DIA_MCP_FILES_ROOT in a new GUI document.
+
+        Native importers can read referenced resources. Use trusted local files.
+        """
+        return call(operations.inspect_live, "open_document", path=path, request_id=request_id)
+
+    @server.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorldHint=False)
+    )
+    def live_save_document(
+        document_id: str, expected_generation: int, request_id: str, overwrite: bool = False
+    ) -> dict:
+        """Save natively to the current filename; existing files require overwrite=true."""
+        return call(
+            operations.inspect_live,
+            "save_document",
+            document_id=document_id,
+            expected_generation=expected_generation,
+            request_id=request_id,
+            overwrite=overwrite,
+        )
+
+    @server.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorldHint=False)
+    )
+    def live_save_document_as(
+        document_id: str,
+        expected_generation: int,
+        request_id: str,
+        path: str,
+        overwrite: bool = False,
+    ) -> dict:
+        """Save native data under DIA_MCP_FILES_ROOT and update GUI filename after publication."""
+        return call(
+            operations.inspect_live,
+            "save_document_as",
+            document_id=document_id,
+            expected_generation=expected_generation,
+            request_id=request_id,
+            path=path,
+            overwrite=overwrite,
+        )
+
+    @server.tool(
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorldHint=False)
+    )
+    def live_export_document(
+        document_id: str,
+        expected_generation: int,
+        request_id: str,
+        path: str,
+        format: str = "svg",
+        overwrite: bool = False,
+    ) -> dict:
+        """Export native dia/svg/png under DIA_MCP_FILES_ROOT; preserve GUI dirty state."""
+        return call(
+            operations.inspect_live,
+            "export_document",
+            document_id=document_id,
+            expected_generation=expected_generation,
+            request_id=request_id,
+            path=path,
+            format=format,
+            overwrite=overwrite,
+        )
+
+    @server.tool(annotations=read)
+    def live_get_dependencies(document_id: str) -> dict:
+        """Report declared native file properties; completeness/existence are not guaranteed."""
+        return call(operations.inspect_live, "get_dependencies", document_id=document_id)
+
+    @server.tool(annotations=read)
+    def live_summarize_document(document_id: str) -> dict:
+        """Summarize object types, layers, selection and current generation without mutation."""
+        return call(operations.inspect_live, "summarize_document", document_id=document_id)
+
+    @server.tool(annotations=read)
+    def live_analyze_document(document_id: str, domain: str = "auto") -> dict:
+        """Analyze actual attachments and mixed domains (at most 256 objects).
+
+        Reports connected components, isolated objects, supported UML relationships
+        and explicit semantic limitations. This is not electrical simulation.
+        """
+        return call(
+            operations.inspect_live, "analyze_document", document_id=document_id, domain=domain
+        )
+
+    @server.resource("dia://live/documents")
+    def live_documents_resource() -> str:
+        """First page of live documents; follow next_offset with live_list_documents."""
+        return json.dumps(call(operations.inspect_live, "list_documents"))
+
+    @server.resource("dia://live/documents/{document_id}/summary")
+    def live_summary_resource(document_id: str) -> str:
+        """Current native document summary."""
+        return json.dumps(
+            call(operations.inspect_live, "summarize_document", document_id=document_id)
+        )
+
+    @server.prompt()
+    def explain_live_diagram(document_id: str) -> str:
+        """Inspect and explain a GUI document using evidence from native attachments."""
+        return (
+            f"Inspect live document {document_id!r} with live_summarize_document and "
+            "live_analyze_document. Inspect selected objects and relevant properties. "
+            "Explain supported structure, mixed domains, and unknowns; distinguish "
+            "actual connections from geometry. Report truncation. Do not mutate the diagram."
         )
 
     @server.tool(annotations=edit)

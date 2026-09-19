@@ -4,6 +4,7 @@ No SDK/Pydantic dependency: this module is also imported by the GUI plugin.
 """
 
 import json
+import math
 from dataclasses import dataclass
 
 from ..errors import DiaError
@@ -27,6 +28,91 @@ ACTIONS = {
     "get_object": {"document_id", "object_id"},
     "get_connections": {"document_id", "object_id"},
 }
+MUTATIONS = {
+    "apply_commands",
+    "history",
+    "open_document",
+    "save_document",
+    "save_document_as",
+    "export_document",
+}
+ACTIONS.update(
+    {
+        "prepare_operation": set(),
+        "get_operation": {"request_id"},
+        "apply_commands": {"document_id", "request_id", "expected_generation", "commands"},
+        "history": {"document_id", "request_id", "expected_generation", "direction"},
+        "open_document": {"request_id", "path"},
+        "save_document": {"document_id", "request_id", "expected_generation"},
+        "save_document_as": {"document_id", "request_id", "expected_generation", "path"},
+        "export_document": {"document_id", "request_id", "expected_generation", "path", "format"},
+        "summarize_document": {"document_id"},
+        "analyze_document": {"document_id"},
+        "get_dependencies": {"document_id"},
+    }
+)
+COMMAND_FIELDS = {
+    "move": ({"op", "object_id", "x", "y"}, set()),
+    "set_properties": ({"op", "object_id", "properties"}, set()),
+    "create": ({"op", "type", "x", "y"}, {"properties", "layer_id"}),
+    "delete": ({"op", "object_id"}, set()),
+    "connect": ({"op", "object_id", "handle", "target_id", "point"}, set()),
+    "disconnect": ({"op", "object_id", "handle"}, set()),
+    "layout": ({"op", "object_ids", "mode"}, set()),
+}
+
+
+def validate_commands(commands):
+    if not isinstance(commands, list) or not 1 <= len(commands) <= 64:
+        raise DiaError("INVALID_ARGUMENT", "commands must contain 1..64 operations")
+    for command in commands:
+        if (
+            not isinstance(command, dict)
+            or not isinstance(command.get("op"), str)
+            or command["op"] not in COMMAND_FIELDS
+        ):
+            raise DiaError("INVALID_ARGUMENT", "Unknown native command")
+        required, optional = COMMAND_FIELDS[command["op"]]
+        if not required <= command.keys() or command.keys() - required - optional:
+            raise DiaError("INVALID_ARGUMENT", "Invalid native command fields")
+        for name, value in command.items():
+            if name in {"x", "y"} and (
+                type(value) not in (int, float) or abs(value) > 1000000 or not math.isfinite(value)
+            ):
+                raise DiaError("INVALID_ARGUMENT", "Coordinates must be finite centimeters")
+            if name in {"handle", "point"} and (type(value) is not int or not 0 <= value < 256):
+                raise DiaError("INVALID_ARGUMENT", "Invalid native connection index")
+            if name in {"object_id", "target_id", "layer_id", "type", "mode"} and (
+                not isinstance(value, str) or not 1 <= len(value) <= 256
+            ):
+                raise DiaError("INVALID_ARGUMENT", "Invalid command reference")
+        if "object_ids" in command:
+            ids = command["object_ids"]
+            if (
+                not isinstance(ids, list)
+                or not 2 <= len(ids) <= 64
+                or any(not isinstance(v, str) or not 1 <= len(v) <= 256 for v in ids)
+                or len(set(ids)) != len(ids)
+            ):
+                raise DiaError("INVALID_ARGUMENT", "layout requires 2..64 distinct object IDs")
+        if "properties" in command:
+            props = command["properties"]
+            if not isinstance(props, dict) or len(props) > 32:
+                raise DiaError("INVALID_ARGUMENT", "At most 32 scalar properties are supported")
+            for name, value in props.items():
+                if (
+                    not isinstance(name, str)
+                    or not 1 <= len(name) <= 128
+                    or type(value) not in (bool, int, float, str)
+                ):
+                    raise DiaError("INVALID_ARGUMENT", "Only named scalar properties are supported")
+                if (isinstance(value, str) and (len(value) > 2048 or "\0" in value)) or (
+                    type(value) is float and not math.isfinite(value)
+                ):
+                    raise DiaError("INVALID_ARGUMENT", "Invalid property value")
+    return commands
+
+
 PAGED = {"list_documents", "list_layers", "get_selection", "list_objects"}
 
 
@@ -81,17 +167,45 @@ def validate(request, limits=Limits()):
         raise DiaError("LIVE_PROTOCOL_MISMATCH", "Live integration protocol version 1 required")
     action = request.get("action")
     if not isinstance(action, str) or action not in ACTIONS:
-        raise DiaError("UNSUPPORTED_LIVE_CAPABILITY", "Unknown live read operation")
+        raise DiaError("UNSUPPORTED_LIVE_CAPABILITY", "Unknown live operation")
     allowed = {"protocol_version", "action"} | ACTIONS[action]
     if action in PAGED:
         allowed |= {"offset", "limit"}
+    if action in {"save_document", "save_document_as", "export_document"}:
+        allowed |= {"overwrite"}
+    if action == "analyze_document":
+        allowed |= {"domain"}
     if action == "get_object":
         allowed |= {"properties"}
     if set(request) - allowed or not ACTIONS[action] <= set(request):
         raise DiaError("INVALID_ARGUMENT", "Invalid live operation fields")
-    for name in ACTIONS[action]:
+    for name in ACTIONS[action] - {"expected_generation", "commands"}:
         if not isinstance(request[name], str) or not 1 <= len(request[name]) <= 256:
             raise DiaError("INVALID_ARGUMENT", "Invalid live reference")
+    if "expected_generation" in request and (
+        type(request["expected_generation"]) is not int or request["expected_generation"] < 1
+    ):
+        raise DiaError("INVALID_ARGUMENT", "expected_generation must be a positive integer")
+    if "overwrite" in request and type(request["overwrite"]) is not bool:
+        raise DiaError("INVALID_ARGUMENT", "overwrite must be boolean")
+    if "path" in request and "\0" in request["path"]:
+        raise DiaError("INVALID_ARGUMENT", "Invalid path")
+    if action == "apply_commands":
+        validate_commands(request["commands"])
+    if action == "history" and request["direction"] not in {"undo", "redo"}:
+        raise DiaError("INVALID_ARGUMENT", "direction must be undo or redo")
+    if action == "analyze_document":
+        domain = request.get("domain", "auto")
+        if not isinstance(domain, str) or domain not in {
+            "auto",
+            "uml",
+            "flowchart",
+            "database",
+            "network",
+            "electrical",
+            "pneumatic",
+        }:
+            raise DiaError("INVALID_ARGUMENT", "Unsupported analysis domain")
     if action in PAGED:
         offset, limit = request.get("offset", 0), request.get("limit", limits.page)
         if type(offset) is not int or not 0 <= offset <= 1000000:

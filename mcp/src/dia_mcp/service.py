@@ -38,7 +38,7 @@ class Operations:
         self._lock = threading.RLock()
 
     def inspect_live(self, action: str, **params) -> dict:
-        """Transport-independent live reads; no snapshot IDs are resolved here."""
+        """Transport-independent live operations; no snapshot IDs are resolved here."""
         if self.live is None:
             raise DiaError(
                 "LIVE_BACKEND_UNAVAILABLE", "Configure --live-socket to inspect a running GUI"
@@ -70,7 +70,8 @@ class Operations:
             },
             "live_documents": True,
             "live_integration": {
-                "mode": "opt-in read-only; configure --live-socket",
+                "mode": "opt-in reads; DIA_MCP_WRITE=1 enables native edits",
+                "transport": "configure --live-socket",
                 "handshake_tool": "live_handshake",
                 "scope": "running GUI; distinct from snapshots",
             },

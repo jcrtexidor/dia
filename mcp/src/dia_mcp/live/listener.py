@@ -16,7 +16,7 @@ from collections import deque
 from pathlib import Path
 
 from ..errors import DiaError
-from .protocol import VERSION, Limits, decode, encode, validate
+from .protocol import MUTATIONS, VERSION, Limits, decode, encode, validate
 
 
 def runtime_path():
@@ -125,7 +125,7 @@ class Listener:
             else:
                 try:
                     result = self.registry.dispatch(request)
-                    if time.monotonic() > deadline:
+                    if request["action"] not in MUTATIONS and time.monotonic() > deadline:
                         raise DiaError("REQUEST_TIMEOUT", "Live read exceeded deadline")
                     client.respond(result=result)
                 except DiaError as exc:

@@ -20,9 +20,11 @@ def enable():
         try:
             if not hasattr(dia, "application_version") or not hasattr(dia.Diagram, "live_state"):
                 raise RuntimeError("This Dia build lacks the M2 native lifetime hooks")
-            _listener = Listener(GLib, Registry(dia))
+            _listener = Listener(
+                GLib, Registry(dia, writable=os.environ.get("DIA_MCP_WRITE") == "1")
+            )
             dia.register_shutdown(_listener.stop)
-            print(f"Dia live read socket: {_listener.path}", file=sys.stderr)
+            print(f"Dia live socket: {_listener.path}", file=sys.stderr)
         except Exception as exc:
             print(f"Dia live integration unavailable: {exc}", file=sys.stderr)
         return False
