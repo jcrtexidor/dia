@@ -303,6 +303,7 @@ do_convert (const char      *infname,
   DiaImportFilter *inf;
   DiagramData     *diagdata = NULL;
   DiaContext      *ctx;
+  gboolean        exported;
 
   inf = filter_guess_import_filter (infname);
   if (!inf) {
@@ -350,9 +351,15 @@ do_convert (const char      *infname,
   if (size) {
     g_warning ("--size parameter unsupported for %s filter",
                ef->unique_name ? ef->unique_name : "selected");
-    ef->export_func (diagdata, ctx, outfname, infname, ef->user_data);
+    exported = ef->export_func (diagdata, ctx, outfname, infname, ef->user_data);
   } else {
-    ef->export_func (diagdata, ctx, outfname, infname, ef->user_data);
+    exported = ef->export_func (diagdata, ctx, outfname, infname, ef->user_data);
+  }
+  if (!exported) {
+    g_printerr (_("Export failed: %s\n"), outfname);
+    g_clear_object (&diagdata);
+    dia_context_release (ctx);
+    exit (1);
   }
   /* if (!quiet) */
   g_printerr (_("%s --> %s\n"), infname, outfname);

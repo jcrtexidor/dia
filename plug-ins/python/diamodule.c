@@ -325,8 +325,17 @@ PyDia_import_data (const gchar* filename, DiagramData *dia, DiaContext *ctx, voi
     arg = Py_BuildValue ("(sO)", filename, diaobj);
     if (arg) {
       PyObject *res = PyObject_CallObject (func, arg);
+      if (res) {
+        /* Historical importers omit a return value. Keep None successful,
+         * but propagate an explicit false result and truth-testing errors. */
+        int success = res == Py_None ? 1 : PyObject_IsTrue (res);
+        if (success < 0) {
+          PyErr_Print ();
+        } else {
+          bRet = success;
+        }
+      }
       ON_RES(res, TRUE);
-      bRet = !!res;
     }
     Py_XDECREF (arg);
 
