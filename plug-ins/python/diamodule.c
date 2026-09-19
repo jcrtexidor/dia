@@ -49,6 +49,7 @@
 #include "lib/object.h"
 #include "lib/group.h"
 #include "app/diagram.h"
+#include "app/dia-application.h"
 #include "app/display.h"
 #include "app/load_save.h"
 
@@ -552,7 +553,42 @@ PyDia_Message (PyObject *self, PyObject *args)
 }
 
 
+static void
+PyDia_Shutdown (DiaApplication *app, gpointer user_data)
+{
+  PyGILState_STATE gil = PyGILState_Ensure ();
+  PyObject *result = PyObject_CallObject ((PyObject *) user_data, NULL);
+  ON_RES (result, FALSE);
+  PyGILState_Release (gil);
+}
+
+static void
+PyDia_ShutdownFree (gpointer user_data, GClosure *closure)
+{
+  PyGILState_STATE gil = PyGILState_Ensure ();
+  Py_DECREF ((PyObject *) user_data);
+  PyGILState_Release (gil);
+}
+
+static PyObject *
+PyDia_RegisterShutdown (PyObject *self, PyObject *args)
+{
+  PyObject *callback;
+  if (!PyArg_ParseTuple (args, "O:register_shutdown", &callback))
+    return NULL;
+  if (!PyCallable_Check (callback)) {
+    PyErr_SetString (PyExc_TypeError, "Shutdown callback must be callable");
+    return NULL;
+  }
+  Py_INCREF (callback);
+  g_signal_connect_data (dia_application_get_default (), "shutdown",
+                         G_CALLBACK (PyDia_Shutdown), callback, PyDia_ShutdownFree, 0);
+  Py_RETURN_NONE;
+}
+
 static PyMethodDef dia_methods[] = {
+    { "register_shutdown", PyDia_RegisterShutdown, METH_VARARGS,
+      "register_shutdown(Callback: func) -> None. Main-thread notification after confirmed exit." },
     { "group_create", PyDia_GroupCreate, METH_VARARGS,
       "group_create(List of Object: objs) -> Object."
       "  Create a group containing the given list of dia.Object(s)" },

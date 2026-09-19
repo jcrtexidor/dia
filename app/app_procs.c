@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#include "dia-application.h"
 
 #include <glib/gi18n-lib.h>
 
@@ -1000,6 +1001,8 @@ app_exit (void)
       gtk_widget_destroy (dialog);
     }
   }
+
+  dia_application_shutdown (dia_application_get_default ());
 
   persistence_save ();
 

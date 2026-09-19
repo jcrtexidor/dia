@@ -22,6 +22,8 @@ enum {
   DISPLAY_CHANGE,
   DISPLAY_REMOVE,
 
+  SHUTDOWN,
+
   LAST_SIGNAL
 };
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -45,6 +47,10 @@ G_DEFINE_TYPE (DiaApplication, dia_application, G_TYPE_OBJECT);
 static void
 dia_application_class_init (DiaApplicationClass *klass)
 {
+  signals[SHUTDOWN] =
+    g_signal_new ("shutdown", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_FIRST,
+                  0, NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+
   signals[DIAGRAM_ADD] =
     g_signal_new ("diagram-add",
                   G_TYPE_FROM_CLASS (klass),
@@ -171,4 +177,11 @@ dia_application_diagram_change (DiaApplication *app,
                                 gpointer        object)
 {
   g_signal_emit (app, signals[DIAGRAM_CHANGE], 0, dia, flags, object);
+}
+
+/* Emitted on the GTK main thread, only after the user has confirmed exit. */
+void
+dia_application_shutdown (DiaApplication *self)
+{
+  g_signal_emit (self, signals[SHUTDOWN], 0);
 }

@@ -27,6 +27,7 @@ sources = files(
 
 python_scripts = [
     'aobjects.py',
+    'mcp-live.py',
     'allprops.py',
     'codegen.py',
     'diasvg.py',

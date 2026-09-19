@@ -2,9 +2,9 @@
 
 ## Current objective
 
-Audit Dia as an extensible multi-domain application, record the smallest path to
-live integration, and deliver the first bounded implementation: native runtime
-sheet/type discovery. Baseline `77fe10bc0`; audit date 2026-09-19.
+Deliver M2: an opt-in, bounded, read-only connection to the running Dia GUI,
+while preserving the completed M1 discovery and snapshot editing/export backend.
+Audit baseline `77fe10bc0`; implementation date 2026-09-19.
 
 ## Completed
 
@@ -21,19 +21,29 @@ sheet/type discovery. Baseline `77fe10bc0`; audit date 2026-09-19.
 
 ## In progress
 
-M2 implementation in progress. Foundation: lazy runtime object tokens without an
-object ABI change, invalidation on detach/destruction/copy, document identity
-reset before import, conservative editor generation, and PyDia read accessors.
-No wrappers are retained between live requests. Initial running-GUI validation
-covers native Delete/Undo/Redo, mixed/custom types and concurrent reads.
-Foundation validation: 9/9 Meson suites and 136 MCP tests pass against the rebuilt
-native development container; the final packaged build and Wayland acceptance
-are still pending. M2 is not yet marked complete.
+M2 implementation and targeted tests are passing. Final packaged build and a
+repeat of the final revision on real Wayland are pending; M2 is not yet marked
+complete.
+
+- Foundation: native ephemeral IDs, detach/destruction/copy invalidation,
+  pre-import document identity reset and conservative editor generation.
+- Transport: protocol v1, strict bounded JSON lines, same-user private Unix
+  socket, GLib I/O plus bounded idle dispatch, no receiver threads/locks.
+- Read registry: no wrappers retained, current membership resolution, mixed/custom
+  types, layers/selection, native connections and conservative properties.
+- Normal shutdown: confirmed application exit notification with GIL-safe Python
+  callback, closing clients/queue/socket before native document destruction.
+- Integration: nine `live_*` tools through Operations/LiveClient; existing snapshot
+  tools and M1 discovery preserved.
+
+First checkpoint: 9/9 Meson suites and 136 MCP tests passed against a rebuilt
+native development container. Initial Xvfb and real Wayland GUI tests passed.
+The final tests additionally cover real File/Quit cleanup, wire rejection,
+endpoint recovery, unsupported getters and interaction during continuous reads.
 
 ## Next
 
-1. M2: live read-only boundary, handshake, main-thread dispatch, stable registry,
-   selections/layers and lifecycle invalidation.
+1. Finish M2 packaged/Wayland acceptance and record final evidence.
 2. M3: native atomic commands, rollback and coherent GUI undo/redo.
 3. M4: property introspection and safe generic editing across arbitrary factories.
 4. M5: native open/Save/Save As with dependency reporting and data preservation.
@@ -47,10 +57,13 @@ a broad rewrite or implement all domain tools before these foundations.
 
 Keep GTK3/Meson, locks, transactional snapshots, validated native exports, stdio
 SDK separation and current C fixes. Reuse PyDia discovery after plugin loading.
-No native API or IPC is added for this increment. Treat the proposed live boundary
-as future work; no running GUI is reachable from today's tools. Separate installed
-factory discovery from supported editing. Keep metadata uncached for correct
-freshness with the current short-lived workers.
+M2 uses GLib nonblocking I/O and idle dispatch, not receiver threads. Lazy native
+UUID tokens avoid wrapper retention and object ABI changes. Detach/undo invalidates
+identity deliberately. Conservative generations detect editor invalidations, not
+exact edit counts; M3 must strengthen transactional preconditions. Runtime sheet
+membership reuses M1 sources but is cached per GUI session, while worker discovery
+stays fresh. Normal Dia shutdown does not finalize Python; an explicit confirmed
+shutdown notification replaces reliance on Python atexit.
 
 ## Supported diagram domains
 
@@ -64,13 +77,16 @@ symbols do not imply engineering simulation/validation.
 ## Generic Dia capabilities
 
 Session create/inspect/close, allowlisted create/update/move/connect, native
-Dia/SVG/PNG export, runtime sheet/type enumeration. No current GUI selection,
-layer commands, generic properties, delete/disconnect/group/layout or native undo
-through MCP. Registry types outside sheets and duplicate palette labels are kept.
+Dia/SVG/PNG export, runtime sheet/type enumeration, and M2 live document/layer/
+selection/object/connection reads with a conservative property subset. No live
+write commands, delete/disconnect/group/layout or native undo through MCP. Registry types outside sheets and duplicate palette labels are kept.
 
 ## Known issues
 
-- Main goal of manipulating an open GUI document is not implemented.
+- Live GUI reads are implemented; native transactional mutations remain M3.
+- Live object membership resolution remains O(N); large native membership tuples
+  are allocated before the traversal limit. Arbitrary native getters cannot be
+  preempted. No constant-time lookup or untrusted-plugin isolation is claimed.
 - PyDia setters/moves do not supply a remote-safe native transaction/history layer.
 - Creation schema is fixed; the generic `properties` parameter is UML-only, and
   connector labels/UML terminal policy leak domain assumptions into core service.
@@ -86,7 +102,7 @@ Full snapshot reconstruction and full inspection response on each edit; no batch
 operations or targeted object reads. Limited structured logging and error detail.
 Public package metadata is 0.2.0 but `__init__.__version__` still says 0.1.0.
 Domain tuple conversions are native-specific; no automatic complete JSON property
-codec exists. Future live wrapper ownership and concurrency require explicit tests.
+codec exists. Live wrappers remain callback-local; concurrent reads and native lifecycle are tested.
 
 ## Tests
 
@@ -121,7 +137,7 @@ unimplemented and untested. Dependencies and project locks unchanged.
 
 ## Upstream compatibility risks
 
-Only three preexisting native divergences: importer failure propagation, CLI export
-failure status and custom-shape connection directions after flips. This increment
-adds no C changes. Future registry/undo/property wrappers are the likely sensitive
-merge areas. Work stays in the fork under its documented contribution policy.
+Three preexisting native divergences: importer failure propagation, CLI export
+failure status and custom-shape connection directions after flips. M2 adds localized lifecycle, UUID, generation, shutdown and PyDia read hooks;
+see upstream differences. Native transactional undo/property wrappers remain the
+likely sensitive future merge areas. Work stays in the fork under its documented contribution policy.
