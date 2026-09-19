@@ -1,0 +1,163 @@
+{
+  "$defs": {
+    "Edge": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "source_port": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "north",
+            "east",
+            "south",
+            "west",
+            "center"
+          ],
+          "title": "Source Port",
+          "type": "string"
+        },
+        "target_port": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "north",
+            "east",
+            "south",
+            "west",
+            "center"
+          ],
+          "title": "Target Port",
+          "type": "string"
+        },
+        "arrow": {
+          "default": true,
+          "title": "Arrow",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "title": "Edge",
+      "type": "object"
+    },
+    "Node": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "default": "Flowchart - Box",
+          "enum": [
+            "Flowchart - Box",
+            "Flowchart - Ellipse",
+            "Flowchart - Diamond"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Y",
+          "type": "number"
+        },
+        "width": {
+          "default": 4.0,
+          "maximum": 100,
+          "minimum": 0.1,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "default": 2.0,
+          "maximum": 100,
+          "minimum": 0.1,
+          "title": "Height",
+          "type": "number"
+        },
+        "text": {
+          "default": "",
+          "maxLength": 2000,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "x",
+        "y"
+      ],
+      "title": "Node",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "api_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Api Version",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "revision": {
+      "default": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/Node"
+      },
+      "maxItems": 100,
+      "title": "Nodes",
+      "type": "array"
+    },
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/Edge"
+      },
+      "maxItems": 200,
+      "title": "Edges",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name"
+  ],
+  "title": "Document",
+  "type": "object"
+}
