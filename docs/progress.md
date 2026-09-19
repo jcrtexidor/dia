@@ -19,11 +19,11 @@ Audit baseline `77fe10bc0`; implementation date 2026-09-19.
 - Unit, native multi-domain/custom-sheet discovery and actual stdio coverage.
   Existing creation contract and native C files preserved.
 
-## In progress
+## M2 final verification
 
-M2 implementation and targeted tests are passing. Final packaged build and a
-repeat of the final revision on real Wayland are pending; M2 is not yet marked
-complete.
+A final review removed a recursive Python closure cycle from membership traversal.
+The iterative traversal now has an immediate-wrapper-release regression test.
+Packaged and Wayland revalidation of this last correction is in progress. Full [evidence and limitations](m2-validation.md).
 
 - Foundation: native ephemeral IDs, detach/destruction/copy invalidation,
   pre-import document identity reset and conservative editor generation.
@@ -43,11 +43,10 @@ endpoint recovery, unsupported getters and interaction during continuous reads.
 
 ## Next
 
-1. Finish M2 packaged/Wayland acceptance and record final evidence.
-2. M3: native atomic commands, rollback and coherent GUI undo/redo.
-3. M4: property introspection and safe generic editing across arbitrary factories.
-4. M5: native open/Save/Save As with dependency reporting and data preservation.
-5. M6: modular semantic helpers; M7: existing layout commands, summaries/resources/
+1. M3: native atomic commands, rollback and coherent GUI undo/redo.
+2. M4: property introspection and safe generic editing across arbitrary factories.
+3. M5: native open/Save/Save As with dependency reporting and data preservation.
+4. M6: modular semantic helpers; M7: existing layout commands, summaries/resources/
    prompts, observability and measured performance work.
 
 Each milestone has acceptance criteria in the architecture document. Do not start
@@ -104,7 +103,23 @@ Public package metadata is 0.2.0 but `__init__.__version__` still says 0.1.0.
 Domain tuple conversions are native-specific; no automatic complete JSON property
 codec exists. Live wrappers remain callback-local; concurrent reads and native lifecycle are tested.
 
-## Tests
+## M2 final validation
+
+- `task mcp:check`: Ruff lint/format pass, 99 passed, 44 native deselected.
+- `task mcp:build`: 9/9 Meson suites, 143 MCP tests, `pip check` passed.
+- `task mcp:test`: 143 passed as UID/GID 1000:1000, network disabled, Xvfb.
+- Installed live tests on real Wayland: 2 passed; repeated with `GDK_SCALE=2`:
+  2 passed. Actual `GdkWaylandDisplay`, concurrent reads plus GTK interaction,
+  native Delete/Undo/Redo, default-document replacement and File/Quit cleanup.
+- 46 implementation/test/build/lock files match the validated image exactly.
+- Final image: `sha256:d6a1e264a09d72285d66030af1912437a26066f519b3c5591fb38da84ee94d37`.
+- No dependency-lock, snapshot schema or GTK version changes.
+
+Nonfatal native text-cursor diagnostics during automated GUI actions are recorded
+for review in the validation report; they are not claimed as a proven upstream
+bug. M3 mutations remain unimplemented.
+
+## Historical M1 tests
 
 Initial `task mcp:check`: 62 passed, 41 native deselected. After discovery:
 78 passed, 42 native deselected; Ruff lint/format checks pass (21 Python files).
@@ -132,8 +147,9 @@ Dia 0.98.0, GTK 3.24.52, GLib 2.88.0, libxml2 2.15.2. Initial integration checks
 use Xvfb. A separate run without Xvfb, with `GDK_BACKEND=wayland` and the host
 compositor socket, observed `GdkWaylandDisplay` inside Dia and passed runtime
 discovery, two-node creation, connection and SVG export (1450 bytes). This verifies
-the native CLI worker on Wayland; interactive live selection/history remains
-unimplemented and untested. Dependencies and project locks unchanged.
+the M1 CLI worker on Wayland. M2 now additionally verifies the running GUI,
+selection, native history actions and shutdown on this real compositor as recorded
+above. Dependencies and project locks remain unchanged.
 
 ## Upstream compatibility risks
 

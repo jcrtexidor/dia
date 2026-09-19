@@ -209,3 +209,33 @@ def test_registry_marks_unsupported_values_without_reading_them():
 def test_invalid_limits(limits):
     with pytest.raises(ValueError):
         Limits(**limits)
+
+
+def test_membership_traversal_releases_wrappers_without_cyclic_gc():
+    import gc
+    import weakref
+
+    refs = []
+
+    class Object:
+        live_id = "object"
+        group_members = ()
+
+    class Layer:
+        @property
+        def objects(self):
+            wrapper = Object()
+            refs.append(weakref.ref(wrapper))
+            return [wrapper]
+
+    registry = Registry(None)
+    was_enabled = gc.isenabled()
+    gc.disable()
+    try:
+        objects = registry._objects(SimpleNamespace(layers=[Layer()]), "document")
+        assert refs[0]() is not None
+        del objects
+        assert refs[0]() is None, "No wrapper may wait for cyclic GC after a read"
+    finally:
+        if was_enabled:
+            gc.enable()

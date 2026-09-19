@@ -80,21 +80,19 @@ class Registry:
     def _objects(self, doc, doc_id):
         result = {}
 
-        # Only local wrappers, only during this callback. Bounds on total traversal
-        # and depth protect the GUI from unbounded or malformed group graphs.
-        def visit(obj, layer, group, depth):
-            if depth > 32 or len(result) >= self.limits.objects:
-                raise DiaError("LIVE_LIMIT_EXCEEDED", "Document exceeds live traversal budget")
-            oid = self._object_id(doc_id, obj)
-            if oid in result:
-                return
-            result[oid] = (obj, layer, group)
-            for child in obj.group_members:
-                visit(child, layer, oid, depth + 1)
-
+        # Iterative traversal is intentional: a recursive nested function forms
+        # a closure cycle, retaining its result (and wrappers) until cyclic GC.
         for layer in doc.layers:
-            for obj in layer.objects:
-                visit(obj, layer, None, 0)
+            stack = [(obj, None, 0) for obj in reversed(layer.objects)]
+            while stack:
+                obj, group, depth = stack.pop()
+                oid = self._object_id(doc_id, obj)
+                if oid in result:
+                    continue
+                if depth > 32 or len(result) >= self.limits.objects:
+                    raise DiaError("LIVE_LIMIT_EXCEEDED", "Document exceeds live traversal budget")
+                result[oid] = (obj, layer, group)
+                stack.extend((child, oid, depth + 1) for child in reversed(obj.group_members))
         return result
 
     def _sheet_entries(self, type_name):
@@ -126,6 +124,10 @@ class Registry:
         if detail:
             result.update(
                 sheet_entries=self._sheet_entries(obj.type.name),
+                child_count=len(obj.children),
+                group_member_count=len(obj.group_members),
+                children_truncated=len(obj.children) > self.limits.structure,
+                group_members_truncated=len(obj.group_members) > self.limits.structure,
                 children=[
                     self._object_id(doc_id, o) for o in obj.children[: self.limits.structure]
                 ],
