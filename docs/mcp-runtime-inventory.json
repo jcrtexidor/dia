@@ -1,0 +1,7393 @@
+{
+  "api_version": "1",
+  "sheets": [
+    {
+      "name": "AADL",
+      "description": "AADL Shapes",
+      "user": false,
+      "objects": [
+        {
+          "type": "AADL - Process",
+          "description": "Process"
+        },
+        {
+          "type": "AADL - Thread",
+          "description": "Thread"
+        },
+        {
+          "type": "AADL - Data",
+          "description": "Data"
+        },
+        {
+          "type": "AADL - Processor",
+          "description": "Processor"
+        },
+        {
+          "type": "AADL - Memory",
+          "description": "Memory"
+        },
+        {
+          "type": "AADL - Bus",
+          "description": "Bus"
+        },
+        {
+          "type": "AADL - System",
+          "description": "System"
+        },
+        {
+          "type": "AADL - Subprogram",
+          "description": "Subprogram"
+        },
+        {
+          "type": "AADL - Thread Group",
+          "description": "Thread Group"
+        },
+        {
+          "type": "AADL - Device",
+          "description": "Device"
+        },
+        {
+          "type": "AADL - Package",
+          "description": "Package"
+        }
+      ]
+    },
+    {
+      "name": "Assorted",
+      "description": "An Assorted Collection of Polygons, Beziergons and other Miscellaneous Geometric Shapes",
+      "user": false,
+      "objects": [
+        {
+          "type": "Geometric - Right Angle Triangle",
+          "description": "Right angle triangle"
+        },
+        {
+          "type": "Geometric - Isosceles Triangle",
+          "description": "Isosceles triangle"
+        },
+        {
+          "type": "Geometric - Perfect Square",
+          "description": "Perfect square, height equals width"
+        },
+        {
+          "type": "Geometric - Perfect Circle",
+          "description": "Perfect circle"
+        },
+        {
+          "type": "Geometric - Quarter Circle",
+          "description": "Quarter circle"
+        },
+        {
+          "type": "Geometric - Diamond",
+          "description": "Diamond"
+        },
+        {
+          "type": "Geometric - Pentagon",
+          "description": "Pentagon. Five-point shape"
+        },
+        {
+          "type": "Geometric - Hexagon",
+          "description": "Hexagon. Six-point shape"
+        },
+        {
+          "type": "Geometric - Heptagon",
+          "description": "Heptagon. Seven-point shape"
+        },
+        {
+          "type": "Geometric - Octagon",
+          "description": "Octagon. Eight-point shape"
+        },
+        {
+          "type": "Geometric - Horizontal Parallelogram",
+          "description": "Horizontal parallelogram"
+        },
+        {
+          "type": "Geometric - Vertical Parallelogram",
+          "description": "Vertical parallelogram"
+        },
+        {
+          "type": "Geometric - Trapezoid",
+          "description": "Trapezoid"
+        },
+        {
+          "type": "Geometric - Four Point Star",
+          "description": "Four-point star"
+        },
+        {
+          "type": "Geometric - Curved Four Point Star",
+          "description": "Curved four-point star"
+        },
+        {
+          "type": "Geometric - Five Point Star",
+          "description": "Five-point star"
+        },
+        {
+          "type": "Geometric - Six Point Star",
+          "description": "Six-point star"
+        },
+        {
+          "type": "Geometric - Seven Point Star",
+          "description": "Seven-point star"
+        },
+        {
+          "type": "Geometric - Eight Point Star",
+          "description": "Eight-point star"
+        },
+        {
+          "type": "Geometric - Sharp Eight Point Star",
+          "description": "Sharp eight-point star"
+        },
+        {
+          "type": "Geometric - Curved Eight Point Star",
+          "description": "Curved eight-point star"
+        },
+        {
+          "type": "Geometric - Swiss Cross",
+          "description": "Swiss cross"
+        },
+        {
+          "type": "Geometric - Maltese Cross",
+          "description": "Maltese cross"
+        },
+        {
+          "type": "Geometric - Down Arrow",
+          "description": "Down arrow"
+        },
+        {
+          "type": "Geometric - Up Arrow",
+          "description": "Up arrow"
+        },
+        {
+          "type": "Geometric - Left Arrow",
+          "description": "Left arrow"
+        },
+        {
+          "type": "Geometric - Right Arrow",
+          "description": "Right arrow"
+        },
+        {
+          "type": "Geometric - Notched Left Arrow",
+          "description": "Notched left arrow"
+        },
+        {
+          "type": "Geometric - Notched Right Arrow",
+          "description": "Notched right arrow"
+        },
+        {
+          "type": "Assorted - Left-Up Arrow",
+          "description": "Left-up arrow"
+        },
+        {
+          "type": "Assorted - Turn-Up Arrow",
+          "description": "Turn-up arrow"
+        },
+        {
+          "type": "Geometric - Left-Right Arrow",
+          "description": "Left-right arrow"
+        },
+        {
+          "type": "Geometric - Up-Down Arrow",
+          "description": "Up-down arrow"
+        },
+        {
+          "type": "Geometric - Quad Arrow",
+          "description": "Quad arrow"
+        },
+        {
+          "type": "Geometric - Left-Right-Up Arrow",
+          "description": "Left-right-up arrow"
+        },
+        {
+          "type": "Geometric - Up-Down-Left Arrow",
+          "description": "Up-down-left arrow"
+        },
+        {
+          "type": "Block Arrow - Pentagon",
+          "description": "Pentagon block arrow"
+        },
+        {
+          "type": "Block Arrow - Chevron",
+          "description": "Chevron"
+        },
+        {
+          "type": "Assorted - Heart",
+          "description": "Heart"
+        },
+        {
+          "type": "Assorted - Sun",
+          "description": "Sun"
+        },
+        {
+          "type": "Assorted - Quarter Moon",
+          "description": "Quarter moon"
+        }
+      ]
+    },
+    {
+      "name": "BPMN",
+      "description": "Business Process Modeling Notation",
+      "user": false,
+      "objects": [
+        {
+          "type": "BPMN - Start-Event",
+          "description": "Start Event"
+        },
+        {
+          "type": "BPMN - Start-Event-Message",
+          "description": "Start Event — Message"
+        },
+        {
+          "type": "BPMN - Start-Event-Timer",
+          "description": "Start Event — Timer"
+        },
+        {
+          "type": "BPMN - Start-Event-Rule",
+          "description": "Start Event — Rule"
+        },
+        {
+          "type": "BPMN - Start-Event-Link",
+          "description": "Start Event — Link"
+        },
+        {
+          "type": "BPMN - Start-Event-Multiple",
+          "description": "Start Event — Multiple"
+        },
+        {
+          "type": "BPMN - Intermediate-Event",
+          "description": "Intermediate Event"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Message",
+          "description": "Intermediate Event — Message"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Timer",
+          "description": "Intermediate Event — Timer"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Error",
+          "description": "Intermediate Event — Error"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Cancel",
+          "description": "Intermediate Event — Cancel"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Compensation",
+          "description": "Intermediate Event — Compensation"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Rule",
+          "description": "Intermediate Event — Rule"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Link",
+          "description": "Intermediate Event — Link"
+        },
+        {
+          "type": "BPMN - Intermediate-Event-Multiple",
+          "description": "Intermediate Event — Multiple"
+        },
+        {
+          "type": "BPMN - End-Event",
+          "description": "End Event"
+        },
+        {
+          "type": "BPMN - End-Event-Message",
+          "description": "End Event — Message"
+        },
+        {
+          "type": "BPMN - End-Event-Error",
+          "description": "End Event — Error"
+        },
+        {
+          "type": "BPMN - End-Event-Cancel",
+          "description": "End Event — Cancel"
+        },
+        {
+          "type": "BPMN - End-Event-Compensation",
+          "description": "End Event — Compensation"
+        },
+        {
+          "type": "BPMN - End-Event-Link",
+          "description": "End Event — Link"
+        },
+        {
+          "type": "BPMN - End-Event-Multiple",
+          "description": "End Event — Multiple"
+        },
+        {
+          "type": "BPMN - End-Event-Terminate",
+          "description": "End Event — Terminate"
+        },
+        {
+          "type": "BPMN - Gateway",
+          "description": "Gateway"
+        },
+        {
+          "type": "BPMN - Gateway-Exclusive-XOR-Data-Based",
+          "description": "Exclusive (XOR) Data Based"
+        },
+        {
+          "type": "BPMN - Gateway-Exclusive-XOR-Event-Based",
+          "description": "Exclusive (XOR) Event Based"
+        },
+        {
+          "type": "BPMN - Gateway-Inclusive-OR",
+          "description": "Inclusive (OR)"
+        },
+        {
+          "type": "BPMN - Gateway-Complex",
+          "description": "Complex"
+        },
+        {
+          "type": "BPMN - Gateway-Parallel-AND",
+          "description": "Parallel (AND)"
+        },
+        {
+          "type": "BPMN - Task",
+          "description": "Task"
+        },
+        {
+          "type": "BPMN - Activity-Looping",
+          "description": "Activity Looping"
+        },
+        {
+          "type": "BPMN - Multiple-Instance-Task",
+          "description": "Multiple Instance Task"
+        },
+        {
+          "type": "BPMN - Compensation",
+          "description": "Compensation Task"
+        },
+        {
+          "type": "BPMN - Collapsed-Sub-Process",
+          "description": "Collapsed Sub-Process"
+        },
+        {
+          "type": "BPMN - Looping-Collapsed-Sub-Process",
+          "description": "Looping Collapsed Sub-Process"
+        },
+        {
+          "type": "BPMN - Multiple-Instance-Collapsed-Sub-Process",
+          "description": "Multiple Instance Collapsed Sub-Process"
+        },
+        {
+          "type": "BPMN - Ad-Hoc-Collapsed-Sub-Process",
+          "description": "Ad-Hoc Collapsed Sub-Process"
+        },
+        {
+          "type": "BPMN - Compensation-Collapsed-Sub-Process",
+          "description": "Compensation Collapsed Sub-Process"
+        },
+        {
+          "type": "BPMN - Group",
+          "description": "Group"
+        },
+        {
+          "type": "BPMN - Transaction",
+          "description": "Transaction"
+        },
+        {
+          "type": "BPMN - Data-Object",
+          "description": "Data Object"
+        },
+        {
+          "type": "BPMN - Text-Annotation",
+          "description": "Text Annotation"
+        }
+      ]
+    },
+    {
+      "name": "ChemEng",
+      "description": "Collection for chemical engineering",
+      "user": false,
+      "objects": [
+        {
+          "type": "chemeng - fan",
+          "description": "Fan or Stirrer"
+        },
+        {
+          "type": "chemeng - spray",
+          "description": "Spraying Device"
+        },
+        {
+          "type": "chemeng - pneum",
+          "description": "Pneumatic Line"
+        },
+        {
+          "type": "chemeng - pneumv",
+          "description": "Pneumatic Line, vertical"
+        },
+        {
+          "type": "chemeng - measure",
+          "description": "Measurement"
+        },
+        {
+          "type": "chemeng - hx",
+          "description": "Simple Heat Exchanger"
+        },
+        {
+          "type": "chemeng - hxv",
+          "description": "Simple Heat Exchanger, vertical"
+        },
+        {
+          "type": "chemeng - wcool",
+          "description": "Water Cooler"
+        },
+        {
+          "type": "chemeng - wcoolv",
+          "description": "Water Cooler, vertical"
+        },
+        {
+          "type": "chemeng - SaT-fixedtube",
+          "description": "Fixed-Sheet Exchanger"
+        },
+        {
+          "type": "chemeng - SaT-floatinghead",
+          "description": "Floating-Head or U-Tube Exchanger"
+        },
+        {
+          "type": "chemeng - kettle",
+          "description": "Kettle Reboiler"
+        },
+        {
+          "type": "chemeng - aircooler",
+          "description": "Air Cooler"
+        },
+        {
+          "type": "chemeng - airforced",
+          "description": "Forced-Flow Air Cooler"
+        },
+        {
+          "type": "chemeng - airinduced",
+          "description": "Induced-Flow Air Cooler"
+        },
+        {
+          "type": "chemeng - plate",
+          "description": "Plate Exchanger"
+        },
+        {
+          "type": "chemeng - doublepipe",
+          "description": "Double-Pipe Exchanger"
+        },
+        {
+          "type": "chemeng - coil",
+          "description": "Heating/Cooling Coil"
+        },
+        {
+          "type": "chemeng - coilv",
+          "description": "Heating/Cooling Coil, vertical"
+        },
+        {
+          "type": "chemeng - furnace",
+          "description": "Simple Furnace"
+        },
+        {
+          "type": "chemeng - vessel",
+          "description": "Simple Vessel"
+        },
+        {
+          "type": "chemeng - knockout",
+          "description": "Knock-out Drum (with demister pad)"
+        },
+        {
+          "type": "chemeng - traycol",
+          "description": "Tray Column, simple"
+        },
+        {
+          "type": "chemeng - bigtraycol",
+          "description": "Tray Column, detailed"
+        },
+        {
+          "type": "chemeng - fluidcont",
+          "description": "Fluid Contacting Vessel, simple"
+        },
+        {
+          "type": "chemeng - reactor",
+          "description": "Reactor or Absorption Vessel, simple"
+        },
+        {
+          "type": "chemengtmp - autoclave",
+          "description": "Autoclave"
+        },
+        {
+          "type": "chemengtmp - tank",
+          "description": "Open Tank"
+        },
+        {
+          "type": "chemengtmp - settling",
+          "description": "Clarifier or Settling Tank"
+        },
+        {
+          "type": "chemengtmp - sealedtank",
+          "description": "Sealed Tank"
+        },
+        {
+          "type": "chemengtmp - coveredtank",
+          "description": "Covered tank"
+        },
+        {
+          "type": "chemengtmp - fixedroof",
+          "description": "Tank with Fixed Roof"
+        },
+        {
+          "type": "chemengtmp - floatingroof",
+          "description": "Tank with Floating Roof"
+        },
+        {
+          "type": "chemengtmp - storagesphere",
+          "description": "Storage Sphere"
+        },
+        {
+          "type": "chemengtmp - gasholder",
+          "description": "Gas Holder, basic"
+        },
+        {
+          "type": "chemeng - pump",
+          "description": "Centrifugal Pump or Fan"
+        },
+        {
+          "type": "chemeng - displa",
+          "description": "Positive Displacement Rotary Pump or Compressor"
+        },
+        {
+          "type": "chemeng - recipr",
+          "description": "Reciprocating Compressor or Pump"
+        },
+        {
+          "type": "chemeng - flowfan",
+          "description": "Axial Flow Fan"
+        },
+        {
+          "type": "chemeng - compr",
+          "description": "Compressor or Turbine"
+        },
+        {
+          "type": "chemeng - ejector",
+          "description": "Ejector or Injector"
+        },
+        {
+          "type": "chemeng - ACgen",
+          "description": "AC Generator"
+        },
+        {
+          "type": "chemeng - val",
+          "description": "Valve"
+        },
+        {
+          "type": "chemeng - valv",
+          "description": "Valve, vertical"
+        },
+        {
+          "type": "chemeng - regval",
+          "description": "Regulable Valve"
+        },
+        {
+          "type": "chemeng - regvalv",
+          "description": "Regulable Valve, vertical"
+        },
+        {
+          "type": "chemengtmp - filter",
+          "description": "Basic Filter"
+        },
+        {
+          "type": "chemengtmp - mixer",
+          "description": "Mixer"
+        },
+        {
+          "type": "chemengtmp - cyclone",
+          "description": "Cyclone and hydrocyclone"
+        },
+        {
+          "type": "chemengtmp - spraydrier",
+          "description": "Spray Drier"
+        },
+        {
+          "type": "chemengtmp - centrifuge",
+          "description": "Centrifuge"
+        },
+        {
+          "type": "chemeng - prv",
+          "description": "Pressure Relief Valve"
+        }
+      ]
+    },
+    {
+      "name": "Chronogram",
+      "description": "Objects to design chronogram charts",
+      "user": false,
+      "objects": [
+        {
+          "type": "chronogram - reference",
+          "description": "Time scale"
+        },
+        {
+          "type": "chronogram - line",
+          "description": "Data line"
+        }
+      ]
+    },
+    {
+      "name": "Circuit",
+      "description": "Components for circuit diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "Circuit - Vertical Resistor",
+          "description": "Vertically aligned resistor"
+        },
+        {
+          "type": "Circuit - Horizontal Inductor",
+          "description": "Horizontally aligned inductor"
+        },
+        {
+          "type": "Circuit - Vertical Inductor",
+          "description": "Vertically aligned inductor"
+        },
+        {
+          "type": "Circuit - Horizontal Resistor",
+          "description": "Horizontally aligned resistor"
+        },
+        {
+          "type": "Circuit - Vertical Resistor (European)",
+          "description": "Vertically aligned resistor (European)"
+        },
+        {
+          "type": "Circuit - Horizontal Inductor (European)",
+          "description": "Horizontally aligned inductor (European)"
+        },
+        {
+          "type": "Circuit - Vertical Inductor (European)",
+          "description": "Vertically aligned inductor (European)"
+        },
+        {
+          "type": "Circuit - Horizontal Resistor (European)",
+          "description": "Horizontally aligned resistor (European)"
+        },
+        {
+          "type": "Circuit - Horizontal Capacitor",
+          "description": "Horizontally aligned capacitor"
+        },
+        {
+          "type": "Circuit - Vertical Capacitor",
+          "description": "Vertically aligned capacitor"
+        },
+        {
+          "type": "Circuit - NPN Transistor",
+          "description": "NPN bipolar transistor"
+        },
+        {
+          "type": "Circuit - PNP Transistor",
+          "description": "PNP bipolar transistor"
+        },
+        {
+          "type": "Circuit - Horizontal Diode",
+          "description": "Horizontally aligned diode"
+        },
+        {
+          "type": "Circuit - Vertical Diode",
+          "description": "Vertically aligned diode"
+        },
+        {
+          "type": "Circuit - Horizontal Zener Diode",
+          "description": "Horizontally aligned zener diode"
+        },
+        {
+          "type": "Circuit - Vertical Zener Diode",
+          "description": "Vertically aligned zener diode"
+        },
+        {
+          "type": "Circuit - Ground",
+          "description": "Ground point"
+        },
+        {
+          "type": "Circuit - Op Amp",
+          "description": "Operational amplifier"
+        },
+        {
+          "type": "Circuit - Horizontal Fuse (European)",
+          "description": "Horizontally aligned fuse"
+        },
+        {
+          "type": "Circuit - Vertical Fuse (European)",
+          "description": "Vertically aligned fuse"
+        },
+        {
+          "type": "Circuit - Horizontal Powersource (European)",
+          "description": "Horizontally aligned power source"
+        },
+        {
+          "type": "Circuit - Vertical Powersource (European)",
+          "description": "Vertically aligned power source"
+        },
+        {
+          "type": "Circuit - Lamp (European)",
+          "description": "Lamp"
+        },
+        {
+          "type": "Circuit - Speaker (European)",
+          "description": "Speaker"
+        },
+        {
+          "type": "Circuit - Microphone (European)",
+          "description": "Microphone"
+        },
+        {
+          "type": "Circuit - Horizontal Led (European)",
+          "description": "Horizontally aligned LED"
+        },
+        {
+          "type": "Circuit - Vertical Led (European)",
+          "description": "Vertically aligned LED"
+        },
+        {
+          "type": "Circuit - NMOS Transistor (European)",
+          "description": "NMOS transistor"
+        },
+        {
+          "type": "Circuit - PMOS Transistor (European)",
+          "description": "PMOS transistor"
+        },
+        {
+          "type": "Circuit - Horizontal Jumper",
+          "description": "Horizontal jumper"
+        },
+        {
+          "type": "Circuit - Horizontal Xtal",
+          "description": "Horizontal xtal"
+        },
+        {
+          "type": "Circuit - Vertical Xtal",
+          "description": "Vertical xtal"
+        }
+      ]
+    },
+    {
+      "name": "Cisco — Computer",
+      "description": "Computer shapes by Cisco",
+      "user": false,
+      "objects": [
+        {
+          "type": "Cisco - PC",
+          "description": "PC"
+        },
+        {
+          "type": "Cisco - Macintosh",
+          "description": "Macintosh"
+        },
+        {
+          "type": "Cisco - Terminal",
+          "description": "Terminal"
+        },
+        {
+          "type": "Cisco - SUN workstation",
+          "description": "SUN workstation"
+        },
+        {
+          "type": "Cisco - CiscoWorks workstation",
+          "description": "CiscoWorks workstation"
+        },
+        {
+          "type": "Cisco - PC Router Card",
+          "description": "PC Router Card"
+        },
+        {
+          "type": "Cisco - PC Software",
+          "description": "PC Software"
+        },
+        {
+          "type": "Cisco - PC with Router-Based Software",
+          "description": "PC with Router-Based Software"
+        },
+        {
+          "type": "Cisco - Workgroup director",
+          "description": "Workgroup director"
+        },
+        {
+          "type": "Cisco - CiscoSecurity",
+          "description": "CiscoSecurity"
+        },
+        {
+          "type": "Cisco - Cisco CA",
+          "description": "Cisco CA"
+        },
+        {
+          "type": "Cisco - WWW server",
+          "description": "WWW server"
+        },
+        {
+          "type": "Cisco - Web browser",
+          "description": "Web browser"
+        },
+        {
+          "type": "Cisco - File Server",
+          "description": "File Server"
+        },
+        {
+          "type": "Cisco - Software based server",
+          "description": "Software-Based Router on File Server"
+        },
+        {
+          "type": "Cisco - Server with PC Router",
+          "description": "Server with PC Router"
+        },
+        {
+          "type": "Cisco - IBM Tower",
+          "description": "IBM Tower"
+        },
+        {
+          "type": "Cisco - IBM Mini (AS400)",
+          "description": "IBM Mini (AS400)"
+        },
+        {
+          "type": "Cisco - Front End Processor",
+          "description": "Front End Processor"
+        },
+        {
+          "type": "Cisco - IBM mainframe",
+          "description": "IBM mainframe"
+        },
+        {
+          "type": "Cisco - IBM mainframe with FEP",
+          "description": "IBM mainframe with FEP"
+        },
+        {
+          "type": "Cisco - HP Mini",
+          "description": "HP Mini"
+        },
+        {
+          "type": "Cisco - Supercomputer",
+          "description": "Supercomputer"
+        },
+        {
+          "type": "Cisco - Web cluster",
+          "description": "Web cluster"
+        },
+        {
+          "type": "Cisco - Mini VAX",
+          "description": "Mini VAX"
+        },
+        {
+          "type": "Cisco - PC Card",
+          "description": "PC Card"
+        },
+        {
+          "type": "Cisco - Scanner",
+          "description": "Scanner"
+        },
+        {
+          "type": "Cisco - Tablet",
+          "description": "Tablet"
+        },
+        {
+          "type": "Cisco - EtherClient",
+          "description": "EtherClient"
+        },
+        {
+          "type": "Cisco - Handheld",
+          "description": "Handheld"
+        },
+        {
+          "type": "Cisco - Wireless",
+          "description": "Wireless"
+        },
+        {
+          "type": "Cisco - PDA",
+          "description": "PDA"
+        },
+        {
+          "type": "Cisco - Newton",
+          "description": "Newton"
+        },
+        {
+          "type": "Cisco - Laptop",
+          "description": "Laptop"
+        },
+        {
+          "type": "Cisco - Printer",
+          "description": "Printer"
+        },
+        {
+          "type": "Cisco - Monitor",
+          "description": "Monitor"
+        },
+        {
+          "type": "Cisco - PC Video",
+          "description": "PC Video"
+        },
+        {
+          "type": "Cisco - Modem",
+          "description": "Modem"
+        },
+        {
+          "type": "Cisco - BBS",
+          "description": "BBS"
+        },
+        {
+          "type": "Cisco - MicroWebserver",
+          "description": "MicroWebserver"
+        },
+        {
+          "type": "Cisco - Relational Database",
+          "description": "Relational Database"
+        },
+        {
+          "type": "Cisco - Diskette",
+          "description": "Diskette"
+        },
+        {
+          "type": "Cisco - Host",
+          "description": "Host"
+        },
+        {
+          "type": "Cisco - Tape array",
+          "description": "Tape array"
+        },
+        {
+          "type": "Cisco - Disk subsystem",
+          "description": "Disk subsystem"
+        },
+        {
+          "type": "Cisco - JBOD",
+          "description": "JBOD"
+        },
+        {
+          "type": "Cisco - Storage array",
+          "description": "Storage array"
+        },
+        {
+          "type": "Cisco - FC Storage",
+          "description": "FC Storage"
+        },
+        {
+          "type": "Cisco - PC Adapter Card",
+          "description": "PC Adapter Card"
+        }
+      ]
+    },
+    {
+      "name": "Cisco — Miscellaneous",
+      "description": "Miscellaneous shapes by Cisco",
+      "user": false,
+      "objects": [
+        {
+          "type": "Cisco - Government Building",
+          "description": "Government Building"
+        },
+        {
+          "type": "Cisco - University",
+          "description": "University"
+        },
+        {
+          "type": "Cisco - Small Business",
+          "description": "Small Business"
+        },
+        {
+          "type": "Cisco - Home office",
+          "description": "Home office"
+        },
+        {
+          "type": "Cisco - Branch office",
+          "description": "Branch office"
+        },
+        {
+          "type": "Cisco - Branch office subdued",
+          "description": "Branch office subdued"
+        },
+        {
+          "type": "Cisco - Branch office blue",
+          "description": "Branch office blue"
+        },
+        {
+          "type": "Cisco - Generic Building",
+          "description": "Generic Building"
+        },
+        {
+          "type": "Cisco - Generic Building subdued",
+          "description": "Generic Building subdued"
+        },
+        {
+          "type": "Cisco - Generic Building blue",
+          "description": "Generic Building blue"
+        },
+        {
+          "type": "Cisco - Medium Building",
+          "description": "Medium Building"
+        },
+        {
+          "type": "Cisco - Medium Building subdued",
+          "description": "Medium Building subdued"
+        },
+        {
+          "type": "Cisco - Medium Building blue",
+          "description": "Medium Building blue"
+        },
+        {
+          "type": "Cisco - House",
+          "description": "House"
+        },
+        {
+          "type": "Cisco - House blue",
+          "description": "House blue"
+        },
+        {
+          "type": "Cisco - Telecommuter house",
+          "description": "Telecommuter house"
+        },
+        {
+          "type": "Cisco - Telecommuter house subdued",
+          "description": "Telecommuter house subdued"
+        },
+        {
+          "type": "Cisco - MDU",
+          "description": "MDU"
+        },
+        {
+          "type": "Cisco - Man",
+          "description": "Man"
+        },
+        {
+          "type": "Cisco - Man red",
+          "description": "Man red"
+        },
+        {
+          "type": "Cisco - Man gold",
+          "description": "Man gold"
+        },
+        {
+          "type": "Cisco - Man blue",
+          "description": "Man blue"
+        },
+        {
+          "type": "Cisco - Standing Man",
+          "description": "Standing Man"
+        },
+        {
+          "type": "Cisco - Standing woman",
+          "description": "Standing woman"
+        },
+        {
+          "type": "Cisco - Woman",
+          "description": "Woman"
+        },
+        {
+          "type": "Cisco - Woman red",
+          "description": "Woman red"
+        },
+        {
+          "type": "Cisco - Woman gold",
+          "description": "Woman gold"
+        },
+        {
+          "type": "Cisco - Woman blue",
+          "description": "Woman blue"
+        },
+        {
+          "type": "Cisco - Running man",
+          "description": "Running man"
+        },
+        {
+          "type": "Cisco - Running man subdued",
+          "description": "Running man subdued"
+        },
+        {
+          "type": "Cisco - Telecommuter",
+          "description": "Telecommuter"
+        },
+        {
+          "type": "Cisco - Running woman",
+          "description": "Running woman"
+        },
+        {
+          "type": "Cisco - CiscoWorks Man",
+          "description": "CiscoWorks Man"
+        },
+        {
+          "type": "Cisco - PC Man",
+          "description": "PC Man"
+        },
+        {
+          "type": "Cisco - Sitting woman",
+          "description": "Sitting Woman"
+        },
+        {
+          "type": "Cisco - Mac Woman",
+          "description": "Mac Woman"
+        },
+        {
+          "type": "Cisco - Androgynous Person",
+          "description": "Androgynous Person"
+        },
+        {
+          "type": "Cisco - Lock",
+          "description": "Lock"
+        },
+        {
+          "type": "Cisco - Key",
+          "description": "Key"
+        },
+        {
+          "type": "Cisco - Lock and Key",
+          "description": "Lock and Key"
+        },
+        {
+          "type": "Cisco - Satellite dish",
+          "description": "Satellite dish"
+        },
+        {
+          "type": "Cisco - Satellite",
+          "description": "Satellite"
+        },
+        {
+          "type": "Cisco - Antenna",
+          "description": "Antenna"
+        },
+        {
+          "type": "Cisco - File cabinet",
+          "description": "File cabinet"
+        },
+        {
+          "type": "Cisco - Car",
+          "description": "Car"
+        },
+        {
+          "type": "Cisco - Truck",
+          "description": "Truck"
+        },
+        {
+          "type": "Cisco - Video camera",
+          "description": "Video Camera"
+        },
+        {
+          "type": "Cisco - Microphone",
+          "description": "Microphone"
+        },
+        {
+          "type": "Cisco - Headphones",
+          "description": "Headphones"
+        },
+        {
+          "type": "Cisco - Speaker",
+          "description": "Speaker"
+        }
+      ]
+    },
+    {
+      "name": "Cisco — Network",
+      "description": "Network shapes by Cisco",
+      "user": false,
+      "objects": [
+        {
+          "type": "Cisco - Network Management",
+          "description": "Network Management"
+        },
+        {
+          "type": "Cisco - Detector",
+          "description": "Detector"
+        },
+        {
+          "type": "Cisco - Protocol Translator",
+          "description": "Protocol Translator"
+        },
+        {
+          "type": "Cisco - IP",
+          "description": "IP"
+        },
+        {
+          "type": "Cisco - IP Old-style",
+          "description": "IP Old-style"
+        },
+        {
+          "type": "Cisco - NAT",
+          "description": "NAT"
+        },
+        {
+          "type": "Cisco - VIP",
+          "description": "VIP"
+        },
+        {
+          "type": "Cisco - Terminal Server",
+          "description": "Terminal Server"
+        },
+        {
+          "type": "Cisco - Access server",
+          "description": "Access Server"
+        },
+        {
+          "type": "Cisco - System controller",
+          "description": "System controller"
+        },
+        {
+          "type": "Cisco - Directory Server",
+          "description": "Directory Server"
+        },
+        {
+          "type": "Cisco - Firewall",
+          "description": "Firewall"
+        },
+        {
+          "type": "Cisco - Firewall subdued",
+          "description": "Firewall subdued"
+        },
+        {
+          "type": "Cisco - Firewall horizontal",
+          "description": "Firewall horizontal"
+        },
+        {
+          "type": "Cisco - Firewall Service Module",
+          "description": "Firewall Service Module"
+        },
+        {
+          "type": "Cisco - IOS Firewall",
+          "description": "IOS Firewall"
+        },
+        {
+          "type": "Cisco - PIX Firewall",
+          "description": "PIX Firewall"
+        },
+        {
+          "type": "Cisco - Centri Firewall",
+          "description": "Centri Firewall"
+        },
+        {
+          "type": "Cisco - Guard",
+          "description": "Guard"
+        },
+        {
+          "type": "Cisco - Security appliance",
+          "description": "Security appliance"
+        },
+        {
+          "type": "Cisco - VPN concentrator",
+          "description": "VPN Concentrator"
+        },
+        {
+          "type": "Cisco - VPN Gateway",
+          "description": "VPN Gateway"
+        },
+        {
+          "type": "Cisco - LAN to LAN",
+          "description": "LAN to LAN"
+        },
+        {
+          "type": "Cisco - SSL Terminator",
+          "description": "SSL Terminator"
+        },
+        {
+          "type": "Cisco - IP DSL",
+          "description": "IP DSL Switch"
+        },
+        {
+          "type": "Cisco - DSLAM",
+          "description": "DSLAM"
+        },
+        {
+          "type": "Cisco - Cable Modem",
+          "description": "Cable Modem"
+        },
+        {
+          "type": "Cisco - Wireless Connectivity",
+          "description": "Wireless Connectivity"
+        },
+        {
+          "type": "Cisco - Wireless Transport",
+          "description": "Wireless Transport"
+        },
+        {
+          "type": "Cisco - AccessPoint",
+          "description": "AccessPoint"
+        },
+        {
+          "type": "Cisco - Wireless Bridge",
+          "description": "Wireless Bridge"
+        },
+        {
+          "type": "Cisco - Dual Mode AccessPoint",
+          "description": "Dual Mode AccessPoint"
+        },
+        {
+          "type": "Cisco - Wi-Fi Tag",
+          "description": "Wi-Fi Tag"
+        },
+        {
+          "type": "Cisco - Wireless Location Appliance",
+          "description": "Wireless Location Appliance"
+        },
+        {
+          "type": "Cisco - Location server",
+          "description": "Location server"
+        },
+        {
+          "type": "Cisco - Lightweight AP",
+          "description": "Lightweight AP"
+        },
+        {
+          "type": "Cisco - WLAN controller",
+          "description": "WLAN controller"
+        },
+        {
+          "type": "Cisco - BBFW",
+          "description": "BBFW"
+        },
+        {
+          "type": "Cisco - BBFW media",
+          "description": "BBFW media"
+        },
+        {
+          "type": "Cisco - Channelized Pipe",
+          "description": "Channelized Pipe"
+        },
+        {
+          "type": "Cisco - Concatenated Payload",
+          "description": "Concatenated Payload"
+        },
+        {
+          "type": "Cisco - Optical Cross-Connect",
+          "description": "Optical Cross-Connect"
+        },
+        {
+          "type": "Cisco - Optical Transport",
+          "description": "Optical Transport"
+        },
+        {
+          "type": "Cisco - Optical Fiber",
+          "description": "Optical Fiber"
+        },
+        {
+          "type": "Cisco - Optical Amplifier",
+          "description": "Optical Amplifier"
+        },
+        {
+          "type": "Cisco - Digital Cross-Connect",
+          "description": "Digital Cross-Connect"
+        },
+        {
+          "type": "Cisco - IPTC",
+          "description": "IP Transport Concentrator"
+        },
+        {
+          "type": "Cisco - DWDM Filter",
+          "description": "DWDM Filter"
+        },
+        {
+          "type": "Cisco - WDM",
+          "description": "WDM"
+        },
+        {
+          "type": "Cisco - 15200",
+          "description": "15200"
+        },
+        {
+          "type": "Cisco - 15800",
+          "description": "15800"
+        },
+        {
+          "type": "Cisco - ONS15104",
+          "description": "ONS15104"
+        },
+        {
+          "type": "Cisco - 10700",
+          "description": "10700"
+        },
+        {
+          "type": "Cisco - Metro 1500",
+          "description": "Metro 1500"
+        },
+        {
+          "type": "Cisco - ONS15500",
+          "description": "ONS15540"
+        },
+        {
+          "type": "Cisco - Automatic Protection Switching",
+          "description": "Automatic Protection Switching"
+        },
+        {
+          "type": "Cisco - RPS",
+          "description": "RPS"
+        },
+        {
+          "type": "Cisco - UPS",
+          "description": "UPS"
+        },
+        {
+          "type": "Cisco - LongReach CPE",
+          "description": "LongReach CPE"
+        },
+        {
+          "type": "Cisco - 3X74 (floor) cluster controller",
+          "description": "3X74 (floor) cluster controller"
+        },
+        {
+          "type": "Cisco - 3174 (desktop) cluster controller",
+          "description": "3174 (desktop) cluster controller"
+        },
+        {
+          "type": "Cisco - CSU/DSU",
+          "description": "CSU/DSU"
+        },
+        {
+          "type": "Cisco - WAN",
+          "description": "WAN"
+        },
+        {
+          "type": "Cisco - Cloud",
+          "description": "Cloud"
+        },
+        {
+          "type": "Cisco - Cloud Gold",
+          "description": "Cloud Gold"
+        },
+        {
+          "type": "Cisco - Cloud White",
+          "description": "Cloud White"
+        },
+        {
+          "type": "Cisco - Cloud Dark",
+          "description": "Cloud Dark"
+        },
+        {
+          "type": "Cisco - Distributed Director",
+          "description": "Distributed Director"
+        },
+        {
+          "type": "Cisco - LocalDirector",
+          "description": "LocalDirector"
+        },
+        {
+          "type": "Cisco - IOS SLB",
+          "description": "IOS SLB"
+        },
+        {
+          "type": "Cisco - MUX",
+          "description": "MUX"
+        },
+        {
+          "type": "Cisco - General appliance",
+          "description": "General Appliance"
+        },
+        {
+          "type": "Cisco - PAD X.28",
+          "description": "PAD"
+        },
+        {
+          "type": "Cisco - CDDI-FDDI",
+          "description": "CDDI/FDDI Concentrator"
+        },
+        {
+          "type": "Cisco - FDDI Ring",
+          "description": "FDDI Ring"
+        },
+        {
+          "type": "Cisco - TokenRing",
+          "description": "TokenRing"
+        },
+        {
+          "type": "Cisco - MAU",
+          "description": "MAU"
+        },
+        {
+          "type": "Cisco - Repeater",
+          "description": "Repeater"
+        },
+        {
+          "type": "Cisco - Bridge",
+          "description": "Bridge"
+        },
+        {
+          "type": "Cisco - Breakout box",
+          "description": "Breakout box"
+        },
+        {
+          "type": "Cisco - STB (set top box)",
+          "description": "STB (set top box)"
+        },
+        {
+          "type": "Cisco - TV",
+          "description": "TV"
+        },
+        {
+          "type": "Cisco - IPTV broadcast server",
+          "description": "IPTV broadcast server"
+        },
+        {
+          "type": "Cisco - IPTV content manager",
+          "description": "IPTV content manager"
+        },
+        {
+          "type": "Cisco - VN2900",
+          "description": "VN2900"
+        },
+        {
+          "type": "Cisco - VN5902",
+          "description": "VN5902"
+        },
+        {
+          "type": "Cisco - VN5900",
+          "description": "VN5900"
+        },
+        {
+          "type": "Cisco - Catalyst Access Gateway",
+          "description": "Catalyst Access Gateway"
+        },
+        {
+          "type": "Cisco - Generic gateway",
+          "description": "Generic Gateway"
+        },
+        {
+          "type": "Cisco - Transpath",
+          "description": "TransPath"
+        },
+        {
+          "type": "Cisco - uBR910",
+          "description": "uBR910 Cable DSU"
+        },
+        {
+          "type": "Cisco - Storage Solution Engine",
+          "description": "Storage Solution Engine"
+        },
+        {
+          "type": "Cisco - Content Engine (Cache Director)",
+          "description": "Content Engine (Cache Director)"
+        },
+        {
+          "type": "Cisco - CDM Content Distribution Manager",
+          "description": "CDM Content Distribution Manager"
+        },
+        {
+          "type": "Cisco - Content Transformation Engine (CTE)",
+          "description": "Content Transformation Engine (CTE)"
+        },
+        {
+          "type": "Cisco - ME 1100",
+          "description": "ME 1100"
+        },
+        {
+          "type": "Cisco - MAS Gateway",
+          "description": "MAS Gateway"
+        },
+        {
+          "type": "Cisco - File Engine",
+          "description": "File Engine"
+        },
+        {
+          "type": "Cisco - Service Control",
+          "description": "Service Control"
+        }
+      ]
+    },
+    {
+      "name": "Cisco — Switch",
+      "description": "Router and switch shapes by Cisco",
+      "user": false,
+      "objects": [
+        {
+          "type": "Cisco - Router",
+          "description": "Router"
+        },
+        {
+          "type": "Cisco - Router subdued",
+          "description": "Router subdued"
+        },
+        {
+          "type": "Cisco - Router with Silicon Switch",
+          "description": "Router with Silicon Switch"
+        },
+        {
+          "type": "Cisco - NetFlow router",
+          "description": "NetFlow router"
+        },
+        {
+          "type": "Cisco - Broadband router",
+          "description": "Broadband router"
+        },
+        {
+          "type": "Cisco - Wavelength router",
+          "description": "Wavelength router"
+        },
+        {
+          "type": "Cisco - Wireless router",
+          "description": "Wireless router"
+        },
+        {
+          "type": "Cisco - 7507 Router",
+          "description": "7507 Router"
+        },
+        {
+          "type": "Cisco - 7505 Router",
+          "description": "7505 Router"
+        },
+        {
+          "type": "Cisco - 7500ARS (7513) Router",
+          "description": "7500ARS (7513) Router"
+        },
+        {
+          "type": "Cisco - Edge Label Switch Router with NetFlow",
+          "description": "Edge Label Switch Router with NetFlow"
+        },
+        {
+          "type": "Cisco - ATM Router",
+          "description": "Edge Label Switch Router"
+        },
+        {
+          "type": "Cisco - Router with Firewall",
+          "description": "Router with Firewall"
+        },
+        {
+          "type": "Cisco - Optical Services Router",
+          "description": "Optical Services Router"
+        },
+        {
+          "type": "Cisco - Content Service Router",
+          "description": "Content Router"
+        },
+        {
+          "type": "Cisco - Carrier Routing System",
+          "description": "Carrier Routing System"
+        },
+        {
+          "type": "Cisco - Storage Router",
+          "description": "Storage Router"
+        },
+        {
+          "type": "Cisco - NetSonar",
+          "description": "NetSonar"
+        },
+        {
+          "type": "Cisco - Hub",
+          "description": "Hub"
+        },
+        {
+          "type": "Cisco - Hub subdued",
+          "description": "Hub subdued"
+        },
+        {
+          "type": "Cisco - Cisco Hub",
+          "description": "Cisco Hub"
+        },
+        {
+          "type": "Cisco - Small hub",
+          "description": "Small Hub"
+        },
+        {
+          "type": "Cisco - 100BaseT Hub",
+          "description": "100BaseT Hub"
+        },
+        {
+          "type": "Cisco - Workgroup switch",
+          "description": "Workgroup switch"
+        },
+        {
+          "type": "Cisco - Workgroup switch Subdued",
+          "description": "Workgroup switch Subdued"
+        },
+        {
+          "type": "Cisco - Voice switch",
+          "description": "Workgroup Switch Voice-Enabled"
+        },
+        {
+          "type": "Cisco - BBSM",
+          "description": "BBSM"
+        },
+        {
+          "type": "Cisco - ATM Tag Switch Router",
+          "description": "ATM Tag Switch Router"
+        },
+        {
+          "type": "Cisco - Switch Processor",
+          "description": "Switch Processor"
+        },
+        {
+          "type": "Cisco - Route Switch Processor",
+          "description": "Route Switch Processor"
+        },
+        {
+          "type": "Cisco - Route Switch Processor with Si",
+          "description": "Route Switch Processor with Si"
+        },
+        {
+          "type": "Cisco - PXF",
+          "description": "PXF"
+        },
+        {
+          "type": "Cisco - ASIC Processor",
+          "description": "ASIC Processor"
+        },
+        {
+          "type": "Cisco - Generic processor",
+          "description": "Generic Processor"
+        },
+        {
+          "type": "Cisco - Data Center Switch",
+          "description": "Data Center Switch"
+        },
+        {
+          "type": "Cisco - Data Center Switch Reversed",
+          "description": "Data Center Switch Reversed"
+        },
+        {
+          "type": "Cisco - Data Switch Processor",
+          "description": "Data Switch Processor"
+        },
+        {
+          "type": "Cisco - Content Switch",
+          "description": "Content Switch"
+        },
+        {
+          "type": "Cisco - Content Switch module",
+          "description": "Content Service Module"
+        },
+        {
+          "type": "Cisco - CSM-S",
+          "description": "CSM-S"
+        },
+        {
+          "type": "Cisco - Access Gateway",
+          "description": "Access Gateway"
+        },
+        {
+          "type": "Cisco - ATM Switch",
+          "description": "ATM Switch"
+        },
+        {
+          "type": "Cisco - ATM 3800",
+          "description": "ATM 3800"
+        },
+        {
+          "type": "Cisco - Cisco 1000",
+          "description": "Cisco 1000"
+        },
+        {
+          "type": "Cisco - ISDN switch",
+          "description": "ISDN switch"
+        },
+        {
+          "type": "Cisco - ATM Tag Sw Gigabit Router",
+          "description": "Label Switch Router"
+        },
+        {
+          "type": "Cisco - MultiSwitch Device",
+          "description": "MultiSwitch Device"
+        },
+        {
+          "type": "Cisco - LAN2LAN Switch",
+          "description": "LAN2LAN Switch"
+        },
+        {
+          "type": "Cisco - Multilayer switch",
+          "description": "Multilayer Switch"
+        },
+        {
+          "type": "Cisco - Multilayer Switch with Silicon",
+          "description": "Multilayer Switch with Silicon"
+        },
+        {
+          "type": "Cisco - Multilayer Switch with Silicon subdued",
+          "description": "Multilayer Switch with Silicon subdued"
+        },
+        {
+          "type": "Cisco - Programmable Switch",
+          "description": "Programmable Switch"
+        },
+        {
+          "type": "Cisco - Content Service Switch 1100",
+          "description": "Content Service Switch 1100"
+        },
+        {
+          "type": "Cisco - ATM Fast Gigabit Etherswitch",
+          "description": "ATM Fast Gigabit Etherswitch"
+        },
+        {
+          "type": "Cisco - RateMUX",
+          "description": "RateMUX"
+        },
+        {
+          "type": "Cisco - Workgroup 5500",
+          "description": "Workgroup 5500"
+        },
+        {
+          "type": "Cisco - Workgroup 5000",
+          "description": "Workgroup 5000"
+        },
+        {
+          "type": "Cisco - Workgroup 5002",
+          "description": "Workgroup 5002"
+        },
+        {
+          "type": "Cisco - NetRanger",
+          "description": "NetRanger"
+        },
+        {
+          "type": "Cisco - MGX 8220",
+          "description": "MGX 8220"
+        },
+        {
+          "type": "Cisco - MGX 8240",
+          "description": "MGX 8240"
+        },
+        {
+          "type": "Cisco - MGX 8260",
+          "description": "MGX 8260"
+        },
+        {
+          "type": "Cisco - Universal Gateway",
+          "description": "Universal Gateway"
+        },
+        {
+          "type": "Cisco - iSCSI switch",
+          "description": "iSCSI switch"
+        },
+        {
+          "type": "Cisco - Workgroup Fibre Channel intelligent switch",
+          "description": "Workgroup Fibre Channel intelligent switch"
+        },
+        {
+          "type": "Cisco - Director-class Fibre Channel intelligent switch",
+          "description": "Director-class Fibre Channel intelligent switch"
+        },
+        {
+          "type": "Cisco - Multi-Fabric Server Switch",
+          "description": "Multi-Fabric Server Switch"
+        },
+        {
+          "type": "Cisco - Server Switch",
+          "description": "Server Switch"
+        },
+        {
+          "type": "Cisco - Multilayer Remote Switch",
+          "description": "Multilayer Remote Switch"
+        },
+        {
+          "type": "Cisco - Layer 2 Remote Switch",
+          "description": "Layer 2 Remote Switch"
+        },
+        {
+          "type": "Cisco - Virtual Layer Switch",
+          "description": "Virtual Layer Switch"
+        }
+      ]
+    },
+    {
+      "name": "Cisco — Telephony",
+      "description": "Telephony shapes by Cisco",
+      "user": false,
+      "objects": [
+        {
+          "type": "Cisco - Phone",
+          "description": "Phone"
+        },
+        {
+          "type": "Cisco - Phone 2",
+          "description": "Phone 2"
+        },
+        {
+          "type": "Cisco - Phone Ethernet",
+          "description": "Phone Ethernet"
+        },
+        {
+          "type": "Cisco - Phone Appliance",
+          "description": "Phone Appliance"
+        },
+        {
+          "type": "Cisco - Phone Feature",
+          "description": "Phone Feature"
+        },
+        {
+          "type": "Cisco - Phone/Fax",
+          "description": "Phone/Fax"
+        },
+        {
+          "type": "Cisco - HootPhone",
+          "description": "HootPhone"
+        },
+        {
+          "type": "Cisco - IP Phone",
+          "description": "IP Phone"
+        },
+        {
+          "type": "Cisco - IP Softphone",
+          "description": "IP Softphone"
+        },
+        {
+          "type": "Cisco - Softphone",
+          "description": "Softphone"
+        },
+        {
+          "type": "Cisco - Cellular phone",
+          "description": "Cellular Phone"
+        },
+        {
+          "type": "Cisco - Mobile Access IP Phone",
+          "description": "Mobile Access IP Phone"
+        },
+        {
+          "type": "Cisco - Pager",
+          "description": "Pager"
+        },
+        {
+          "type": "Cisco - Fax",
+          "description": "Fax"
+        },
+        {
+          "type": "Cisco - Turret",
+          "description": "Turret"
+        },
+        {
+          "type": "Cisco - Octel",
+          "description": "Octel"
+        },
+        {
+          "type": "Cisco - Radio Tower",
+          "description": "Radio Tower"
+        },
+        {
+          "type": "Cisco - PBX",
+          "description": "PBX"
+        },
+        {
+          "type": "Cisco - PBX Switch",
+          "description": "PBX Switch"
+        },
+        {
+          "type": "Cisco - Class 4/5 switch",
+          "description": "Class 4/5 switch"
+        },
+        {
+          "type": "Cisco - SONET MUX",
+          "description": "SONET MUX"
+        },
+        {
+          "type": "Cisco - ADM",
+          "description": "ADM"
+        },
+        {
+          "type": "Cisco - ITP",
+          "description": "ITP"
+        },
+        {
+          "type": "Cisco - ATA",
+          "description": "ATA"
+        },
+        {
+          "type": "Cisco - SIP Proxy server",
+          "description": "SIP Proxy Server"
+        },
+        {
+          "type": "Cisco - Gatekeeper",
+          "description": "Gatekeeper"
+        },
+        {
+          "type": "Cisco - MGX 8000 Series Voice Gateway",
+          "description": "MGX 8000 Series Voice Gateway"
+        },
+        {
+          "type": "Cisco - End Office",
+          "description": "End Office"
+        },
+        {
+          "type": "Cisco - Voice commserver",
+          "description": "Voice-Enabled Access Server"
+        },
+        {
+          "type": "Cisco - Voice router",
+          "description": "Voice-Enabled Router"
+        },
+        {
+          "type": "Cisco - Voice ATM Switch",
+          "description": "Voice-Enabled ATM Switch"
+        },
+        {
+          "type": "Cisco - CallManager",
+          "description": "CallManager"
+        },
+        {
+          "type": "Cisco - IP Telephony Router",
+          "description": "IP Telephony Router"
+        },
+        {
+          "type": "Cisco - Mobile Access Router",
+          "description": "Mobile Access Router"
+        },
+        {
+          "type": "Cisco - H.323",
+          "description": "H.323"
+        },
+        {
+          "type": "Cisco - STP",
+          "description": "STP"
+        },
+        {
+          "type": "Cisco - BTS 10200",
+          "description": "BTS 10200"
+        },
+        {
+          "type": "Cisco - Generic softswitch",
+          "description": "Generic softswitch"
+        },
+        {
+          "type": "Cisco - SC2200/VSC3000 host",
+          "description": "SC2200/VSC3000 host"
+        },
+        {
+          "type": "Cisco - Virtual switch controller (VSC 3000)",
+          "description": "Virtual switch controller (VSC 3000)"
+        },
+        {
+          "type": "Cisco - SC2200 (Signalling Controller)",
+          "description": "SC2200 (Signalling Controller)"
+        },
+        {
+          "type": "Cisco - MoH server (Music on Hold)",
+          "description": "MoH server (Music on Hold)"
+        },
+        {
+          "type": "Cisco - TDM router",
+          "description": "TDM router"
+        },
+        {
+          "type": "Cisco - 6701",
+          "description": "6701"
+        },
+        {
+          "type": "Cisco - 6705",
+          "description": "6705"
+        },
+        {
+          "type": "Cisco - 6732",
+          "description": "6732"
+        },
+        {
+          "type": "Cisco - IAD router",
+          "description": "IAD router"
+        },
+        {
+          "type": "Cisco - ICS",
+          "description": "ICS"
+        },
+        {
+          "type": "Cisco - ICM",
+          "description": "ICM"
+        },
+        {
+          "type": "Cisco - IntelliSwitch Stack",
+          "description": "IntelliSwitch Stack"
+        },
+        {
+          "type": "Cisco - Unity server",
+          "description": "Unity server"
+        },
+        {
+          "type": "Cisco - Unity Express",
+          "description": "Unity Express"
+        },
+        {
+          "type": "Cisco - MCU",
+          "description": "MCU"
+        },
+        {
+          "type": "Cisco - uMG series",
+          "description": "uMG series"
+        }
+      ]
+    },
+    {
+      "name": "Civil",
+      "description": "Civil Engineering Components",
+      "user": false,
+      "objects": [
+        {
+          "type": "Civil - Vertical Rest",
+          "description": "Vertical rest"
+        },
+        {
+          "type": "Civil - Horizontal Rest",
+          "description": "Horizontal rest"
+        },
+        {
+          "type": "Civil - Bivalent Vertical Rest",
+          "description": "Bivalent vertical rest"
+        },
+        {
+          "type": "Civil - Reference Line",
+          "description": "Reference line"
+        },
+        {
+          "type": "Civil - Water Level",
+          "description": "Water level"
+        },
+        {
+          "type": "Civil - Soil",
+          "description": "Soil"
+        },
+        {
+          "type": "Civil - Right Arrow",
+          "description": "Horizontally aligned arrow"
+        },
+        {
+          "type": "Civil - Up Arrow",
+          "description": "Vertically aligned arrow"
+        },
+        {
+          "type": "Civil - Horizontal Limiting Line",
+          "description": "Horizontal limiting line"
+        },
+        {
+          "type": "Civil - Vertical Limiting Line",
+          "description": "Vertical limiting line"
+        },
+        {
+          "type": "Civil - Horizontal Pump",
+          "description": "Horizontally aligned pump"
+        },
+        {
+          "type": "Civil - Vertical Pump",
+          "description": "Vertically aligned pump"
+        },
+        {
+          "type": "Civil - Horizontal Compressor",
+          "description": "Horizontally aligned compressor"
+        },
+        {
+          "type": "Civil - Vertical Compressor",
+          "description": "Vertically aligned compressor"
+        },
+        {
+          "type": "Flowchart - Collate",
+          "description": "Vertically aligned valve"
+        },
+        {
+          "type": "Civil - Horizontal Valve",
+          "description": "Horizontally aligned valve"
+        },
+        {
+          "type": "Civil - Backflow Preventer",
+          "description": "Backflow preventer"
+        },
+        {
+          "type": "Civil - Motor",
+          "description": "Motor"
+        },
+        {
+          "type": "Civil - Gas Bottle",
+          "description": "Gas bottle"
+        },
+        {
+          "type": "Civil - Frequency Converter",
+          "description": "Frequency converter"
+        },
+        {
+          "type": "Civil - Vertical Propeller",
+          "description": "Vertically aligned propeller"
+        },
+        {
+          "type": "Civil - Aerator",
+          "description": "Aerator with bubbles"
+        },
+        {
+          "type": "Civil - Rotor",
+          "description": "Rotor"
+        },
+        {
+          "type": "Civil - Final-Settling Basin",
+          "description": "Final-settling basin"
+        },
+        {
+          "type": "Civil - Preliminary Clarification Tank",
+          "description": "Preliminary clarification tank"
+        },
+        {
+          "type": "Civil - Basin",
+          "description": "Basin"
+        },
+        {
+          "type": "Civil - Container",
+          "description": "Container"
+        }
+      ]
+    },
+    {
+      "name": "Cybernetics",
+      "description": "Elements of cybernetic circuits",
+      "user": false,
+      "objects": [
+        {
+          "type": "Cybernetics - l-sens",
+          "description": "Sensor — left"
+        },
+        {
+          "type": "Cybernetics - r-sens",
+          "description": "Sensor — right"
+        },
+        {
+          "type": "Cybernetics - b-sens",
+          "description": "Sensor — bottom"
+        },
+        {
+          "type": "Cybernetics - t-sens",
+          "description": "Sensor — top"
+        },
+        {
+          "type": "Cybernetics - l-minus",
+          "description": "Sum, subtracting left input"
+        },
+        {
+          "type": "Cybernetics - r-minus",
+          "description": "Sum, subtracting right input"
+        },
+        {
+          "type": "Cybernetics - b-minus",
+          "description": "Sum, subtracting bottom input"
+        },
+        {
+          "type": "Cybernetics - t-minus",
+          "description": "Sum, subtracting top input"
+        },
+        {
+          "type": "Cybernetics - l-integrator",
+          "description": "Integrator — input left"
+        },
+        {
+          "type": "Cybernetics - r-integrator",
+          "description": "Integrator — input right"
+        },
+        {
+          "type": "Cybernetics - b-integrator",
+          "description": "Integrator — input bottom"
+        },
+        {
+          "type": "Cybernetics - t-integrator",
+          "description": "Integrator — input top"
+        },
+        {
+          "type": "Cybernetics - sum",
+          "description": "Sum"
+        },
+        {
+          "type": "Cybernetics - product",
+          "description": "Product"
+        },
+        {
+          "type": "Cybernetics - hpf",
+          "description": "High pass filter"
+        },
+        {
+          "type": "Cybernetics - lpf",
+          "description": "Low pass filter"
+        },
+        {
+          "type": "Cybernetics - sine",
+          "description": "Sine characteristic or input"
+        },
+        {
+          "type": "Cybernetics - sigmoid",
+          "description": "Sigmoid characteristic"
+        },
+        {
+          "type": "Cybernetics - saturation",
+          "description": "Saturation characteristic"
+        },
+        {
+          "type": "Cybernetics - relay",
+          "description": "Relay characteristic (sigma)"
+        },
+        {
+          "type": "Cybernetics - half-wave-rectifier",
+          "description": "Half wave rectifier or ramp input"
+        },
+        {
+          "type": "Cybernetics - full-wave-rectifier",
+          "description": "Full wave rectifier (absolute value)"
+        },
+        {
+          "type": "Cybernetics - positive-shift",
+          "description": "Constant positive shift on the y-axis"
+        },
+        {
+          "type": "Cybernetics - negative-shift",
+          "description": "Constant negative shift on the y-axis"
+        },
+        {
+          "type": "Cybernetics - factor-greater1",
+          "description": "Constant factor greater 1"
+        },
+        {
+          "type": "Cybernetics - factor-0to1",
+          "description": "Constant factor between 0 and 1"
+        },
+        {
+          "type": "Cybernetics - factor-0to-1",
+          "description": "Constant factor between 0 and -1"
+        },
+        {
+          "type": "Cybernetics - factor-smaller-1",
+          "description": "Constant factor below -1"
+        },
+        {
+          "type": "Cybernetics - empty-func",
+          "description": "Template for custom characteristics"
+        },
+        {
+          "type": "Cybernetics - delta-t",
+          "description": "Time delay"
+        }
+      ]
+    },
+    {
+      "name": "Database",
+      "description": "Editor for Database Table Relation Diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "Database - Table",
+          "description": "Table"
+        },
+        {
+          "type": "Database - Reference",
+          "description": "Reference"
+        },
+        {
+          "type": "Database - Compound",
+          "description": "Attribute compound"
+        }
+      ]
+    },
+    {
+      "name": "EDPC",
+      "description": "Objects to draw event-driven process chains",
+      "user": false,
+      "objects": [
+        {
+          "type": "EDPC_Business_Process",
+          "description": "Business Process"
+        },
+        {
+          "type": "EDPC_Process_Group",
+          "description": "Process Group"
+        },
+        {
+          "type": "EDPC_Function",
+          "description": "Function"
+        },
+        {
+          "type": "EDPC_Event",
+          "description": "Event"
+        },
+        {
+          "type": "EDPC_Start_Event",
+          "description": "Start Event"
+        },
+        {
+          "type": "EDPC_End_Event",
+          "description": "End Event"
+        },
+        {
+          "type": "EDPC_Organisation_Unit",
+          "description": "Organisation Unit"
+        },
+        {
+          "type": "EDPC_Document",
+          "description": "Document"
+        },
+        {
+          "type": "EDPC_Operator_AND_in",
+          "description": "Operator AND (Input)"
+        },
+        {
+          "type": "EDPC_Operator_AND_out",
+          "description": "Operator AND (Output)"
+        },
+        {
+          "type": "EDPC_Operator_OR_in",
+          "description": "Operator Inclusive (OR) (Input)"
+        },
+        {
+          "type": "EDPC_Operator_OR_out",
+          "description": "Operator Inclusive (OR) (Output)"
+        },
+        {
+          "type": "EDPC_Operator_XOR_in",
+          "description": "Operator Exclusive (XOR) (Input)"
+        },
+        {
+          "type": "EDPC_Operator_XOR_out",
+          "description": "Operator Exclusive (XOR) (Output)"
+        }
+      ]
+    },
+    {
+      "name": "ER",
+      "description": "Editor for Entity Relations Diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "ER - Entity",
+          "description": "Entity"
+        },
+        {
+          "type": "ER - Entity",
+          "description": "Weak entity"
+        },
+        {
+          "type": "ER - Relationship",
+          "description": "Relationship"
+        },
+        {
+          "type": "ER - Attribute",
+          "description": "Attribute"
+        },
+        {
+          "type": "ER - Participation",
+          "description": "Participation"
+        }
+      ]
+    },
+    {
+      "name": "Electric",
+      "description": "Components for electric circuits",
+      "user": false,
+      "objects": [
+        {
+          "type": "Electric - contact_o",
+          "description": "Normally open contact (horizontal)"
+        },
+        {
+          "type": "Electric - contact_f",
+          "description": "Normally closed contact (horizontal)"
+        },
+        {
+          "type": "Electric - intpos_o",
+          "description": "Normally open position switch (horizontal)"
+        },
+        {
+          "type": "Electric - intpos_f",
+          "description": "Normally closed position switch (horizontal)"
+        },
+        {
+          "type": "Electric - vcontact_o",
+          "description": "Normally open contact (vertical)"
+        },
+        {
+          "type": "Electric - vcontact_f",
+          "description": "Normally closed contact (vertical)"
+        },
+        {
+          "type": "Electric - vintpos_o",
+          "description": "Normally open position switch (vertical)"
+        },
+        {
+          "type": "Electric - vintpos_f",
+          "description": "Normally closed position switch (vertical)"
+        },
+        {
+          "type": "Electric - command",
+          "description": "The command organ of a relay (horizontal)"
+        },
+        {
+          "type": "Electric - relay",
+          "description": "Relay (horizontal)"
+        },
+        {
+          "type": "Electric - lamp",
+          "description": "Lamp or indicator light (horizontal)"
+        },
+        {
+          "type": "Electric - vcommand",
+          "description": "The command organ of a relay (vertical)"
+        },
+        {
+          "type": "Electric - vrelay",
+          "description": "Relay (vertical)"
+        },
+        {
+          "type": "Electric - vlamp",
+          "description": "Lamp or indicator light (vertical)"
+        },
+        {
+          "type": "Electric - connpoint",
+          "description": "Connection point"
+        }
+      ]
+    },
+    {
+      "name": "FS",
+      "description": "Editor for Function Structure Diagrams.",
+      "user": false,
+      "objects": [
+        {
+          "type": "FS - Flow",
+          "description": "Flow"
+        },
+        {
+          "type": "FS - Orthflow",
+          "description": "Orthogonal polyline flow"
+        },
+        {
+          "type": "FS - Function",
+          "description": "Function"
+        }
+      ]
+    },
+    {
+      "name": "Flowchart",
+      "description": "Objects to draw flowcharts",
+      "user": false,
+      "objects": [
+        {
+          "type": "Flowchart - Box",
+          "description": "Process/Auxiliary Operation"
+        },
+        {
+          "type": "Flowchart - Parallelogram",
+          "description": "Input/Output"
+        },
+        {
+          "type": "Flowchart - Diamond",
+          "description": "Decision"
+        },
+        {
+          "type": "Flowchart - Ellipse",
+          "description": "Connector"
+        },
+        {
+          "type": "Flowchart - Display",
+          "description": "Display"
+        },
+        {
+          "type": "Flowchart - Transaction File",
+          "description": "Transaction file"
+        },
+        {
+          "type": "Flowchart - Off Page Connector",
+          "description": "Off page connector"
+        },
+        {
+          "type": "Flowchart - Document",
+          "description": "Document"
+        },
+        {
+          "type": "Flowchart - Manual Operation",
+          "description": "Manual operation"
+        },
+        {
+          "type": "Flowchart - Preparation",
+          "description": "Preparation"
+        },
+        {
+          "type": "Flowchart - Manual Input",
+          "description": "Manual input"
+        },
+        {
+          "type": "Flowchart - Predefined Process",
+          "description": "Predefined process"
+        },
+        {
+          "type": "Flowchart - Terminal",
+          "description": "Terminal Interrupt"
+        },
+        {
+          "type": "Flowchart - Magnetic Disk",
+          "description": "Magnetic disk"
+        },
+        {
+          "type": "Flowchart - Magnetic Drum",
+          "description": "Magnetic drum"
+        },
+        {
+          "type": "Flowchart - Magnetic Tape",
+          "description": "Magnetic tape"
+        },
+        {
+          "type": "Flowchart - Internal Storage",
+          "description": "Internal storage"
+        },
+        {
+          "type": "Flowchart - Merge",
+          "description": "Merge"
+        },
+        {
+          "type": "Flowchart - Extract",
+          "description": "Extract"
+        },
+        {
+          "type": "Flowchart - Delay",
+          "description": "Delay"
+        },
+        {
+          "type": "Flowchart - Summing Junction",
+          "description": "Summing junction"
+        },
+        {
+          "type": "Flowchart - Collate",
+          "description": "Collate"
+        },
+        {
+          "type": "Flowchart - Sort",
+          "description": "Sort"
+        },
+        {
+          "type": "Flowchart - Or",
+          "description": "Or"
+        },
+        {
+          "type": "Flowchart - Punched Card",
+          "description": "Punched card"
+        },
+        {
+          "type": "Flowchart - Punched Tape",
+          "description": "Punched tape"
+        },
+        {
+          "type": "Flowchart - Transmittal Tape",
+          "description": "Transmittal tape"
+        },
+        {
+          "type": "Flowchart - Offline Storage",
+          "description": "Offline storage"
+        },
+        {
+          "type": "Flowchart - Data Source",
+          "description": "Data source"
+        }
+      ]
+    },
+    {
+      "name": "GRAFCET",
+      "description": "Objects to design GRAFCET charts",
+      "user": false,
+      "objects": [
+        {
+          "type": "GRAFCET - Step",
+          "description": "Regular step"
+        },
+        {
+          "type": "GRAFCET - Step",
+          "description": "Initial step"
+        },
+        {
+          "type": "GRAFCET - Step",
+          "description": "Macro entry step"
+        },
+        {
+          "type": "GRAFCET - Step",
+          "description": "Macro exit step"
+        },
+        {
+          "type": "GRAFCET - Step",
+          "description": "Macro call step"
+        },
+        {
+          "type": "GRAFCET - Step",
+          "description": "Macro sub-program call step"
+        },
+        {
+          "type": "GRAFCET - Action",
+          "description": "Action to associate to a step"
+        },
+        {
+          "type": "GRAFCET - Condition",
+          "description": "Condition (of an action)"
+        },
+        {
+          "type": "GRAFCET - Transition",
+          "description": "Transition"
+        },
+        {
+          "type": "GRAFCET - Vergent",
+          "description": "OR vergent"
+        },
+        {
+          "type": "GRAFCET - Vergent",
+          "description": "AND vergent"
+        },
+        {
+          "type": "GRAFCET - Arc",
+          "description": "Arc (upward)"
+        }
+      ]
+    },
+    {
+      "name": "Gane and Sarson",
+      "description": "Gane and Sarson DFD",
+      "user": false,
+      "objects": [
+        {
+          "type": "G&S - Alternative External Entity",
+          "description": "Alternate external entity"
+        },
+        {
+          "type": "G&S - Data Store",
+          "description": "Data store"
+        },
+        {
+          "type": "G&S - External Entity",
+          "description": "External entity"
+        },
+        {
+          "type": "G&S - Process",
+          "description": "Process"
+        }
+      ]
+    },
+    {
+      "name": "Jigsaw",
+      "description": "Pieces of a jigsaw",
+      "user": false,
+      "objects": [
+        {
+          "type": "Jigsaw - part_oioi",
+          "description": "Jigsaw — part_oioi"
+        },
+        {
+          "type": "Jigsaw - part_ioio",
+          "description": "Jigsaw — part_ioio"
+        },
+        {
+          "type": "Jigsaw - part_iiii",
+          "description": "Jigsaw — part_iiii"
+        },
+        {
+          "type": "Jigsaw - part_oooo",
+          "description": "Jigsaw — part_oooo"
+        },
+        {
+          "type": "Jigsaw - part_oooi",
+          "description": "Jigsaw — part_oooi"
+        },
+        {
+          "type": "Jigsaw - part_iooo",
+          "description": "Jigsaw — part_iooo"
+        },
+        {
+          "type": "Jigsaw - part_oioo",
+          "description": "Jigsaw — part_oioo"
+        },
+        {
+          "type": "Jigsaw - part_ooio",
+          "description": "Jigsaw — part_ooio"
+        },
+        {
+          "type": "Jigsaw - part_iioo",
+          "description": "Jigsaw — part_iioo"
+        },
+        {
+          "type": "Jigsaw - part_oiio",
+          "description": "Jigsaw — part_oiio"
+        },
+        {
+          "type": "Jigsaw - part_ooii",
+          "description": "Jigsaw — part_ooii"
+        },
+        {
+          "type": "Jigsaw - part_iooi",
+          "description": "Jigsaw — part_iooi"
+        },
+        {
+          "type": "Jigsaw - part_oiii",
+          "description": "Jigsaw — part_oiii"
+        },
+        {
+          "type": "Jigsaw - part_ioii",
+          "description": "Jigsaw — part_ioii"
+        },
+        {
+          "type": "Jigsaw - part_iioi",
+          "description": "Jigsaw — part_iioi"
+        },
+        {
+          "type": "Jigsaw - part_iiio",
+          "description": "Jigsaw — part_iiio"
+        }
+      ]
+    },
+    {
+      "name": "Ladder",
+      "description": "Components for LADDER circuits",
+      "user": false,
+      "objects": [
+        {
+          "type": "LADDER - if",
+          "description": "'if' (normally open) ladder contact"
+        },
+        {
+          "type": "LADDER - ifnot",
+          "description": "'if not' (normally closed) ladder contact"
+        },
+        {
+          "type": "LADDER - out",
+          "description": "Simple output variable"
+        },
+        {
+          "type": "LADDER - outnot",
+          "description": "Negative output variable"
+        },
+        {
+          "type": "LADDER - outs",
+          "description": "'set' output variable"
+        },
+        {
+          "type": "LADDER - outr",
+          "description": "'reset' output variable"
+        },
+        {
+          "type": "LADDER - outj",
+          "description": "'jump' output variable"
+        },
+        {
+          "type": "LADDER - outrcep",
+          "description": "Receptivity output variable"
+        },
+        {
+          "type": "LADDER - sout",
+          "description": "Power-saved simple output variable"
+        },
+        {
+          "type": "LADDER - soutnot",
+          "description": "Power-saved negative output variable"
+        },
+        {
+          "type": "LADDER - souts",
+          "description": "Power-saved 'set' output variable"
+        },
+        {
+          "type": "LADDER - soutr",
+          "description": "Power-saved 'reset' output variable"
+        }
+      ]
+    },
+    {
+      "name": "Lights",
+      "description": "Objects to design simple lighting plots",
+      "user": false,
+      "objects": [
+        {
+          "type": "Lights - PAR",
+          "description": "PAR"
+        },
+        {
+          "type": "Lights - PAR_floor",
+          "description": "PAR on the floor"
+        },
+        {
+          "type": "Lights - ACL",
+          "description": "ACL"
+        },
+        {
+          "type": "Lights - PC",
+          "description": "Pebble Convex lantern"
+        },
+        {
+          "type": "Lights - Fresnel",
+          "description": "Fresnel lantern"
+        },
+        {
+          "type": "Lights - Striplight",
+          "description": "Striplight"
+        },
+        {
+          "type": "Lights - ERS",
+          "description": "Ellipsoidal Reflector Spotlight"
+        },
+        {
+          "type": "Lights - Blinders",
+          "description": "Blinders"
+        },
+        {
+          "type": "Lights - Blacklight",
+          "description": "Black light"
+        },
+        {
+          "type": "Lights - Stroboscope",
+          "description": "Stroboscope light"
+        },
+        {
+          "type": "Lights - Moving_head",
+          "description": "Moving head"
+        },
+        {
+          "type": "Lights - Scanner",
+          "description": "Scanner"
+        },
+        {
+          "type": "Lights - Structure",
+          "description": "Structure"
+        }
+      ]
+    },
+    {
+      "name": "Logic",
+      "description": "Boolean Logic",
+      "user": false,
+      "objects": [
+        {
+          "type": "Logic - Or",
+          "description": "OR gate"
+        },
+        {
+          "type": "Logic - And",
+          "description": "AND gate"
+        },
+        {
+          "type": "Logic - Xor",
+          "description": "XOR gate"
+        },
+        {
+          "type": "Logic - Buffer",
+          "description": "Simple buffer"
+        },
+        {
+          "type": "Logic - Inverter",
+          "description": "Inverter"
+        },
+        {
+          "type": "Logic - Nand",
+          "description": "NAND gate"
+        },
+        {
+          "type": "Logic - Nor",
+          "description": "NOR gate"
+        },
+        {
+          "type": "Logic - Not",
+          "description": "NOT"
+        },
+        {
+          "type": "Logic - Connector",
+          "description": "Cross-connector"
+        }
+      ]
+    },
+    {
+      "name": "MSE",
+      "description": "U.S. Army Mobile Subscriber Equipment Components",
+      "user": false,
+      "objects": [
+        {
+          "type": "Node Center",
+          "description": "Node center"
+        },
+        {
+          "type": "Large Extension Node",
+          "description": "Large extension node"
+        },
+        {
+          "type": "Small Extension Node",
+          "description": "Small extension node"
+        },
+        {
+          "type": "Tactical Satellite Communications Terminal",
+          "description": "Tactical satellite communications terminal"
+        },
+        {
+          "type": "Multiplexer",
+          "description": "Multiplexer"
+        },
+        {
+          "type": "Demultiplexer",
+          "description": "Demultiplexer"
+        }
+      ]
+    },
+    {
+      "name": "Map, Isometric",
+      "description": "Isometric Directional Map Shapes",
+      "user": false,
+      "objects": [
+        {
+          "type": "Road1",
+          "description": "Road Section"
+        },
+        {
+          "type": "StraightRoad1",
+          "description": "Long Straight Road Section"
+        },
+        {
+          "type": "Crossroads",
+          "description": "Crossroads"
+        },
+        {
+          "type": "T-Junction",
+          "description": "T-Junction"
+        },
+        {
+          "type": "Elevated",
+          "description": "Elevated Road"
+        },
+        {
+          "type": "Corner1",
+          "description": "Corner 1"
+        },
+        {
+          "type": "Corner2",
+          "description": "Corner 2"
+        },
+        {
+          "type": "River",
+          "description": "River"
+        },
+        {
+          "type": "Roof1",
+          "description": "Roof 1"
+        },
+        {
+          "type": "Block1",
+          "description": "Block 1, 2:4"
+        },
+        {
+          "type": "Block2",
+          "description": "Block 2, 2:8"
+        },
+        {
+          "type": "Block3",
+          "description": "Block 3, 4:4"
+        },
+        {
+          "type": "Block4",
+          "description": "Block 4, 4:8"
+        },
+        {
+          "type": "Block5",
+          "description": "Block 5, 3:3"
+        },
+        {
+          "type": "Block6",
+          "description": "Block 6, 4:6"
+        },
+        {
+          "type": "Block7",
+          "description": "Block 7"
+        },
+        {
+          "type": "Factory",
+          "description": "Factory"
+        },
+        {
+          "type": "Car1",
+          "description": "Car 1, Front View"
+        },
+        {
+          "type": "Car2",
+          "description": "Car 2, Rear View"
+        },
+        {
+          "type": "Train1",
+          "description": "Train 1, angled downward"
+        },
+        {
+          "type": "Train2",
+          "description": "Train 2, angled upward"
+        },
+        {
+          "type": "Tree1",
+          "description": "Tree 1"
+        },
+        {
+          "type": "FootBridge",
+          "description": "Footbridge, Pedestrian Bridge"
+        },
+        {
+          "type": "OneWay",
+          "description": "One Way Road Sign"
+        }
+      ]
+    },
+    {
+      "name": "Miscellaneous",
+      "description": "Miscellaneous Shapes",
+      "user": false,
+      "objects": [
+        {
+          "type": "Misc - Tree",
+          "description": "Tree"
+        },
+        {
+          "type": "Filesystem - Folder",
+          "description": "Folder"
+        },
+        {
+          "type": "Filesystem - File",
+          "description": "File"
+        },
+        {
+          "type": "Misc - expensible node",
+          "description": "Expansible node"
+        },
+        {
+          "type": "Misc - expended node",
+          "description": "Expanded node"
+        },
+        {
+          "type": "Misc - Analog Clock",
+          "description": "Traditional clock"
+        },
+        {
+          "type": "Misc - Measure",
+          "description": "Measure distance"
+        },
+        {
+          "type": "Misc - Grid",
+          "description": "Resizable grid"
+        },
+        {
+          "type": "Misc - Diagram",
+          "description": "Diagram object"
+        },
+        {
+          "type": "Misc - Ngon",
+          "description": "N-gon or Star object"
+        }
+      ]
+    },
+    {
+      "name": "Network",
+      "description": "Objects to design network diagrams with",
+      "user": false,
+      "objects": [
+        {
+          "type": "Network - General Computer (Tower)",
+          "description": "Computer"
+        },
+        {
+          "type": "Network - General Monitor (With Stand)",
+          "description": "Monitor"
+        },
+        {
+          "type": "Network - Storage",
+          "description": "Storage"
+        },
+        {
+          "type": "Network - Bus",
+          "description": "Ethernet bus"
+        },
+        {
+          "type": "Network - General Printer",
+          "description": "Simple printer"
+        },
+        {
+          "type": "Network - WAN Connection",
+          "description": "WAN connection"
+        },
+        {
+          "type": "Network - WAN Link",
+          "description": "WAN link"
+        },
+        {
+          "type": "Network - Hub",
+          "description": "Stackable hub or switch"
+        },
+        {
+          "type": "Network - Modular Switch",
+          "description": "Modular switching system"
+        },
+        {
+          "type": "Network - Patch Panel",
+          "description": "24 Port Patch Panel"
+        },
+        {
+          "type": "Network - RJ45 Wall-Plug",
+          "description": "RJ45 wall-plug"
+        },
+        {
+          "type": "Network - scEAD Wall-Plug",
+          "description": "Wall-plug for the scEAD cabling system"
+        },
+        {
+          "type": "Network - Modem",
+          "description": "Simple modem"
+        },
+        {
+          "type": "Network - Antenna",
+          "description": "Antenna for wireless transmission"
+        },
+        {
+          "type": "Network - Base Station",
+          "description": "Mobile telephony base station"
+        },
+        {
+          "type": "Network - Cloud",
+          "description": "Network cloud"
+        },
+        {
+          "type": "Network - Radio Cell",
+          "description": "Mobile telephony cell"
+        },
+        {
+          "type": "Network - Router Symbol",
+          "description": "Router symbol"
+        },
+        {
+          "type": "Network - Switch Symbol",
+          "description": "Switch symbol"
+        },
+        {
+          "type": "Network - Switch ATM Symbol",
+          "description": "ATM switch symbol"
+        },
+        {
+          "type": "Network - Firewall",
+          "description": "Firewall router"
+        },
+        {
+          "type": "Network - A Workstation Monitor",
+          "description": "Workstation monitor"
+        },
+        {
+          "type": "Network - A Workstation",
+          "description": "UNIX workstation"
+        },
+        {
+          "type": "Network - A Desktop PC",
+          "description": "Desktop PC"
+        },
+        {
+          "type": "Network - Laptop Computer",
+          "description": "Laptop PC"
+        },
+        {
+          "type": "Network - A Bigtower PC",
+          "description": "Bigtower PC"
+        },
+        {
+          "type": "Network - A Miditower PC",
+          "description": "Miditower PC"
+        },
+        {
+          "type": "Network - A Minitower PC",
+          "description": "Minitower PC"
+        },
+        {
+          "type": "Network - An amplifier speaker",
+          "description": "Speaker with integrated amplifier"
+        },
+        {
+          "type": "Network - A speaker",
+          "description": "Speaker without amplifier"
+        },
+        {
+          "type": "Network - A Diskette",
+          "description": "3 1/2 inch diskette"
+        },
+        {
+          "type": "Network - A ZIP Disk",
+          "description": "ZIP disk"
+        },
+        {
+          "type": "Network - An external DAT drive",
+          "description": "External DAT drive"
+        },
+        {
+          "type": "Network - A Mobile Phone",
+          "description": "Mobile phone"
+        },
+        {
+          "type": "Network - A Telephone",
+          "description": "Telephone"
+        },
+        {
+          "type": "Network - Plotter",
+          "description": "Plotter"
+        },
+        {
+          "type": "Network - Digitizing Board",
+          "description": "Digitizing board"
+        }
+      ]
+    },
+    {
+      "name": "Pneumatic/Hydraulic",
+      "description": "Components for pneumatic and hydraulic circuits",
+      "user": false,
+      "objects": [
+        {
+          "type": "Pneum - DEJack",
+          "description": "Double-effect jack"
+        },
+        {
+          "type": "Pneum - SEIJack",
+          "description": "Normally-in simple-effect jack"
+        },
+        {
+          "type": "Pneum - SEOJack",
+          "description": "Normally-out simple-effect jack"
+        },
+        {
+          "type": "Pneum - press",
+          "description": "Generic pressure source"
+        },
+        {
+          "type": "Pneum - presshy",
+          "description": "Hydraulic pressure source"
+        },
+        {
+          "type": "Pneum - presspn",
+          "description": "Pneumatic pressure source"
+        },
+        {
+          "type": "Pneum - drain",
+          "description": "Air exhaust orifice"
+        },
+        {
+          "type": "Pneum - dist22",
+          "description": "2/2 distributor"
+        },
+        {
+          "type": "Pneum - dist32",
+          "description": "3/2 distributor"
+        },
+        {
+          "type": "Pneum - dist42",
+          "description": "4/2 distributor"
+        },
+        {
+          "type": "Pneum - dist52",
+          "description": "5/2 distributor"
+        },
+        {
+          "type": "Pneum - commusc",
+          "description": "Muscular command"
+        },
+        {
+          "type": "Pneum - compb",
+          "description": "Push-button command"
+        },
+        {
+          "type": "Pneum - compush",
+          "description": "Mechanical command by tappet"
+        },
+        {
+          "type": "Pneum - comspr",
+          "description": "Mechanical command by spring"
+        },
+        {
+          "type": "Pneum - comelec1",
+          "description": "Electric command (single coil)"
+        },
+        {
+          "type": "Pneum - comelec2",
+          "description": "Electric command (double coil)"
+        },
+        {
+          "type": "Pneum - compilh",
+          "description": "Indirect command by hydraulic driver"
+        },
+        {
+          "type": "Pneum - compilp",
+          "description": "Indirect command by pneumatic driver"
+        },
+        {
+          "type": "Pneum - connpoint",
+          "description": "Connection point"
+        }
+      ]
+    },
+    {
+      "name": "RE-Jackson",
+      "description": "Objects to design Jackson diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "Jackson - domain",
+          "description": "A Jackson given domain"
+        },
+        {
+          "type": "Jackson - domain",
+          "description": "A Jackson designed domain"
+        },
+        {
+          "type": "Jackson - domain",
+          "description": "A Jackson machine domain"
+        },
+        {
+          "type": "Jackson - requirement",
+          "description": "A Jackson requirement"
+        },
+        {
+          "type": "Jackson - phenomenon",
+          "description": "A Jackson shared phenomenon"
+        },
+        {
+          "type": "Jackson - phenomenon",
+          "description": "A Jackson requirement phenomenon"
+        }
+      ]
+    },
+    {
+      "name": "RE-KAOS",
+      "description": "Objects to design KAOS diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "KAOS - goal",
+          "description": "A KAOS softgoal"
+        },
+        {
+          "type": "KAOS - goal",
+          "description": "A KAOS goal"
+        },
+        {
+          "type": "KAOS - goal",
+          "description": "A KAOS requirement"
+        },
+        {
+          "type": "KAOS - goal",
+          "description": "A KAOS assumption"
+        },
+        {
+          "type": "KAOS - goal",
+          "description": "A KAOS obstacle"
+        },
+        {
+          "type": "KAOS - maor",
+          "description": "A KAOS AND refinement"
+        },
+        {
+          "type": "KAOS - maor",
+          "description": "A KAOS complete AND refinement"
+        },
+        {
+          "type": "KAOS - maor",
+          "description": "A KAOS OR refinement"
+        },
+        {
+          "type": "KAOS - maor",
+          "description": "A KAOS complete OR refinement"
+        },
+        {
+          "type": "KAOS - maor",
+          "description": "A KAOS operationalization"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS contribution"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS obstruction"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS binary conflict"
+        },
+        {
+          "type": "KAOS - other",
+          "description": "A KAOS agent"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS responsibility"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS monitor link"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS control link"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS capable-of"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS performs"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS input"
+        },
+        {
+          "type": "KAOS - mbr",
+          "description": "A KAOS output"
+        }
+      ]
+    },
+    {
+      "name": "RE-i*",
+      "description": "Objects to design i* diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "Istar - goal",
+          "description": "An i* softgoal"
+        },
+        {
+          "type": "Istar - goal",
+          "description": "An i* goal"
+        },
+        {
+          "type": "Istar - other",
+          "description": "An i* resource"
+        },
+        {
+          "type": "Istar - other",
+          "description": "An i* task"
+        },
+        {
+          "type": "Istar - actor",
+          "description": "An i* unspecified actor"
+        },
+        {
+          "type": "Istar - actor",
+          "description": "An i* agent"
+        },
+        {
+          "type": "Istar - actor",
+          "description": "An i* position"
+        },
+        {
+          "type": "Istar - actor",
+          "description": "An i* role"
+        },
+        {
+          "type": "Istar - link",
+          "description": "An i* unspecified link"
+        },
+        {
+          "type": "Istar - link",
+          "description": "An i* positive contribution"
+        },
+        {
+          "type": "Istar - link",
+          "description": "An i* negative contribution"
+        },
+        {
+          "type": "Istar - link",
+          "description": "An i* dependency link"
+        },
+        {
+          "type": "Istar - link",
+          "description": "An i* decomposition link"
+        },
+        {
+          "type": "Istar - link",
+          "description": "An i* means-ends link"
+        }
+      ]
+    },
+    {
+      "name": "SADT/IDEF0",
+      "description": "Objects to design SADT diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "SADT - arrow",
+          "description": "Activity/data flow arrow"
+        },
+        {
+          "type": "SADT - box",
+          "description": "Activity/data box"
+        },
+        {
+          "type": "SADT - annotation",
+          "description": "Flow label"
+        }
+      ]
+    },
+    {
+      "name": "SDL",
+      "description": "Specification and Description Language.",
+      "user": false,
+      "objects": [
+        {
+          "type": "SDL - Block",
+          "description": "Block type reference"
+        },
+        {
+          "type": "SDL - Service",
+          "description": "Service type reference"
+        },
+        {
+          "type": "SDL - Process",
+          "description": "Process type reference"
+        },
+        {
+          "type": "SDL - State",
+          "description": "State"
+        },
+        {
+          "type": "SDL - Function Header",
+          "description": "Function header"
+        },
+        {
+          "type": "SDL - Send",
+          "description": "Send message"
+        },
+        {
+          "type": "SDL - Receive",
+          "description": "Receive message"
+        },
+        {
+          "type": "SDL - Function",
+          "description": "Function call"
+        },
+        {
+          "type": "SDL - Macro",
+          "description": "Macro call"
+        },
+        {
+          "type": "SDL - Task",
+          "description": "Action being executed"
+        },
+        {
+          "type": "SDL - Save",
+          "description": "Save state"
+        },
+        {
+          "type": "SDL - Decision",
+          "description": "Decision"
+        },
+        {
+          "type": "SDL - InOut",
+          "description": "In/Out connector"
+        },
+        {
+          "type": "SDL - Stop",
+          "description": "Stop"
+        },
+        {
+          "type": "SDL - Return",
+          "description": "Procedure return"
+        },
+        {
+          "type": "SDL - Comment",
+          "description": "Comment"
+        },
+        {
+          "type": "SDL - Note",
+          "description": "Generic text note"
+        }
+      ]
+    },
+    {
+      "name": "Shape Design",
+      "description": "Design Dia objects with individual connection points",
+      "user": false,
+      "objects": [
+        {
+          "type": "Shape Design - Connection Point",
+          "description": "Connection Point"
+        },
+        {
+          "type": "Shape Design - Main Connection Point",
+          "description": "Main Connection Point"
+        }
+      ]
+    },
+    {
+      "name": "Sybase",
+      "description": "Objects to design Sybase replication domain diagrams with",
+      "user": false,
+      "objects": [
+        {
+          "type": "Sybase - Dataserver",
+          "description": "Sybase dataserver"
+        },
+        {
+          "type": "Sybase - Replication Server",
+          "description": "Sybase replication server"
+        },
+        {
+          "type": "Sybase - Log Transfer Manager/Rep Agent",
+          "description": "Log transfer manager or rep agent"
+        },
+        {
+          "type": "Sybase - Stable Queue",
+          "description": "Stable storage device"
+        },
+        {
+          "type": "Sybase - Client Application",
+          "description": "Sybase client application"
+        },
+        {
+          "type": "Sybase - Replication Server Manager",
+          "description": "Replication server manager"
+        }
+      ]
+    },
+    {
+      "name": "UML",
+      "description": "Editor for UML Static Structure Diagrams",
+      "user": false,
+      "objects": [
+        {
+          "type": "UML - Class",
+          "description": "Class"
+        },
+        {
+          "type": "UML - Class",
+          "description": "Template class"
+        },
+        {
+          "type": "UML - Note",
+          "description": "Note"
+        },
+        {
+          "type": "UML - Dependency",
+          "description": "Dependency"
+        },
+        {
+          "type": "UML - Realizes",
+          "description": "Realizes, implements a specific interface"
+        },
+        {
+          "type": "UML - Generalization",
+          "description": "Generalization, class inheritance"
+        },
+        {
+          "type": "UML - Association",
+          "description": "Association, two classes are associated"
+        },
+        {
+          "type": "UML - Association",
+          "description": "Aggregation, one class is part of another"
+        },
+        {
+          "type": "UML - Implements",
+          "description": "Implements, class implements a specific interface"
+        },
+        {
+          "type": "UML - Constraint",
+          "description": "Constraint, place a constraint on something"
+        },
+        {
+          "type": "UML - SmallPackage",
+          "description": "Small package"
+        },
+        {
+          "type": "UML - LargePackage",
+          "description": "Large package"
+        },
+        {
+          "type": "UML - Actor",
+          "description": "Actor"
+        },
+        {
+          "type": "UML - Usecase",
+          "description": "Use case"
+        },
+        {
+          "type": "UML - Lifeline",
+          "description": "Lifeline"
+        },
+        {
+          "type": "UML - Object",
+          "description": "Object"
+        },
+        {
+          "type": "UML - Message",
+          "description": "Message"
+        },
+        {
+          "type": "UML - Component",
+          "description": "Component"
+        },
+        {
+          "type": "UML - Component Feature",
+          "description": "Facet"
+        },
+        {
+          "type": "UML - Component Feature",
+          "description": "Receptacle"
+        },
+        {
+          "type": "UML - Component Feature",
+          "description": "Event Source"
+        },
+        {
+          "type": "UML - Component Feature",
+          "description": "Event Sink"
+        },
+        {
+          "type": "UML - Node",
+          "description": "Node"
+        },
+        {
+          "type": "UML - Classicon",
+          "description": "Class stereotype icon"
+        },
+        {
+          "type": "UML - State Term",
+          "description": "Initial/End state"
+        },
+        {
+          "type": "UML - State",
+          "description": "State"
+        },
+        {
+          "type": "UML - Activity",
+          "description": "Activity"
+        },
+        {
+          "type": "UML - Branch",
+          "description": "Branch"
+        },
+        {
+          "type": "UML - Fork",
+          "description": "Fork/Union"
+        },
+        {
+          "type": "UML - Transition",
+          "description": "Transition"
+        }
+      ]
+    }
+  ],
+  "object_types": [
+    {
+      "name": "AADL - Bus",
+      "version": 0
+    },
+    {
+      "name": "AADL - Data",
+      "version": 0
+    },
+    {
+      "name": "AADL - Device",
+      "version": 0
+    },
+    {
+      "name": "AADL - Memory",
+      "version": 0
+    },
+    {
+      "name": "AADL - Package",
+      "version": 0
+    },
+    {
+      "name": "AADL - Process",
+      "version": 0
+    },
+    {
+      "name": "AADL - Processor",
+      "version": 0
+    },
+    {
+      "name": "AADL - Subprogram",
+      "version": 0
+    },
+    {
+      "name": "AADL - System",
+      "version": 0
+    },
+    {
+      "name": "AADL - Thread",
+      "version": 0
+    },
+    {
+      "name": "AADL - Thread Group",
+      "version": 0
+    },
+    {
+      "name": "Assorted - Heart",
+      "version": 1
+    },
+    {
+      "name": "Assorted - Left-Up Arrow",
+      "version": 1
+    },
+    {
+      "name": "Assorted - Quarter Moon",
+      "version": 1
+    },
+    {
+      "name": "Assorted - Sun",
+      "version": 1
+    },
+    {
+      "name": "Assorted - Turn-Up Arrow",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Activity-Looping",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Ad-Hoc-Collapsed-Sub-Process",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Collapsed-Sub-Process",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Compensation",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Compensation-Collapsed-Sub-Process",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Data-Object",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Cancel",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Compensation",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Error",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Link",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Message",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Multiple",
+      "version": 1
+    },
+    {
+      "name": "BPMN - End-Event-Terminate",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Gateway",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Gateway-Complex",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Gateway-Exclusive-XOR-Data-Based",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Gateway-Exclusive-XOR-Event-Based",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Gateway-Inclusive-OR",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Gateway-Parallel-AND",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Group",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Cancel",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Compensation",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Error",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Link",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Message",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Multiple",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Rule",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Intermediate-Event-Timer",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Looping-Collapsed-Sub-Process",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Multiple-Instance-Collapsed-Sub-Process",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Multiple-Instance-Task",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Start-Event",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Start-Event-Link",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Start-Event-Message",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Start-Event-Multiple",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Start-Event-Rule",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Start-Event-Timer",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Task",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Text-Annotation",
+      "version": 1
+    },
+    {
+      "name": "BPMN - Transaction",
+      "version": 1
+    },
+    {
+      "name": "Block Arrow - Chevron",
+      "version": 1
+    },
+    {
+      "name": "Block Arrow - Pentagon",
+      "version": 1
+    },
+    {
+      "name": "Block1",
+      "version": 1
+    },
+    {
+      "name": "Block2",
+      "version": 1
+    },
+    {
+      "name": "Block3",
+      "version": 1
+    },
+    {
+      "name": "Block4",
+      "version": 1
+    },
+    {
+      "name": "Block5",
+      "version": 1
+    },
+    {
+      "name": "Block6",
+      "version": 1
+    },
+    {
+      "name": "Block7",
+      "version": 1
+    },
+    {
+      "name": "Car1",
+      "version": 1
+    },
+    {
+      "name": "Car2",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Ground",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Capacitor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Diode",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Fuse (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Inductor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Inductor (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Jumper",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Led (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Powersource (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Resistor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Resistor (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Xtal",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Horizontal Zener Diode",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Lamp (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Microphone (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - NMOS Transistor (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - NPN Transistor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Op Amp",
+      "version": 1
+    },
+    {
+      "name": "Circuit - PMOS Transistor (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - PNP Transistor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Speaker (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Capacitor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Diode",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Fuse (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Inductor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Inductor (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Led (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Powersource (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Resistor",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Resistor (European)",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Xtal",
+      "version": 1
+    },
+    {
+      "name": "Circuit - Vertical Zener Diode",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 100BaseT Hub",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 10700",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 15200",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 15800",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 3174 (desktop) cluster controller",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 3X74 (floor) cluster controller",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 6701",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 6705",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 6732",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 7500ARS (7513) Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 7505 Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - 7507 Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ADM",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ASIC Processor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATA",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATM 3800",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATM Fast Gigabit Etherswitch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATM Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATM Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATM Tag Sw Gigabit Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ATM Tag Switch Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Access Gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Access server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - AccessPoint",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Androgynous Person",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Antenna",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Automatic Protection Switching",
+      "version": 1
+    },
+    {
+      "name": "Cisco - BBFW",
+      "version": 1
+    },
+    {
+      "name": "Cisco - BBFW media",
+      "version": 1
+    },
+    {
+      "name": "Cisco - BBS",
+      "version": 1
+    },
+    {
+      "name": "Cisco - BBSM",
+      "version": 1
+    },
+    {
+      "name": "Cisco - BTS 10200",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Branch office",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Branch office blue",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Branch office subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Breakout box",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Bridge",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Broadband router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CDDI-FDDI",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CDM Content Distribution Manager",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CSM-S",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CSU/DSU",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cable Modem",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CallManager",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Car",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Carrier Routing System",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Catalyst Access Gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cellular phone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Centri Firewall",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Channelized Pipe",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cisco 1000",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cisco CA",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cisco Hub",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CiscoSecurity",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CiscoWorks Man",
+      "version": 1
+    },
+    {
+      "name": "Cisco - CiscoWorks workstation",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Class 4/5 switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cloud",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cloud Dark",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cloud Gold",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Cloud White",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Communications server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Concatenated Payload",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Content Engine (Cache Director)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Content Service Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Content Service Switch 1100",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Content Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Content Switch module",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Content Transformation Engine (CTE)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - DPT",
+      "version": 1
+    },
+    {
+      "name": "Cisco - DSLAM",
+      "version": 1
+    },
+    {
+      "name": "Cisco - DWDM Filter",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Data Center Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Data Center Switch Reversed",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Data Switch Processor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Detector",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Digital Cross-Connect",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Director-class Fibre Channel intelligent switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Directory Server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Disk subsystem",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Diskette",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Distributed Director",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Dot-Dot",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Dual Mode AccessPoint",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Edge Label Switch Router with NetFlow",
+      "version": 1
+    },
+    {
+      "name": "Cisco - End Office",
+      "version": 1
+    },
+    {
+      "name": "Cisco - EtherClient",
+      "version": 1
+    },
+    {
+      "name": "Cisco - FC Storage",
+      "version": 1
+    },
+    {
+      "name": "Cisco - FDDI Ring",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Fax",
+      "version": 1
+    },
+    {
+      "name": "Cisco - File Engine",
+      "version": 1
+    },
+    {
+      "name": "Cisco - File Server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - File cabinet",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Firewall",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Firewall Service Module",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Firewall horizontal",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Firewall subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Front End Processor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Gatekeeper",
+      "version": 1
+    },
+    {
+      "name": "Cisco - General appliance",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Generic Building",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Generic Building blue",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Generic Building subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Generic gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Generic processor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Generic softswitch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Gigabit Switch Router (ATM Tag)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Government Building",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Guard",
+      "version": 1
+    },
+    {
+      "name": "Cisco - H.323",
+      "version": 1
+    },
+    {
+      "name": "Cisco - HP Mini",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Handheld",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Headphones",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Home office",
+      "version": 1
+    },
+    {
+      "name": "Cisco - HootPhone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Host",
+      "version": 1
+    },
+    {
+      "name": "Cisco - House",
+      "version": 1
+    },
+    {
+      "name": "Cisco - House blue",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Hub",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Hub subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IAD router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IBM Mini (AS400)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IBM Tower",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IBM mainframe",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IBM mainframe with FEP",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ICM",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ICS",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IOS Firewall",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IOS SLB",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IP",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IP DSL",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IP Old-style",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IP Phone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IP Softphone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IP Telephony Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IPTC",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IPTV broadcast server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IPTV content manager",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ISDN switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ITP",
+      "version": 1
+    },
+    {
+      "name": "Cisco - IntelliSwitch Stack",
+      "version": 1
+    },
+    {
+      "name": "Cisco - JBOD",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Key",
+      "version": 1
+    },
+    {
+      "name": "Cisco - LAN to LAN",
+      "version": 1
+    },
+    {
+      "name": "Cisco - LAN2LAN Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Laptop",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Layer 2 Remote Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Layer 3 Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Lightweight AP",
+      "version": 1
+    },
+    {
+      "name": "Cisco - LocalDirector",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Location server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Lock",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Lock and Key",
+      "version": 1
+    },
+    {
+      "name": "Cisco - LongReach CPE",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MAS Gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MAU",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MCU",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MDU",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ME 1100",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MGX 8000 Series Voice Gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MGX 8220",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MGX 8240",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MGX 8260",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MUX",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Mac Woman",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Macintosh",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Man",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Man blue",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Man gold",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Man red",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Man/Woman",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Medium Building",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Medium Building blue",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Medium Building subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Metro 1500",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MicroWebserver",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Microphone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Mini VAX",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MoH server (Music on Hold)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Mobile Access IP Phone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Mobile Access Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Modem",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Monitor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Multi-Fabric Server Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - MultiSwitch Device",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Multilayer Remote Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Multilayer Switch with Silicon",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Multilayer Switch with Silicon subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Multilayer switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - NAT",
+      "version": 1
+    },
+    {
+      "name": "Cisco - NetFlow router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - NetRanger",
+      "version": 1
+    },
+    {
+      "name": "Cisco - NetSonar",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Network Management",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Newton",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ONS15104",
+      "version": 1
+    },
+    {
+      "name": "Cisco - ONS15500",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Octel",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Optical Amplifier",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Optical Cross-Connect",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Optical Fiber",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Optical Services Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Optical Transport",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PAD X.28",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PBX",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PBX Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Adapter Card",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Card",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Man",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Man left",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Router Card",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Software",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC Video",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PC with Router-Based Software",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PDA",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PIX Firewall",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PIX Firewall Left",
+      "version": 1
+    },
+    {
+      "name": "Cisco - PXF",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Pager",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Phone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Phone 2",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Phone Appliance",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Phone Ethernet",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Phone Feature",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Phone/Fax",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Printer",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Programmable Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Protocol Translator",
+      "version": 1
+    },
+    {
+      "name": "Cisco - RPS",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Radio Tower",
+      "version": 1
+    },
+    {
+      "name": "Cisco - RateMUX",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Relational Database",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Repeater",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Route Switch Processor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Route Switch Processor with Si",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Router in building",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Router subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Router with Firewall",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Router with Silicon Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Running man",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Running man subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Running woman",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SC2200 (Signalling Controller)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SC2200/VSC3000 host",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SIP Proxy server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SONET MUX",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SSL Terminator",
+      "version": 1
+    },
+    {
+      "name": "Cisco - STB (set top box)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - STP",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SUN workstation",
+      "version": 1
+    },
+    {
+      "name": "Cisco - SVX (interchangeable with End office)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Satellite",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Satellite dish",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Scanner",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Security appliance",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Server Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Server with PC Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Service Control",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Sitting Woman right",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Sitting woman",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Small Business",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Small hub",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Softphone",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Software based server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Speaker",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Standing Man",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Standing woman",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Storage Router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Storage Solution Engine",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Storage array",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Supercomputer",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Switch Processor",
+      "version": 1
+    },
+    {
+      "name": "Cisco - System controller",
+      "version": 1
+    },
+    {
+      "name": "Cisco - TDM router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - TV",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Tablet",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Tape array",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Telecommuter",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Telecommuter house",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Telecommuter house subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Telecommuter house/router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Terminal",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Terminal Server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - TokenRing",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Transpath",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Truck",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Turret",
+      "version": 1
+    },
+    {
+      "name": "Cisco - UPS",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Unity Express",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Unity server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Universal Gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - University",
+      "version": 1
+    },
+    {
+      "name": "Cisco - VIP",
+      "version": 1
+    },
+    {
+      "name": "Cisco - VN2900",
+      "version": 1
+    },
+    {
+      "name": "Cisco - VN5900",
+      "version": 1
+    },
+    {
+      "name": "Cisco - VN5902",
+      "version": 1
+    },
+    {
+      "name": "Cisco - VPN Gateway",
+      "version": 1
+    },
+    {
+      "name": "Cisco - VPN concentrator",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Video Camera right",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Video camera",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Virtual Layer Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Virtual switch controller (VSC 3000)",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Voice ATM Switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Voice commserver",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Voice router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Voice switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Voice switch 2",
+      "version": 1
+    },
+    {
+      "name": "Cisco - WAN",
+      "version": 1
+    },
+    {
+      "name": "Cisco - WDM",
+      "version": 1
+    },
+    {
+      "name": "Cisco - WLAN controller",
+      "version": 1
+    },
+    {
+      "name": "Cisco - WWW server",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wavelength router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Web browser",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Web cluster",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wi-Fi Tag",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wireless",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wireless Bridge",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wireless Connectivity",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wireless Location Appliance",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wireless Transport",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Wireless router",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Woman",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Woman blue",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Woman gold",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Woman red",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup 5000",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup 5002",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup 5500",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup Fibre Channel intelligent switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup director",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workgroup switch Subdued",
+      "version": 1
+    },
+    {
+      "name": "Cisco - Workstation",
+      "version": 1
+    },
+    {
+      "name": "Cisco - iSCSI switch",
+      "version": 1
+    },
+    {
+      "name": "Cisco - uBR910",
+      "version": 1
+    },
+    {
+      "name": "Cisco - uMG series",
+      "version": 1
+    },
+    {
+      "name": "Civil - Aerator",
+      "version": 1
+    },
+    {
+      "name": "Civil - Backflow Preventer",
+      "version": 1
+    },
+    {
+      "name": "Civil - Basin",
+      "version": 1
+    },
+    {
+      "name": "Civil - Bivalent Vertical Rest",
+      "version": 1
+    },
+    {
+      "name": "Civil - Container",
+      "version": 1
+    },
+    {
+      "name": "Civil - Final-Settling Basin",
+      "version": 1
+    },
+    {
+      "name": "Civil - Frequency Converter",
+      "version": 1
+    },
+    {
+      "name": "Civil - Gas Bottle",
+      "version": 1
+    },
+    {
+      "name": "Civil - Horizontal Compressor",
+      "version": 1
+    },
+    {
+      "name": "Civil - Horizontal Limiting Line",
+      "version": 1
+    },
+    {
+      "name": "Civil - Horizontal Pump",
+      "version": 1
+    },
+    {
+      "name": "Civil - Horizontal Rest",
+      "version": 1
+    },
+    {
+      "name": "Civil - Horizontal Valve",
+      "version": 1
+    },
+    {
+      "name": "Civil - Motor",
+      "version": 1
+    },
+    {
+      "name": "Civil - Preliminary Clarification Tank",
+      "version": 1
+    },
+    {
+      "name": "Civil - Reference Line",
+      "version": 1
+    },
+    {
+      "name": "Civil - Right Arrow",
+      "version": 1
+    },
+    {
+      "name": "Civil - Rotor",
+      "version": 1
+    },
+    {
+      "name": "Civil - Soil",
+      "version": 1
+    },
+    {
+      "name": "Civil - Up Arrow",
+      "version": 1
+    },
+    {
+      "name": "Civil - Vertical Compressor",
+      "version": 1
+    },
+    {
+      "name": "Civil - Vertical Limiting Line",
+      "version": 1
+    },
+    {
+      "name": "Civil - Vertical Propeller",
+      "version": 1
+    },
+    {
+      "name": "Civil - Vertical Pump",
+      "version": 1
+    },
+    {
+      "name": "Civil - Vertical Rest",
+      "version": 1
+    },
+    {
+      "name": "Civil - Water Level",
+      "version": 1
+    },
+    {
+      "name": "Contact - if",
+      "version": 1
+    },
+    {
+      "name": "Contact - ifnot",
+      "version": 1
+    },
+    {
+      "name": "Contact - lamp",
+      "version": 1
+    },
+    {
+      "name": "Contact - relay",
+      "version": 1
+    },
+    {
+      "name": "Corner1",
+      "version": 1
+    },
+    {
+      "name": "Corner2",
+      "version": 1
+    },
+    {
+      "name": "Crossroads",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - b-integrator",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - b-minus",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - b-sens",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - delta-t",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - empty-func",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - factor-0to-1",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - factor-0to1",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - factor-greater1",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - factor-smaller-1",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - full-wave-rectifier",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - half-wave-rectifier",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - hpf",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - l-integrator",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - l-minus",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - l-sens",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - lpf",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - negative-shift",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - positive-shift",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - product",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - r-integrator",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - r-minus",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - r-sens",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - relay",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - saturation",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - sigmoid",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - sine",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - sum",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - t-integrator",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - t-minus",
+      "version": 1
+    },
+    {
+      "name": "Cybernetics - t-sens",
+      "version": 1
+    },
+    {
+      "name": "Database - Compound",
+      "version": 0
+    },
+    {
+      "name": "Database - Reference",
+      "version": 0
+    },
+    {
+      "name": "Database - Table",
+      "version": 0
+    },
+    {
+      "name": "Demultiplexer",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Business_Process",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Document",
+      "version": 1
+    },
+    {
+      "name": "EDPC_End_Event",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Event",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Function",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Operator_AND_in",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Operator_AND_out",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Operator_OR_in",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Operator_OR_out",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Operator_XOR_in",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Operator_XOR_out",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Organisation_Unit",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Process_Group",
+      "version": 1
+    },
+    {
+      "name": "EDPC_Start_Event",
+      "version": 1
+    },
+    {
+      "name": "ER - Attribute",
+      "version": 0
+    },
+    {
+      "name": "ER - Entity",
+      "version": 0
+    },
+    {
+      "name": "ER - Participation",
+      "version": 1
+    },
+    {
+      "name": "ER - Relationship",
+      "version": 0
+    },
+    {
+      "name": "Electric - command",
+      "version": 1
+    },
+    {
+      "name": "Electric - connpoint",
+      "version": 1
+    },
+    {
+      "name": "Electric - contact_f",
+      "version": 1
+    },
+    {
+      "name": "Electric - contact_o",
+      "version": 1
+    },
+    {
+      "name": "Electric - intpos_f",
+      "version": 1
+    },
+    {
+      "name": "Electric - intpos_o",
+      "version": 1
+    },
+    {
+      "name": "Electric - lamp",
+      "version": 1
+    },
+    {
+      "name": "Electric - relay",
+      "version": 1
+    },
+    {
+      "name": "Electric - vcommand",
+      "version": 1
+    },
+    {
+      "name": "Electric - vcontact_f",
+      "version": 1
+    },
+    {
+      "name": "Electric - vcontact_o",
+      "version": 1
+    },
+    {
+      "name": "Electric - vintpos_f",
+      "version": 1
+    },
+    {
+      "name": "Electric - vintpos_o",
+      "version": 1
+    },
+    {
+      "name": "Electric - vlamp",
+      "version": 1
+    },
+    {
+      "name": "Electric - vrelay",
+      "version": 1
+    },
+    {
+      "name": "Elevated",
+      "version": 1
+    },
+    {
+      "name": "FS - Flow",
+      "version": 0
+    },
+    {
+      "name": "FS - Function",
+      "version": 0
+    },
+    {
+      "name": "FS - Orthflow",
+      "version": 1
+    },
+    {
+      "name": "Factory",
+      "version": 1
+    },
+    {
+      "name": "Filesystem - File",
+      "version": 1
+    },
+    {
+      "name": "Filesystem - Folder",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Box",
+      "version": 0
+    },
+    {
+      "name": "Flowchart - Collate",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Data Source",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Delay",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Diamond",
+      "version": 0
+    },
+    {
+      "name": "Flowchart - Display",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Document",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Ellipse",
+      "version": 0
+    },
+    {
+      "name": "Flowchart - Extract",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Internal Storage",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Magnetic Disk",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Magnetic Drum",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Magnetic Tape",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Manual Input",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Manual Operation",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Merge",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Off Page Connector",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Offline Storage",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Or",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Parallelogram",
+      "version": 0
+    },
+    {
+      "name": "Flowchart - Predefined Process",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Preparation",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Punched Card",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Punched Tape",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Sort",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Summing Junction",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Terminal",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Transaction File",
+      "version": 1
+    },
+    {
+      "name": "Flowchart - Transmittal Tape",
+      "version": 1
+    },
+    {
+      "name": "FootBridge",
+      "version": 1
+    },
+    {
+      "name": "G&S - Alternative External Entity",
+      "version": 1
+    },
+    {
+      "name": "G&S - Data Store",
+      "version": 1
+    },
+    {
+      "name": "G&S - External Entity",
+      "version": 1
+    },
+    {
+      "name": "G&S - Process",
+      "version": 1
+    },
+    {
+      "name": "GRAFCET - Action",
+      "version": 0
+    },
+    {
+      "name": "GRAFCET - Arc",
+      "version": 0
+    },
+    {
+      "name": "GRAFCET - Condition",
+      "version": 0
+    },
+    {
+      "name": "GRAFCET - Step",
+      "version": 0
+    },
+    {
+      "name": "GRAFCET - Transition",
+      "version": 0
+    },
+    {
+      "name": "GRAFCET - Vector",
+      "version": 1
+    },
+    {
+      "name": "GRAFCET - Vergent",
+      "version": 0
+    },
+    {
+      "name": "Geometric - Curved Eight Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Curved Four Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Diamond",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Down Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Eight Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Five Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Four Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Heptagon",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Hexagon",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Horizontal Parallelogram",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Isoceles Triangle",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Isosceles Triangle",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Left Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Left-Right Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Left-Right-Up Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Maltese Cross",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Notched Left Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Notched Right Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Octagon",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Pentagon",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Perfect Circle",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Perfect Square",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Quad Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Quarter Circle",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Right Angle Triangle",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Right Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Seven Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Sharp Eight Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Six Point Star",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Swiss Cross",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Trapezoid",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Up Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Up-Down Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Up-Down-Left Arrow",
+      "version": 1
+    },
+    {
+      "name": "Geometric - Vertical Parallelogram",
+      "version": 1
+    },
+    {
+      "name": "Group",
+      "version": 0
+    },
+    {
+      "name": "Istar - actor",
+      "version": 0
+    },
+    {
+      "name": "Istar - goal",
+      "version": 0
+    },
+    {
+      "name": "Istar - link",
+      "version": 0
+    },
+    {
+      "name": "Istar - other",
+      "version": 0
+    },
+    {
+      "name": "Jackson - domain",
+      "version": 0
+    },
+    {
+      "name": "Jackson - phenomenon",
+      "version": 0
+    },
+    {
+      "name": "Jackson - requirement",
+      "version": 0
+    },
+    {
+      "name": "Jigsaw - part_iiii",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_iiio",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_iioi",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_iioo",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_ioii",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_ioio",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_iooi",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_iooo",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_oiii",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_oiio",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_oioi",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_oioo",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_ooii",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_ooio",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_oooi",
+      "version": 1
+    },
+    {
+      "name": "Jigsaw - part_oooo",
+      "version": 1
+    },
+    {
+      "name": "KAOS - goal",
+      "version": 0
+    },
+    {
+      "name": "KAOS - maor",
+      "version": 0
+    },
+    {
+      "name": "KAOS - mbr",
+      "version": 0
+    },
+    {
+      "name": "KAOS - other",
+      "version": 0
+    },
+    {
+      "name": "LADDER - if",
+      "version": 1
+    },
+    {
+      "name": "LADDER - ifnot",
+      "version": 1
+    },
+    {
+      "name": "LADDER - out",
+      "version": 1
+    },
+    {
+      "name": "LADDER - outj",
+      "version": 1
+    },
+    {
+      "name": "LADDER - outnot",
+      "version": 1
+    },
+    {
+      "name": "LADDER - outr",
+      "version": 1
+    },
+    {
+      "name": "LADDER - outrcep",
+      "version": 1
+    },
+    {
+      "name": "LADDER - outs",
+      "version": 1
+    },
+    {
+      "name": "LADDER - sout",
+      "version": 1
+    },
+    {
+      "name": "LADDER - soutnot",
+      "version": 1
+    },
+    {
+      "name": "LADDER - soutr",
+      "version": 1
+    },
+    {
+      "name": "LADDER - souts",
+      "version": 1
+    },
+    {
+      "name": "Large Extension Node",
+      "version": 1
+    },
+    {
+      "name": "Lights - ACL",
+      "version": 1
+    },
+    {
+      "name": "Lights - Blacklight",
+      "version": 1
+    },
+    {
+      "name": "Lights - Blinders",
+      "version": 1
+    },
+    {
+      "name": "Lights - ERS",
+      "version": 1
+    },
+    {
+      "name": "Lights - Fresnel",
+      "version": 1
+    },
+    {
+      "name": "Lights - Moving_head",
+      "version": 1
+    },
+    {
+      "name": "Lights - PAR",
+      "version": 1
+    },
+    {
+      "name": "Lights - PAR_floor",
+      "version": 1
+    },
+    {
+      "name": "Lights - PC",
+      "version": 1
+    },
+    {
+      "name": "Lights - Scanner",
+      "version": 1
+    },
+    {
+      "name": "Lights - Striplight",
+      "version": 1
+    },
+    {
+      "name": "Lights - Stroboscope",
+      "version": 1
+    },
+    {
+      "name": "Lights - Structure",
+      "version": 1
+    },
+    {
+      "name": "Logic - And",
+      "version": 1
+    },
+    {
+      "name": "Logic - Buffer",
+      "version": 1
+    },
+    {
+      "name": "Logic - Connector",
+      "version": 1
+    },
+    {
+      "name": "Logic - Inverter",
+      "version": 1
+    },
+    {
+      "name": "Logic - Nand",
+      "version": 1
+    },
+    {
+      "name": "Logic - Nor",
+      "version": 1
+    },
+    {
+      "name": "Logic - Not",
+      "version": 1
+    },
+    {
+      "name": "Logic - Or",
+      "version": 1
+    },
+    {
+      "name": "Logic - Xor",
+      "version": 1
+    },
+    {
+      "name": "Misc - Analog Clock",
+      "version": 0
+    },
+    {
+      "name": "Misc - Diagram",
+      "version": 0
+    },
+    {
+      "name": "Misc - Grid",
+      "version": 0
+    },
+    {
+      "name": "Misc - Measure",
+      "version": 0
+    },
+    {
+      "name": "Misc - Ngon",
+      "version": 1
+    },
+    {
+      "name": "Misc - Tree",
+      "version": 0
+    },
+    {
+      "name": "Misc - expended node",
+      "version": 1
+    },
+    {
+      "name": "Misc - expensible node",
+      "version": 1
+    },
+    {
+      "name": "Multiplexer",
+      "version": 1
+    },
+    {
+      "name": "Network - A Bigtower PC",
+      "version": 1
+    },
+    {
+      "name": "Network - A Desktop PC",
+      "version": 1
+    },
+    {
+      "name": "Network - A Diskette",
+      "version": 1
+    },
+    {
+      "name": "Network - A Miditower PC",
+      "version": 1
+    },
+    {
+      "name": "Network - A Minitower PC",
+      "version": 1
+    },
+    {
+      "name": "Network - A Mobile Phone",
+      "version": 1
+    },
+    {
+      "name": "Network - A Telephone",
+      "version": 1
+    },
+    {
+      "name": "Network - A Workstation",
+      "version": 1
+    },
+    {
+      "name": "Network - A Workstation Monitor",
+      "version": 1
+    },
+    {
+      "name": "Network - A ZIP Disk",
+      "version": 1
+    },
+    {
+      "name": "Network - A speaker",
+      "version": 1
+    },
+    {
+      "name": "Network - An amplifier speaker",
+      "version": 1
+    },
+    {
+      "name": "Network - An external DAT drive",
+      "version": 1
+    },
+    {
+      "name": "Network - Antenna",
+      "version": 1
+    },
+    {
+      "name": "Network - Base Station",
+      "version": 0
+    },
+    {
+      "name": "Network - Bus",
+      "version": 0
+    },
+    {
+      "name": "Network - Cloud",
+      "version": 1
+    },
+    {
+      "name": "Network - Digitizing Board",
+      "version": 1
+    },
+    {
+      "name": "Network - Firewall",
+      "version": 1
+    },
+    {
+      "name": "Network - General Computer (Tower)",
+      "version": 1
+    },
+    {
+      "name": "Network - General Monitor (With Stand)",
+      "version": 1
+    },
+    {
+      "name": "Network - General Printer",
+      "version": 1
+    },
+    {
+      "name": "Network - Hub",
+      "version": 1
+    },
+    {
+      "name": "Network - Laptop Computer",
+      "version": 1
+    },
+    {
+      "name": "Network - Modem",
+      "version": 1
+    },
+    {
+      "name": "Network - Modular Switch",
+      "version": 1
+    },
+    {
+      "name": "Network - Patch Panel",
+      "version": 1
+    },
+    {
+      "name": "Network - Plotter",
+      "version": 1
+    },
+    {
+      "name": "Network - RJ45 Wall-Plug",
+      "version": 1
+    },
+    {
+      "name": "Network - Radio Cell",
+      "version": 0
+    },
+    {
+      "name": "Network - Router Symbol",
+      "version": 1
+    },
+    {
+      "name": "Network - Storage",
+      "version": 1
+    },
+    {
+      "name": "Network - Switch ATM Symbol",
+      "version": 1
+    },
+    {
+      "name": "Network - Switch Symbol",
+      "version": 1
+    },
+    {
+      "name": "Network - WAN Connection",
+      "version": 1
+    },
+    {
+      "name": "Network - WAN Link",
+      "version": 1
+    },
+    {
+      "name": "Network - scEAD Wall-Plug",
+      "version": 1
+    },
+    {
+      "name": "Node Center",
+      "version": 1
+    },
+    {
+      "name": "OneWay",
+      "version": 1
+    },
+    {
+      "name": "Pneum - DEJack",
+      "version": 1
+    },
+    {
+      "name": "Pneum - SEIJack",
+      "version": 1
+    },
+    {
+      "name": "Pneum - SEOJack",
+      "version": 1
+    },
+    {
+      "name": "Pneum - comelec1",
+      "version": 1
+    },
+    {
+      "name": "Pneum - comelec2",
+      "version": 1
+    },
+    {
+      "name": "Pneum - commusc",
+      "version": 1
+    },
+    {
+      "name": "Pneum - compb",
+      "version": 1
+    },
+    {
+      "name": "Pneum - compilh",
+      "version": 1
+    },
+    {
+      "name": "Pneum - compilp",
+      "version": 1
+    },
+    {
+      "name": "Pneum - compush",
+      "version": 1
+    },
+    {
+      "name": "Pneum - comspr",
+      "version": 1
+    },
+    {
+      "name": "Pneum - connpoint",
+      "version": 1
+    },
+    {
+      "name": "Pneum - dist22",
+      "version": 1
+    },
+    {
+      "name": "Pneum - dist32",
+      "version": 1
+    },
+    {
+      "name": "Pneum - dist42",
+      "version": 1
+    },
+    {
+      "name": "Pneum - dist52",
+      "version": 1
+    },
+    {
+      "name": "Pneum - drain",
+      "version": 1
+    },
+    {
+      "name": "Pneum - press",
+      "version": 1
+    },
+    {
+      "name": "Pneum - presshy",
+      "version": 1
+    },
+    {
+      "name": "Pneum - presspn",
+      "version": 1
+    },
+    {
+      "name": "RedCar",
+      "version": 1
+    },
+    {
+      "name": "River",
+      "version": 1
+    },
+    {
+      "name": "Road1",
+      "version": 1
+    },
+    {
+      "name": "Roof1",
+      "version": 1
+    },
+    {
+      "name": "SADT - annotation",
+      "version": 0
+    },
+    {
+      "name": "SADT - arrow",
+      "version": 1
+    },
+    {
+      "name": "SADT - box",
+      "version": 0
+    },
+    {
+      "name": "SDL - Block",
+      "version": 1
+    },
+    {
+      "name": "SDL - Comment",
+      "version": 1
+    },
+    {
+      "name": "SDL - Decision",
+      "version": 1
+    },
+    {
+      "name": "SDL - Function",
+      "version": 1
+    },
+    {
+      "name": "SDL - Function Header",
+      "version": 1
+    },
+    {
+      "name": "SDL - InOut",
+      "version": 1
+    },
+    {
+      "name": "SDL - Macro",
+      "version": 1
+    },
+    {
+      "name": "SDL - Note",
+      "version": 1
+    },
+    {
+      "name": "SDL - Process",
+      "version": 1
+    },
+    {
+      "name": "SDL - Receive",
+      "version": 1
+    },
+    {
+      "name": "SDL - Return",
+      "version": 1
+    },
+    {
+      "name": "SDL - Save",
+      "version": 1
+    },
+    {
+      "name": "SDL - Send",
+      "version": 1
+    },
+    {
+      "name": "SDL - Service",
+      "version": 1
+    },
+    {
+      "name": "SDL - State",
+      "version": 1
+    },
+    {
+      "name": "SDL - Stop",
+      "version": 1
+    },
+    {
+      "name": "SDL - Task",
+      "version": 1
+    },
+    {
+      "name": "Shape Design - Connection Point",
+      "version": 1
+    },
+    {
+      "name": "Shape Design - Main Connection Point",
+      "version": 1
+    },
+    {
+      "name": "Small Extension Node",
+      "version": 1
+    },
+    {
+      "name": "Standard - Arc",
+      "version": 0
+    },
+    {
+      "name": "Standard - BezierLine",
+      "version": 0
+    },
+    {
+      "name": "Standard - Beziergon",
+      "version": 0
+    },
+    {
+      "name": "Standard - Box",
+      "version": 0
+    },
+    {
+      "name": "Standard - Bus",
+      "version": 0
+    },
+    {
+      "name": "Standard - Ellipse",
+      "version": 0
+    },
+    {
+      "name": "Standard - Image",
+      "version": 0
+    },
+    {
+      "name": "Standard - Line",
+      "version": 0
+    },
+    {
+      "name": "Standard - Outline",
+      "version": 0
+    },
+    {
+      "name": "Standard - Path",
+      "version": 0
+    },
+    {
+      "name": "Standard - PolyLine",
+      "version": 0
+    },
+    {
+      "name": "Standard - Polygon",
+      "version": 0
+    },
+    {
+      "name": "Standard - Text",
+      "version": 1
+    },
+    {
+      "name": "Standard - ZigZagLine",
+      "version": 1
+    },
+    {
+      "name": "StraightRoad1",
+      "version": 1
+    },
+    {
+      "name": "Sybase - Client Application",
+      "version": 1
+    },
+    {
+      "name": "Sybase - Dataserver",
+      "version": 1
+    },
+    {
+      "name": "Sybase - Log Transfer Manager/Rep Agent",
+      "version": 1
+    },
+    {
+      "name": "Sybase - Replication Server",
+      "version": 1
+    },
+    {
+      "name": "Sybase - Replication Server Manager",
+      "version": 1
+    },
+    {
+      "name": "Sybase - Stable Queue",
+      "version": 1
+    },
+    {
+      "name": "T-Junction",
+      "version": 1
+    },
+    {
+      "name": "Tactical Satellite Communications Terminal",
+      "version": 1
+    },
+    {
+      "name": "Train1",
+      "version": 1
+    },
+    {
+      "name": "Train2",
+      "version": 1
+    },
+    {
+      "name": "Tree1",
+      "version": 1
+    },
+    {
+      "name": "UML - Activity",
+      "version": 0
+    },
+    {
+      "name": "UML - Actor",
+      "version": 0
+    },
+    {
+      "name": "UML - Association",
+      "version": 2
+    },
+    {
+      "name": "UML - Branch",
+      "version": 0
+    },
+    {
+      "name": "UML - Class",
+      "version": 0
+    },
+    {
+      "name": "UML - Classicon",
+      "version": 0
+    },
+    {
+      "name": "UML - Component",
+      "version": 0
+    },
+    {
+      "name": "UML - Component Feature",
+      "version": 1
+    },
+    {
+      "name": "UML - Constraint",
+      "version": 0
+    },
+    {
+      "name": "UML - Dependency",
+      "version": 1
+    },
+    {
+      "name": "UML - Fork",
+      "version": 0
+    },
+    {
+      "name": "UML - Generalization",
+      "version": 1
+    },
+    {
+      "name": "UML - Implements",
+      "version": 0
+    },
+    {
+      "name": "UML - LargePackage",
+      "version": 0
+    },
+    {
+      "name": "UML - Lifeline",
+      "version": 0
+    },
+    {
+      "name": "UML - Message",
+      "version": 0
+    },
+    {
+      "name": "UML - Node",
+      "version": 0
+    },
+    {
+      "name": "UML - Note",
+      "version": 0
+    },
+    {
+      "name": "UML - Object",
+      "version": 0
+    },
+    {
+      "name": "UML - Objet",
+      "version": 0
+    },
+    {
+      "name": "UML - Realizes",
+      "version": 1
+    },
+    {
+      "name": "UML - SmallPackage",
+      "version": 0
+    },
+    {
+      "name": "UML - State",
+      "version": 0
+    },
+    {
+      "name": "UML - State Term",
+      "version": 0
+    },
+    {
+      "name": "UML - Transition",
+      "version": 2
+    },
+    {
+      "name": "UML - Usecase",
+      "version": 0
+    },
+    {
+      "name": "chemeng - ACgen",
+      "version": 1
+    },
+    {
+      "name": "chemeng - SaT-fixedtube",
+      "version": 1
+    },
+    {
+      "name": "chemeng - SaT-floatinghead",
+      "version": 1
+    },
+    {
+      "name": "chemeng - aircooler",
+      "version": 1
+    },
+    {
+      "name": "chemeng - airforced",
+      "version": 1
+    },
+    {
+      "name": "chemeng - airinduced",
+      "version": 1
+    },
+    {
+      "name": "chemeng - bigtraycol",
+      "version": 1
+    },
+    {
+      "name": "chemeng - coil",
+      "version": 1
+    },
+    {
+      "name": "chemeng - coilv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - compr",
+      "version": 1
+    },
+    {
+      "name": "chemeng - displa",
+      "version": 1
+    },
+    {
+      "name": "chemeng - doublepipe",
+      "version": 1
+    },
+    {
+      "name": "chemeng - ejector",
+      "version": 1
+    },
+    {
+      "name": "chemeng - fan",
+      "version": 1
+    },
+    {
+      "name": "chemeng - flowfan",
+      "version": 1
+    },
+    {
+      "name": "chemeng - fluidcont",
+      "version": 1
+    },
+    {
+      "name": "chemeng - furnace",
+      "version": 1
+    },
+    {
+      "name": "chemeng - hx",
+      "version": 1
+    },
+    {
+      "name": "chemeng - hxv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - kettle",
+      "version": 1
+    },
+    {
+      "name": "chemeng - knockout",
+      "version": 1
+    },
+    {
+      "name": "chemeng - measure",
+      "version": 1
+    },
+    {
+      "name": "chemeng - plate",
+      "version": 1
+    },
+    {
+      "name": "chemeng - pneum",
+      "version": 1
+    },
+    {
+      "name": "chemeng - pneumv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - pnuemv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - prv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - pump",
+      "version": 1
+    },
+    {
+      "name": "chemeng - reactor",
+      "version": 1
+    },
+    {
+      "name": "chemeng - recipr",
+      "version": 1
+    },
+    {
+      "name": "chemeng - regval",
+      "version": 1
+    },
+    {
+      "name": "chemeng - regvalv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - spray",
+      "version": 1
+    },
+    {
+      "name": "chemeng - traycol",
+      "version": 1
+    },
+    {
+      "name": "chemeng - val",
+      "version": 1
+    },
+    {
+      "name": "chemeng - valv",
+      "version": 1
+    },
+    {
+      "name": "chemeng - vessel",
+      "version": 1
+    },
+    {
+      "name": "chemeng - wcool",
+      "version": 1
+    },
+    {
+      "name": "chemeng - wcoolv",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - autoclave",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - centrifuge",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - coveredtank",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - cyclone",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - filter",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - fixedroof",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - floatingroof",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - gasholder",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - mixer",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - sealedtank",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - settling",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - spraydrier",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - storagesphere",
+      "version": 1
+    },
+    {
+      "name": "chemengtmp - tank",
+      "version": 1
+    },
+    {
+      "name": "chronogram - line",
+      "version": 0
+    },
+    {
+      "name": "chronogram - reference",
+      "version": 0
+    }
+  ],
+  "capture": {
+    "date": "2026-09-19",
+    "source_baseline": "77fe10bc0",
+    "native_image": "sha256:32884aa388eba9a94771ad6475ab56f34af1c959df97c0bcbba462d1dd94d37c",
+    "scope": "isolated worker in Ubuntu 26.04 container; not host GUI",
+    "dia_version": "Dia version 0.98.0, compiled 13:09:36 Sep 19 2026",
+    "method": "NativeBackend.discover; PyDia registered_types and registered_sheets after plugin loading"
+  }
+}
