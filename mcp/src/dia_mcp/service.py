@@ -13,6 +13,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 
 from .backend import Backend
+from .discovery import Catalog
 from .errors import DiaError
 from .models import (
     ConnectionType,
@@ -54,7 +55,90 @@ class Operations:
             "max_nodes": 100,
             "max_edges": 200,
             "persistence": "session; export native .dia files to keep diagrams",
+            "runtime_discovery": {
+                "tools": ["list_sheets", "list_object_types"],
+                "scope": "fresh native worker; not an open GUI session",
+            },
+            "live_documents": False,
+            "generic_creation": False,
         }
+
+    @staticmethod
+    def _page(items: list, offset: int, limit: int) -> dict:
+        end = offset + limit
+        return {
+            "api_version": "1",
+            "scope": "native_worker",
+            "items": items[offset:end],
+            "total": len(items),
+            "next_offset": end if end < len(items) else None,
+        }
+
+    @staticmethod
+    def _validate_page(offset: int, limit: int) -> None:
+        if type(offset) is not int or offset < 0 or type(limit) is not int or not 1 <= limit <= 100:
+            raise DiaError("INVALID_ARGUMENT", "offset must be >=0 and limit must be 1..100")
+
+    def _catalog(self) -> Catalog:
+        discover = getattr(self.backend, "discover", None)
+        if discover is None:
+            raise DiaError("UNSUPPORTED_CAPABILITY", "Backend does not support runtime discovery")
+        return discover()
+
+    def list_sheets(self, offset: int = 0, limit: int = 100) -> dict:
+        self._validate_page(offset, limit)
+        catalog = self._catalog()
+        return self._page(
+            [
+                {
+                    "name": sheet.name,
+                    "description": sheet.description,
+                    "user": sheet.user,
+                    "object_count": len(sheet.objects),
+                }
+                for sheet in sorted(catalog.sheets, key=lambda sheet: sheet.name)
+            ],
+            offset,
+            limit,
+        )
+
+    def list_object_types(
+        self, sheet: str | None = None, offset: int = 0, limit: int = 100
+    ) -> dict:
+        self._validate_page(offset, limit)
+        if sheet is not None and (not isinstance(sheet, str) or not 1 <= len(sheet) <= 4096):
+            raise DiaError("INVALID_ARGUMENT", "sheet must be a nonempty name from list_sheets")
+        catalog = self._catalog()
+        if sheet is not None and not any(s.name == sheet for s in catalog.sheets):
+            raise DiaError("NOT_FOUND", "Unknown sheet; use list_sheets for available names")
+        membership: dict[str, list[dict]] = {}
+        for entry in catalog.sheets:
+            for obj in entry.objects:
+                if obj.type is not None:
+                    membership.setdefault(obj.type, []).append(
+                        {"sheet": entry.name, "description": obj.description}
+                    )
+        node_types, connection_types = set(get_args(NodeType)), set(get_args(ConnectionType))
+        items = []
+        for kind in sorted(catalog.object_types, key=lambda kind: kind.name):
+            entries = membership.get(kind.name, [])
+            if sheet is not None and not any(entry["sheet"] == sheet for entry in entries):
+                continue
+            items.append(
+                {
+                    "name": kind.name,
+                    "version": kind.version,
+                    "sheet_entries": entries,
+                    "creatable_as": (
+                        "object"
+                        if kind.name in node_types
+                        else "connection"
+                        if kind.name in connection_types
+                        else None
+                    ),
+                }
+            )
+        return self._page(items, offset, limit)
 
     def _document(self, document_id: str) -> Document:
         try:

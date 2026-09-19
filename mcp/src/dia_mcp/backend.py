@@ -12,6 +12,9 @@ import zlib
 from pathlib import Path
 from typing import Protocol
 
+from pydantic import ValidationError
+
+from .discovery import Catalog
 from .errors import DiaError
 from .models import Document, ExportFormat
 
@@ -55,6 +58,8 @@ def validate_png(payload: bytes) -> None:
 
 
 class Backend(Protocol):
+    def discover(self) -> Catalog: ...
+
     def render(self, document: Document, destination: Path, format: ExportFormat) -> dict: ...
 
 
@@ -97,49 +102,75 @@ class NativeBackend:
             response = job / "response.json"
             output = job / f"output.{format}"
             request.write_text(document.model_dump_json(), encoding="utf-8")
-            env = os.environ.copy()
-            # The embedded interpreter must not inherit the MCP virtualenv's modules.
-            for key in ("PYTHONHOME", "PYTHONPATH", "VIRTUAL_ENV"):
-                env.pop(key, None)
-            env.update(
-                {
-                    "DIA_PYTHON_PATH": str(Path(__file__).parent / "native"),
-                    "DIA_MCP_RESPONSE": str(response),
-                    "DIA_MCP_FORMAT": format,
-                    "PYTHONNOUSERSITE": "1",
-                    "PYTHONDONTWRITEBYTECODE": "1",
-                    "GSETTINGS_BACKEND": "memory",
-                }
-            )
-            try:
-                process = subprocess.run(
-                    [
-                        self.executable,
-                        "--export",
-                        str(output),
-                        "--filter",
-                        FILTERS[format],
-                        str(request),
-                    ],
-                    env=env,
-                    capture_output=True,
-                    timeout=self.timeout,
-                    check=False,
-                )
-            except subprocess.TimeoutExpired as exc:
-                raise DiaError("BACKEND_TIMEOUT", "Dia exceeded the operation timeout") from exc
-            except OSError as exc:
-                raise DiaError("BACKEND_UNAVAILABLE", str(exc)) from exc
-            try:
-                report = json.loads(response.read_text(encoding="utf-8"))
-            except (OSError, ValueError) as exc:
-                detail = process.stderr.decode("utf-8", errors="replace")[-2000:]
-                raise DiaError("BACKEND_FAILED", f"Missing native response: {detail}") from exc
-            if not report.get("ok"):
-                raise DiaError("BACKEND_FAILED", report.get("error", "Native import failed"))
-            if process.returncode:
-                detail = process.stderr.decode("utf-8", errors="replace")[-2000:]
-                raise DiaError("EXPORT_FAILED", f"Dia exited {process.returncode}: {detail}")
+            report = self._run(request, output, response, format)
             validate_artifact(output, format)
             shutil.copyfile(output, destination)
             return report["geometry"]
+
+    def discover(self) -> Catalog:
+        try:
+            with tempfile.TemporaryDirectory(prefix="dia-mcp-catalog-") as folder:
+                job = Path(folder)
+                request = job / "request.diacatalog"
+                request.write_text('{"api_version": "1"}', encoding="utf-8")
+                report = self._run(request, job / "empty.dia", job / "response.json", "dia")
+                try:
+                    return Catalog.model_validate(report.get("catalog"))
+                except ValidationError as exc:
+                    raise DiaError("BACKEND_FAILED", "Invalid native catalog") from exc
+        except OSError as exc:
+            raise DiaError("IO_ERROR", str(exc)) from exc
+
+    def _run(self, request: Path, output: Path, response: Path, format: ExportFormat) -> dict:
+        env = os.environ.copy()
+        # The embedded interpreter must not inherit the MCP virtualenv's modules.
+        for key in ("PYTHONHOME", "PYTHONPATH", "VIRTUAL_ENV"):
+            env.pop(key, None)
+        env.update(
+            {
+                "DIA_PYTHON_PATH": str(Path(__file__).parent / "native"),
+                "DIA_MCP_RESPONSE": str(response),
+                "DIA_MCP_FORMAT": format,
+                "PYTHONNOUSERSITE": "1",
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "GSETTINGS_BACKEND": "memory",
+            }
+        )
+        try:
+            process = subprocess.run(
+                [
+                    self.executable,
+                    "--export",
+                    str(output),
+                    "--filter",
+                    FILTERS[format],
+                    str(request),
+                ],
+                env=env,
+                capture_output=True,
+                timeout=self.timeout,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise DiaError("BACKEND_TIMEOUT", "Dia exceeded the operation timeout") from exc
+        except OSError as exc:
+            raise DiaError("BACKEND_UNAVAILABLE", str(exc)) from exc
+        try:
+            with response.open("rb") as stream:
+                payload = stream.read(8 * 1024 * 1024 + 1)
+            if len(payload) > 8 * 1024 * 1024:
+                raise ValueError("native response exceeds 8 MiB")
+            report = json.loads(payload)
+            if not isinstance(report, dict) or type(report.get("ok")) is not bool:
+                raise ValueError("invalid native response envelope")
+        except OSError as exc:
+            detail = process.stderr.decode("utf-8", errors="replace")[-2000:]
+            raise DiaError("BACKEND_FAILED", f"Missing native response: {detail}") from exc
+        except ValueError as exc:
+            raise DiaError("BACKEND_FAILED", "Invalid or oversized native response") from exc
+        if not report["ok"]:
+            raise DiaError("BACKEND_FAILED", str(report.get("error", "Native import failed")))
+        if process.returncode:
+            detail = process.stderr.decode("utf-8", errors="replace")[-2000:]
+            raise DiaError("EXPORT_FAILED", f"Dia exited {process.returncode}: {detail}")
+        return report

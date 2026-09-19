@@ -4,6 +4,12 @@ Contrato implementado en [`mcp/src/dia_mcp`](../../mcp/src/dia_mcp). El esquema
 JSON de un documento está en [`document.schema.json`](document.schema.json).
 El contrato no contiene widgets GTK, punteros C ni objetos de CPython embebido.
 
+La ampliación de descubrimiento del 2026-09-19 añade `list_sheets` y
+`list_object_types` (11 herramientas en total), sin cambiar el esquema de documento.
+Consulta tipos y hojas del proceso nativo y distingue su disponibilidad de la
+creación permitida por MCP. Véanse la [referencia completa](../mcp-tools.md) y
+la [arquitectura actual y propuesta](../mcp-architecture.md).
+
 ## Capas
 
 ```mermaid
@@ -28,7 +34,9 @@ contrato y las mismas pruebas. Hoy el motor continúa enlazando GTK3.
 
 | Operación | Entradas principales | Resultado |
 | --- | --- | --- |
-| `capabilities` / MCP `get_capabilities` | Ninguna | Versión, unidades, tipos, puertos, formatos y límites |
+| `capabilities` / MCP `get_capabilities` | Ninguna | Contrato estático: versión, unidades, tipos, puertos, formatos y límites |
+| `list_sheets` | `offset`, `limit` | Hojas cargadas por el worker, descripciones y cantidad de entradas |
+| `list_object_types` | `sheet`, `offset`, `limit` | Tipos registrados, etiquetas, pertenencia a hojas y soporte de creación MCP |
 | `create_document` | `name` | `document` vacío con ID y revisión 0; `geometry` vacío |
 | `create_object` | `document_id`, `type`, coordenadas, dimensiones, `text`, `properties`, flips | `object_id`, documento actualizado y geometría nativa |
 | `connect_objects` | `document_id`, extremos, puertos/índices, `type`, `arrow`, `label` | `connection_id`, documento y geometría nativa |
@@ -59,8 +67,8 @@ conserva la referencia y no solamente la apariencia de una línea.
 ## Ampliación compatible 0.2: objetos técnicos
 
 El paquete 0.2 conserva `api_version="1"`, las firmas posicionales originales y
-sus valores predeterminados. Añade una herramienta (`update_object`, nueve en
-total) y campos opcionales. El esquema de documento versionado debe actualizarse
+sus valores predeterminados. Su entrega inicial añadió una herramienta
+(`update_object`, nueve en total entonces) y campos opcionales. El esquema de documento versionado debe actualizarse
 en clientes que validen estrictamente las respuestas: los nuevos campos se
 incluyen también con sus valores predeterminados.
 
@@ -177,6 +185,7 @@ con un objeto JSON que incluye `api_version`, `code` y `message`.
 | `EMPTY_DIAGRAM` | Se intenta exportar sin nodos |
 | `ALREADY_EXISTS` | Nombre ocupado o enlace simbólico de salida |
 | `BACKEND_UNAVAILABLE` | Ejecutable ausente/no ejecutable |
+| `UNSUPPORTED_CAPABILITY` | El backend no implementa descubrimiento del catálogo |
 | `BACKEND_TIMEOUT` | Dia excedió el tiempo permitido |
 | `BACKEND_FAILED` | Error del importador o informe ausente/inválido |
 | `EXPORT_FAILED` | Salida no cero después de importar o artefacto inválido |

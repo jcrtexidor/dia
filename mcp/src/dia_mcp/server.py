@@ -9,6 +9,7 @@ from mcp.server.fastmcp.exceptions import ToolError
 from mcp.types import ToolAnnotations
 
 from .backend import NativeBackend
+from .discovery import Offset, PageSize
 from .errors import DiaError
 from .models import (
     ConnectionIndex,
@@ -28,6 +29,8 @@ def build_server(operations: Operations) -> FastMCP:
             "Create a document, create labeled objects (coordinates in cm), connect their IDs, "
             "then export .dia, .svg or .png into the configured workspace. State lasts for this "
             "server session. Inspect geometry for actual text-expanded bounds and native ports."
+            " Use list_sheets/list_object_types to discover installed native types; only those "
+            "with a creatable_as marker can be created through the current MCP contract."
         ),
     )
 
@@ -42,8 +45,28 @@ def build_server(operations: Operations) -> FastMCP:
 
     @server.tool(annotations=read)
     def get_capabilities() -> dict:
-        """List the exact object types, formats, semantic ports and MVP limits."""
+        """Describe MCP creation types and limits; use list tools for installed native types."""
         return operations.capabilities()
+
+    @server.tool(annotations=read)
+    def list_sheets(offset: Offset = 0, limit: PageSize = 100) -> dict:
+        """Discover native worker sheets with names, descriptions and entry counts.
+
+        Read-only, fresh worker inventory, not the open GUI. Follow next_offset for more.
+        """
+        return call(operations.list_sheets, offset, limit)
+
+    @server.tool(annotations=read)
+    def list_object_types(
+        sheet: str | None = None, offset: Offset = 0, limit: PageSize = 100
+    ) -> dict:
+        """Discover registered Dia types, optionally filtered by an exact list_sheets name.
+
+        Includes native version, sheet labels and creatable_as (object/connection/null).
+        Installed types with null are not yet creatable through MCP. Follow next_offset.
+        This queries a fresh worker, not the open GUI; no objects are instantiated.
+        """
+        return call(operations.list_object_types, sheet, offset, limit)
 
     @server.tool(annotations=edit)
     def create_document(name: str = "Diagram") -> dict:

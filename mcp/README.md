@@ -6,6 +6,20 @@ los tipos, puntos de conexión y exportadores nativos de Dia. El servidor no
 controla una ventana abierta del editor. La implementación actual usa GTK3;
 la migración a GTK4 tiene un [plan independiente](../docs/modernization/gtk4-migration.md).
 
+## Runtime discovery audit (2026-09-19)
+
+The server now includes read-only `list_sheets` and `list_object_types` tools,
+for 11 tools in total. They query the native worker's loaded sheets/factories,
+paginate results, preserve human-readable labels and distinguish installed types
+from those supported by MCP creation. The verified worker contains 38 sheets and
+887 registered types; these counts are observations, not a fixed catalog.
+
+See the [architecture](../docs/mcp-architecture.md),
+[complete inventory](../docs/mcp-capabilities.md),
+[tool reference](../docs/mcp-tools.md), [development](../docs/mcp-development.md)
+and [progress](../docs/progress.md). The existing snapshot editing contract below
+is preserved. MCP does not yet attach to an open GUI document or its undo history.
+
 ## Inicio reproducible en Ubuntu 26
 
 Desde la raíz del fork, con Docker disponible:

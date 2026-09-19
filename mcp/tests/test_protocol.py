@@ -41,6 +41,8 @@ def test_stdio_workflow(tmp_path):
                 tools = {tool.name: tool for tool in listing.tools}
                 assert set(tools) == {
                     "get_capabilities",
+                    "list_sheets",
+                    "list_object_types",
                     "create_document",
                     "create_object",
                     "connect_objects",
@@ -51,11 +53,22 @@ def test_stdio_workflow(tmp_path):
                     "close_document",
                 }
                 assert tools["inspect_document"].annotations.readOnlyHint is True
+                assert tools["list_sheets"].annotations.readOnlyHint is True
+                assert tools["list_object_types"].annotations.readOnlyHint is True
 
                 async def call(tool_name, **arguments):
                     result = await session.call_tool(tool_name, arguments)
                     assert not result.isError, result
                     return json.loads(result.content[0].text)
+
+                sheets = await call("list_sheets", limit=2)
+                assert len(sheets["items"]) == 2 and sheets["next_offset"] == 2
+                types = await call("list_object_types", sheet="ER")
+                assert types["items"] and all(t["creatable_as"] is None for t in types["items"])
+                invalid_sheet = await session.call_tool("list_object_types", {"sheet": "missing"})
+                assert invalid_sheet.isError and "NOT_FOUND" in invalid_sheet.content[0].text
+                invalid_page = await session.call_tool("list_sheets", {"limit": 101})
+                assert invalid_page.isError
 
                 doc = (await call("create_document", name="MCP real"))["document"]["id"]
                 a = await call("create_object", document_id=doc, text="Crear", x=1, y=1)

@@ -13,6 +13,9 @@ The editor still uses GTK3; [GTK4 migration is a documented plan](docs/moderniza
 - [Internal API contract](docs/modernization/api.md)
 - [Build and usage](mcp/README.md), [validation](docs/modernization/validation.md)
 - [Contribution guide and implementation log](docs/modernization/contributing.md)
+- [Current MCP architecture and live-integration milestones](docs/mcp-architecture.md)
+- [Runtime capability inventory](docs/mcp-capabilities.md), [tools](docs/mcp-tools.md),
+  [development](docs/mcp-development.md) and [progress](docs/progress.md)
 
 These fork additions were developed with AI assistance at the fork owner's
 request. GNOME Dia's upstream policy below excludes AI-generated contributions;

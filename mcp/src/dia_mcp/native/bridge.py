@@ -291,3 +291,20 @@ def register():
     import dia
 
     dia.register_import("Dia operations v1", "diacmd", import_snapshot)
+    dia.register_import("Dia runtime catalog v1", "diacatalog", import_catalog)
+
+
+def import_catalog(filename, data):
+    import dia
+    from discovery import discover
+
+    response = Path(os.environ["DIA_MCP_RESPONSE"])
+    try:
+        request = json.loads(Path(filename).read_text(encoding="utf-8"))
+        if request != {"api_version": "1"}:
+            raise ValueError("unsupported catalog request")
+        report = {"ok": True, "catalog": discover(dia)}
+    except Exception as exc:
+        report = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+    response.write_text(json.dumps(report, allow_nan=False), encoding="utf-8")
+    return report["ok"]
