@@ -23,6 +23,8 @@ Audit baseline `77fe10bc0`; implementation date 2026-09-19.
 
 A final review removed a recursive Python closure cycle from membership traversal.
 The iterative traversal now has an immediate-wrapper-release regression test.
+A descriptor-only native accessor also prevents fetching unsupported values when
+inspecting property metadata.
 Packaged and Wayland revalidation of this last correction is in progress. Full [evidence and limitations](m2-validation.md).
 
 - Foundation: native ephemeral IDs, detach/destruction/copy invalidation,

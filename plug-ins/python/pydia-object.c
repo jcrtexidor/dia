@@ -267,7 +267,48 @@ PyDiaObject_MoveHandle (PyDiaObject *self, PyObject *args)
 }
 
 
+/* Descriptor-only inspection must not call object_prop_by_name/get_props:
+ * even constructing an ordinary PyDiaProperty fetches its native value. */
+static PyObject *
+PyDiaObject_PropertyDescriptors (PyDiaObject *self, PyObject *args)
+{
+  int limit = 32;
+  int total = 0;
+  const PropDescription *descs = NULL;
+  PyObject *items;
+
+  if (!PyArg_ParseTuple (args, "|i:Object.property_descriptors", &limit))
+    return NULL;
+  if (limit < 1 || limit > 256) {
+    PyErr_SetString (PyExc_ValueError, "Descriptor limit must be 1..256");
+    return NULL;
+  }
+  if (self->object->ops->describe_props)
+    descs = dia_object_describe_properties (self->object);
+  if (descs) {
+    while (descs[total].name)
+      total++;
+  }
+  items = PyList_New (MIN (total, limit));
+  if (!items)
+    return NULL;
+  for (int i = 0; i < MIN (total, limit); i++) {
+    PyObject *item = Py_BuildValue ("{s:s,s:s,s:O}",
+      "name", descs[i].name, "type", descs[i].type,
+      "visible", (descs[i].flags & PROP_FLAG_VISIBLE) ? Py_True : Py_False);
+    if (!item) {
+      Py_DECREF (items);
+      return NULL;
+    }
+    PyList_SET_ITEM (items, i, item);
+  }
+  return Py_BuildValue ("{s:N,s:i,s:O}", "items", items, "total", total,
+                        "truncated", total > limit ? Py_True : Py_False);
+}
+
 static PyMethodDef PyDiaObject_Methods[] = {
+    { "property_descriptors", (PyCFunction)PyDiaObject_PropertyDescriptors, METH_VARARGS,
+      "property_descriptors(int: limit=32) -> dict. Read descriptors without fetching values." },
     { "destroy", (PyCFunction)PyDiaObject_Destroy, METH_VARARGS,
       "destroy() -> None."
       "  Release the object. Must not be called when already added to a group or layer." },

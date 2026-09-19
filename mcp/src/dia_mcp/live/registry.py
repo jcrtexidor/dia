@@ -138,28 +138,37 @@ class Registry:
         return result
 
     def _properties(self, obj):
-        # Consult descriptor type BEFORE fetching .value: image/file-backed and
-        # aggregate property getters are intentionally never evaluated here.
-        keys = list(obj.properties.keys())
+        # The ordinary PyDiaProperties subscript fetches native values. Use the
+        # descriptor-only accessor before touching even that subscript.
+        descriptions = obj.property_descriptors(min(self.limits.properties, 256))
         values = []
-        for key in keys[: self.limits.properties]:
-            prop = obj.properties[key]
+        for descriptor in descriptions["items"]:
+            name, kind = descriptor["name"], descriptor["type"]
             item = {
-                "name": bounded(prop.name),
-                "type": bounded(prop.type),
-                "visible": bool(prop.visible),
+                "name": bounded(name),
+                "type": bounded(kind),
+                "visible": descriptor["visible"],
                 "supported": False,
             }
-            if prop.type in {"bool", "int", "enum", "real", "string", "text"}:
-                value = prop.value
-                if prop.type == "text":
-                    value = value.text
-                if isinstance(value, str):
-                    item.update(value=value[:2048], truncated=len(value) > 2048, supported=True)
-                elif type(value) in (bool, int) or (type(value) is float and math.isfinite(value)):
-                    item.update(value=value, supported=True)
+            if kind in {"bool", "int", "enum", "real", "string", "text"}:
+                try:
+                    value = obj.properties[name].value
+                    if kind == "text":
+                        value = value.text
+                    if isinstance(value, str):
+                        item.update(value=value[:2048], truncated=len(value) > 2048, supported=True)
+                    elif type(value) in (bool, int) or (
+                        type(value) is float and math.isfinite(value)
+                    ):
+                        item.update(value=value, supported=True)
+                except (AttributeError, KeyError, TypeError, ValueError, RuntimeError):
+                    item["reason"] = "Value unavailable or unsupported"
             values.append(item)
-        return {"items": values, "total": len(keys), "truncated": len(keys) > len(values)}
+        return {
+            "items": values,
+            "total": descriptions["total"],
+            "truncated": descriptions["truncated"],
+        }
 
     def _connections(self, doc_id, obj):
         handles, points = obj.handles, obj.connections

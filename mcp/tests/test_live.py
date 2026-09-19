@@ -189,17 +189,19 @@ def test_listener_refuses_unsafe_endpoints_and_recovers_stale_socket(tmp_path):
 
 
 def test_registry_marks_unsupported_values_without_reading_them():
-    class Unsafe:
-        name = "image_file"
-        type = "pixbuf"
-        visible = True
-
+    class Object:
         @property
-        def value(self):
-            raise AssertionError("Must not read a file-backed property")
+        def properties(self):
+            raise AssertionError("Must not even construct a file-backed PyDiaProperty")
 
-    registry = Registry(None)
-    result = registry._properties(SimpleNamespace(properties={"image_file": Unsafe()}))
+        def property_descriptors(self, limit):
+            return {
+                "items": [{"name": "image_file", "type": "pixbuf", "visible": True}],
+                "total": 1,
+                "truncated": False,
+            }
+
+    result = Registry(None)._properties(Object())
     assert result["items"][0]["supported"] is False
 
 
