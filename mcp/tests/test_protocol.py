@@ -40,6 +40,11 @@ def test_stdio_workflow(tmp_path):
                 listing = await session.list_tools()
                 tools = {tool.name: tool for tool in listing.tools}
                 assert set(tools) == {
+                    "live_get_current_context",
+                    "live_inspect_selection",
+                    "live_inspect_object_neighborhood",
+                    "live_plan_selection",
+                    "live_validate_commands",
                     "live_plan_objects",
                     "live_prepare_operation",
                     "live_get_operation",

@@ -6,6 +6,9 @@ callers must report paging/truncation separately. Sheets are never treated as
 exclusive domains. Geometry, captions and visual touching cannot establish edges.
 """
 
+import math
+from collections import Counter
+
 from .native.uml import superclass_endpoints
 
 DOMAINS = ("flowchart", "uml", "database", "network", "electrical", "pneumatic")
@@ -50,6 +53,7 @@ def analyze_graph(objects, connections, domain="auto"):
                 "type": kind,
                 "domain": detected,
                 "basis": "native_type_prefix" if detected != "unknown" else "unknown",
+                "evidence_level": "heuristic" if detected != "unknown" else "unknown",
             }
         )
     domains = sorted({e["domain"] for e in evidence if e["domain"] != "unknown"})
@@ -97,6 +101,7 @@ def analyze_graph(objects, connections, domain="auto"):
                         "object_id": oid,
                         **relation,
                         "basis": "native_type_and_attached_endpoint_ids",
+                        "evidence_level": "derived_from_native",
                     }
                 )
     components = []
@@ -146,4 +151,94 @@ def analyze_graph(objects, connections, domain="auto"):
             "scope": "supplied_subgraph",
         },
         "limitations": limitations,
+        "evidence_levels": _evidence_levels(objects, connections, components, isolated, findings),
+    }
+
+
+def _evidence_levels(objects, connections, components, isolated, findings):
+    """Separate observations, derivations and bounded hints; none is simulation."""
+    boxes, missing_bounds = [], []
+    layers, groups = Counter(), Counter()
+    unknown_layers = []
+    unattached, unattached_count = [], 0
+    for obj in objects:
+        oid = obj["object_id"]
+        if isinstance(obj.get("layer_id"), str):
+            layers[obj["layer_id"]] += 1
+        else:
+            unknown_layers.append(oid)
+        if isinstance(obj.get("group_id"), str):
+            groups[obj["group_id"]] += 1
+        bounds = obj.get("bounds")
+        if (
+            isinstance(bounds, dict)
+            and all(
+                type(bounds.get(k)) in (int, float)
+                and abs(bounds[k]) <= 1_000_000
+                and math.isfinite(bounds[k])
+                for k in ("left", "top", "right", "bottom")
+            )
+            and bounds["left"] <= bounds["right"]
+            and bounds["top"] <= bounds["bottom"]
+        ):
+            boxes.append((oid, bounds))
+        else:
+            missing_bounds.append(oid)
+        for handle in connections.get(oid, {}).get("handles", []):
+            if (
+                type(handle.get("connect_type")) is int
+                and handle["connect_type"] in (1, 2)
+                and "attached_to" in handle
+                and handle["attached_to"] is None
+            ):
+                unattached_count += 1
+                if len(unattached) < 64:
+                    unattached.append(
+                        {
+                            "object_id": oid,
+                            "handle_index": handle.get("index"),
+                            "handle_id": handle.get("id"),
+                        }
+                    )
+    overlaps, overlap_count = [], 0
+    for i, (aid, a) in enumerate(boxes):
+        for bid, b in boxes[i + 1 :]:
+            if max(a["left"], b["left"]) < min(a["right"], b["right"]) and max(
+                a["top"], b["top"]
+            ) < min(a["bottom"], b["bottom"]):
+                overlap_count += 1
+                if len(overlaps) < 64:
+                    overlaps.append(
+                        {"object_ids": [aid, bid], "basis": "positive_bbox_intersection"}
+                    )
+    return {
+        "native_facts": {
+            "layer_object_counts": dict(sorted(layers.items())),
+            "group_member_counts": dict(sorted(groups.items())),
+            "unknown_layer_objects": unknown_layers,
+            "scope": "supplied_objects_only; group counts include supplied members only",
+        },
+        "derived_structure": {
+            "basis": "native_attachments_in_supplied_subgraph",
+            "component_count": len(components),
+            "isolated_object_count": len(isolated),
+            "supported_relationship_count": len(findings),
+        },
+        "heuristics": {
+            "bbox_overlaps": {
+                "items": overlaps,
+                "total": overlap_count,
+                "truncated": overlap_count > 64,
+                "missing_or_invalid_bounds": missing_bounds,
+                "meaning": "Bounding-box overlap only; not collision, touching, or connectivity.",
+            },
+            "unattached_connectable_handles": {
+                "items": unattached,
+                "total": unattached_count,
+                "truncated": unattached_count > 64,
+                "meaning": "Native connect_type 1/2 without attachment; may be intentional. "
+                "No two-ended connector or missing-edge inference.",
+            },
+            "domain_classification": "Native type prefix suggests domain; sheets are nonexclusive.",
+        },
     }

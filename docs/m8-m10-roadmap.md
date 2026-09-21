@@ -14,7 +14,7 @@ GTK3/Meson or separate snapshot/live backends is planned.
 | M6 semantics | Optional UML codec, bounded evidence-based topology and creation recipes; simulation not claimed |
 | M7 context/layout | Eight native layout modes, two resources and one prompt; measured 256-object reads; 199 regression tests and Wayland normal/scale-2 evidence |
 | M8 reliability | Complete: 320 MCP tests, 9 native suites, 18 Wayland GUI tests; bounded measured resources, certified outcomes, property audit and connection matrix; see [M8 evidence](m8-reliability.md) |
-| M9 agent ergonomics | Pending after M8: compact selection/current context, neighborhood, reviewable plans/static validation, structured evidence and recovery guidance |
+| M9 agent ergonomics | Complete after M8: 405 MCP tests, 9 native suites and 22 Wayland tests; compact context, selection/neighborhood, static validation and reviewable plans; [M9 evidence](m9-validation.md) |
 | M10 user readiness | Pending after M9: evaluated Ubuntu install artifact, explicit configuration/status, bootstrap/release automation, migration/security/user documentation and clean-user acceptance |
 
 ## Sequential delivery gates

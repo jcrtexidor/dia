@@ -180,6 +180,13 @@ def install():
             elif action == "property":
                 state["objects"][0].properties["name"] = "Changed from GUI side"
                 state["doc"].add_update_all()
+            elif action == "select_all":
+                doc = dia.active_display().diagram
+                for obj in doc.selected:
+                    doc.unselect(obj)
+                for layer in doc.layers:
+                    for obj in layer.objects:
+                        doc.select(obj)
             elif action == "select":
                 doc = state["doc"]
                 for obj in doc.selected:

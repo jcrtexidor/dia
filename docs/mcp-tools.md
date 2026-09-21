@@ -9,11 +9,51 @@ Resources: `dia://live/documents` and `dia://live/documents/{document_id}/summar
 Prompt: `explain_live_diagram(document_id)`. Existing snapshot tools are unchanged.
 
 
-The server now exposes 20 tools over local stdio. No resources/prompts are
-registered. `api_version="1"` describes the existing session document contract.
+The server exposes 37 tools over local stdio (the 32 M1–M7 tools plus five
+M9 workflow reads). Four concrete resources, one resource template and two
+prompts are registered. `api_version="1"` describes the existing session document contract.
 Parameters and property definitions are authoritative in `server.py`, `models.py`
 and the [JSON document schema](modernization/document.schema.json).
 Examples below are MCP `arguments` objects; substitute IDs from earlier results.
+
+## Live workflow entry points (M9)
+
+Start with `live_get_current_context()` for the active document/generation, layer,
+object count and first eight selected objects, with safe properties and native
+attachments. Empty GUI state returns `document: null`. Do not enumerate the entire
+document merely to identify what the user selected.
+
+| Tool | Input and bounded result | Next step |
+| --- | --- | --- |
+| `live_get_current_context` | No arguments; current document and selection page (8) | Explain selection or plan the requested edit |
+| `live_inspect_selection` | document_id, offset=0, limit=8 (max8); detailed objects, total, next_offset, generation | Follow pages only as needed; reject inconsistent generations |
+| `live_inspect_object_neighborhood` | document_id, object_id, offset=0, limit=8; object detail and directly attached neighbor summaries | Investigate actual handles/points; touching shapes are not connections |
+| `live_plan_selection` | document_id, intent, options; flat commands and generation plus review metadata; 1..64 selected objects | Review, optionally validate, prepare receipt and apply |
+| `live_validate_commands` | document_id, expected_generation, commands; valid, complete, issues and deferred checks | Correct bounded issues or accept documented native checks before apply |
+
+Plan intents are `layout` with `{"mode":"left"}` (or another native mode),
+`move` with `{"dx":2,"dy":0}` in cm, and `set_properties` with
+`{"properties":{"text":"Reviewed"}}`. Selection plans bind existing IDs;
+`live_plan_objects` produces creation commands and also includes affected objects,
+objects to create, assumptions, unsupported semantics and expected structural effect.
+Newly created IDs/ports must be inspected before planning connections.
+
+Validation is read-only, requires no receipt or write opt-in, and never instantiates
+factories, executes native changes or simulates rollback. `valid=true` means no
+known static rejection; `complete=false` means checks remain deferred. Plugin
+callbacks and native descriptor enum/range constraints remain authoritative.
+Issues contain at most 12 alternatives each (at most 64 issues/deferred entries).
+Generation conflicts report the observed generation and recovery advice.
+
+Resources add `dia://live/context` and `dia://live/capabilities`. The sparse
+`inspect_live_selection()` prompt helps explain selection or review a requested
+change; tools work without prompts. Selection itself is not permission to edit.
+Analysis returns separately labeled native facts, derived structure, heuristic
+observations and supported domain claims. Overlap and unattached-handle warnings
+are heuristics, not diagram errors. Semantics/recipes load only when requested;
+generic inspection and editing do not depend on those modules.
+
+See [tool-selection review](m9-tool-review.md) and [M9 acceptance](m9-validation.md).
 
 ## Snapshot contract
 

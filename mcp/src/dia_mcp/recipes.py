@@ -74,6 +74,23 @@ def plan_native(domain, nodes):
         "domain": domain,
         "mutates": False,
         "commands": commands,
+        "affected_existing": [],
+        "objects_to_create": [dict(command) for command in commands],
+        "assumptions": [
+            "Factories and label descriptors must exist in the target live installation.",
+            "Caller supplies current document generation and a separately prepared receipt.",
+            "Runtime IDs are assigned only after native creation commits.",
+        ],
+        "unsupported_semantics": [
+            "No ports, relationships, domain validity or simulation are inferred.",
+            "Compound UML members and database fields are outside scalar creation recipes.",
+        ],
+        "expected_structural_effect": {
+            "created_objects": len(commands),
+            "deleted_objects": 0,
+            "explicit_attachment_changes": 0,
+            "description": "Create independent native objects with scalar labels.",
+        },
         "followup": [
             "Inspect the live catalog for required native factories and property descriptors.",
             "Apply commands through a prepared generic transaction at the observed generation.",

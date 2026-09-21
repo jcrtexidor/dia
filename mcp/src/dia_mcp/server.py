@@ -20,7 +20,6 @@ from .models import (
     Port,
     UMLClassProperties,
 )
-from .recipes import plan_native
 from .service import Operations
 
 
@@ -76,6 +75,85 @@ def build_server(operations: Operations) -> FastMCP:
     def live_handshake() -> dict:
         """Connect to the configured running Dia GUI; return version, capabilities and limits."""
         return call(operations.inspect_live, "handshake")
+
+    @server.tool(annotations=read)
+    def live_get_current_context() -> dict:
+        """Start here for the running GUI: active document/generation, layer and selection.
+
+        Up to eight selected objects include safe properties and native attachments.
+        No active document returns document=null. Follow selection.next_offset with
+        live_inspect_selection; use the returned generation when reviewing edits.
+        """
+        return call(operations.inspect_live, "get_current_context")
+
+    @server.tool(annotations=read)
+    def live_inspect_selection(document_id: str, offset: int = 0, limit: int = 8) -> dict:
+        """Inspect what the human selected, with safe properties and actual attachments.
+
+        Bounded to eight objects per page; compare generation across pages. Selection
+        is the user's pointing mechanism, not consent to mutate.
+        """
+        return call(
+            operations.inspect_live,
+            "inspect_selection",
+            document_id=document_id,
+            offset=offset,
+            limit=limit,
+        )
+
+    @server.tool(annotations=read)
+    def live_inspect_object_neighborhood(
+        document_id: str, object_id: str, offset: int = 0, limit: int = 8
+    ) -> dict:
+        """Inspect one object and its directly attached neighbors (max eight per page).
+
+        Returns native handles/connection points, safe properties, and actual one-hop
+        connectivity. Visual touching, direction and domain semantics are not inferred.
+        """
+        return call(
+            operations.inspect_live,
+            "inspect_object_neighborhood",
+            document_id=document_id,
+            object_id=object_id,
+            offset=offset,
+            limit=limit,
+        )
+
+    @server.tool(annotations=read)
+    def live_plan_selection(document_id: str, intent: str, options: dict) -> dict:
+        """Plan changes to the current selection without modifying it (1..64 objects).
+
+        intent=layout with options={mode: native layout mode}; move with {dx,dy}
+        in centimeters; set_properties with {properties: scalar property map}.
+        Review commands/assumptions, optionally live_validate_commands, then prepare
+        and apply using the returned generation. Never silently refresh a stale plan.
+        """
+        return call(
+            operations.inspect_live,
+            "plan_selection",
+            document_id=document_id,
+            intent=intent,
+            options=options,
+        )
+
+    @server.tool(annotations=read)
+    def live_validate_commands(
+        document_id: str, expected_generation: int, commands: list[dict]
+    ) -> dict:
+        """Statically check a proposed batch without executing factories or native changes.
+
+        Checks IDs, descriptors, known ports and eligibility. valid=true means no
+        known static rejection, not a guarantee: inspect complete/deferred/issues.
+        Native plugins/ranges and changes to dynamic ports remain authoritative at apply.
+        Does not reserve a receipt, alter history, simulate, or execute-and-rollback.
+        """
+        return call(
+            operations.inspect_live,
+            "validate_commands",
+            document_id=document_id,
+            expected_generation=expected_generation,
+            commands=commands,
+        )
 
     @server.tool(annotations=read)
     def live_list_documents(offset: Offset = 0, limit: PageSize = 100) -> dict:
@@ -152,7 +230,17 @@ def build_server(operations: Operations) -> FastMCP:
         Inspect created native handles before planning connections.
         """
         try:
+            from .recipes import plan_native
+
             return plan_native(domain, nodes)
+        except ImportError as exc:
+            raise ToolError(
+                json.dumps(
+                    DiaError(
+                        "UNSUPPORTED_LIVE_CAPABILITY", "Optional creation recipes are unavailable"
+                    ).as_dict()
+                )
+            ) from exc
         except ValueError as exc:
             raise ToolError(json.dumps(DiaError("INVALID_ARGUMENT", str(exc)).as_dict())) from exc
 
@@ -308,6 +396,28 @@ def build_server(operations: Operations) -> FastMCP:
     def live_documents_resource() -> str:
         """First page of live documents; follow next_offset with live_list_documents."""
         return json.dumps(call(operations.inspect_live, "list_documents"))
+
+    @server.resource("dia://live/context")
+    def live_context_resource() -> str:
+        """Compact active GUI context and the first eight selected objects."""
+        return json.dumps(call(operations.inspect_live, "get_current_context"))
+
+    @server.resource("dia://live/capabilities")
+    def live_capabilities_resource() -> str:
+        """Actual GUI protocol, capabilities, write mode and resource limits."""
+        return json.dumps(call(operations.inspect_live, "handshake"))
+
+    @server.prompt()
+    def inspect_live_selection() -> str:
+        """Explain the user's selected objects or review a proposed layout."""
+        return (
+            "Call live_get_current_context and inspect the user's selection. Follow pages "
+            "with live_inspect_selection only as needed, checking generation. Explain native "
+            "facts separately from derived structure, heuristics and unsupported semantics. "
+            "For a requested edit, use live_plan_selection and review its commands, then "
+            "live_validate_commands. Apply only within the user's requested scope with a "
+            "prepared receipt and the reviewed generation. Selection alone is not edit consent."
+        )
 
     @server.resource("dia://live/documents/{document_id}/summary")
     def live_summary_resource(document_id: str) -> str:

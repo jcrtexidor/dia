@@ -66,3 +66,12 @@ def test_circuit_and_pneumatic_native_families_are_explicit_evidence():
     )
     assert result["classification"] == "mixed"
     assert result["domains"] == ["electrical", "pneumatic"]
+
+
+def test_recipe_plan_metadata_declares_creation_without_attachments():
+    plan = plan_native("network", [{"x": 1, "y": 2, "label": "Base"}])
+    assert plan["affected_existing"] == []
+    assert len(plan["objects_to_create"]) == 1
+    assert plan["expected_structural_effect"]["created_objects"] == 1
+    assert plan["expected_structural_effect"]["explicit_attachment_changes"] == 0
+    assert plan["assumptions"] and plan["unsupported_semantics"]

@@ -106,3 +106,71 @@ def test_partial_or_ambiguous_generalization_cannot_prove_relationship():
     end = {"id": 9, "attached_to": {"object_id": "b"}}
     for handles in ([start], [start, start, end]):
         assert analyze_graph(objects, {"edge": {"handles": handles}})["findings"] == []
+
+
+def test_evidence_separates_native_group_facts_overlap_and_attachment_hints():
+    objects = [
+        {
+            "object_id": "a",
+            "type": "Custom",
+            "layer_id": "l",
+            "group_id": "g",
+            "bounds": {"left": 0, "top": 0, "right": 2, "bottom": 2},
+        },
+        {
+            "object_id": "b",
+            "type": "Custom",
+            "layer_id": "l",
+            "group_id": None,
+            "bounds": {"left": 1, "top": 1, "right": 3, "bottom": 3},
+        },
+    ]
+    connections = {
+        "a": {
+            "handles": [
+                {"index": 7, "id": 200, "connect_type": 1, "attached_to": None},
+                {"index": 8, "id": 201, "connect_type": 0, "attached_to": None},
+                {"index": 9, "id": 202, "connect_type": 1},
+            ]
+        }
+    }
+    result = analyze_graph(objects, connections)
+    levels = result["evidence_levels"]
+    assert levels["native_facts"]["layer_object_counts"] == {"l": 2}
+    assert levels["native_facts"]["group_member_counts"] == {"g": 1}
+    assert levels["derived_structure"]["component_count"] == 2
+    assert levels["heuristics"]["bbox_overlaps"]["items"][0]["object_ids"] == ["a", "b"]
+    assert levels["heuristics"]["unattached_connectable_handles"]["items"] == [
+        {"object_id": "a", "handle_index": 7, "handle_id": 200}
+    ]
+    assert result["findings"] == []  # no missing connector or collision claim
+
+
+def test_heuristic_evidence_has_explicit_budgets_and_coverage():
+    objects = [
+        {
+            "object_id": str(i),
+            "type": "Custom",
+            "bounds": {"left": 0, "top": 0, "right": 1, "bottom": 1},
+        }
+        for i in range(14)
+    ]
+    connections = {
+        "0": {"handles": [{"index": i, "connect_type": 2, "attached_to": None} for i in range(70)]}
+    }
+    heuristics = analyze_graph(objects, connections)["evidence_levels"]["heuristics"]
+    overlap = heuristics["bbox_overlaps"]
+    assert len(overlap["items"]) == 64 and overlap["total"] == 91 and overlap["truncated"]
+    handles = heuristics["unattached_connectable_handles"]
+    assert len(handles["items"]) == 64 and handles["total"] == 70 and handles["truncated"]
+
+
+def test_touching_or_invalid_bounds_are_not_reported_as_positive_overlap():
+    objects = [
+        {"object_id": "a", "bounds": {"left": 0, "top": 0, "right": 1, "bottom": 1}},
+        {"object_id": "b", "bounds": {"left": 1, "top": 0, "right": 2, "bottom": 1}},
+        {"object_id": "c", "bounds": {"left": float("nan"), "top": 0, "right": 1, "bottom": 1}},
+    ]
+    overlap = analyze_graph(objects, {})["evidence_levels"]["heuristics"]["bbox_overlaps"]
+    assert overlap["items"] == [] and overlap["total"] == 0
+    assert overlap["missing_or_invalid_bounds"] == ["c"]

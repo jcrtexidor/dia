@@ -4,6 +4,7 @@ Opaque native lifetime tokens are scoped by process and document session. Resolv
 against current ownership on every request; no pointer keys or stale wrappers.
 """
 
+import importlib.util
 import math
 import threading
 import time
@@ -13,7 +14,6 @@ from uuid import uuid4
 
 from ..errors import DiaError
 from ..property_policy import classify_property
-from ..semantics import analyze_graph
 from .files import NativeFiles
 from .operations import Receipts
 from .protocol import CAPABILITIES, MUTATIONS, VERSION, Limits, page
@@ -25,6 +25,13 @@ def point(value):
 
 def bounded(text):
     return str(text)[:2048]
+
+
+def semantic_available():
+    try:
+        return importlib.util.find_spec("dia_mcp.semantics") is not None
+    except (ImportError, ValueError):
+        return False
 
 
 class Registry:
@@ -276,7 +283,14 @@ class Registry:
                 "integration_api_version": VERSION,
                 "dia_version": self.dia.application_version,
                 "capabilities": CAPABILITIES
-                + ["summary.read", "semantics.read", "dependencies.read"]
+                + [
+                    "summary.read",
+                    "dependencies.read",
+                    "context.read",
+                    "plans.read",
+                    "commands.validate",
+                ]
+                + (["semantics.read"] if semantic_available() else [])
                 + (
                     ["objects.write", "history.write", "layout.write"]
                     if self.writable
@@ -321,6 +335,14 @@ class Registry:
                 if active is not None and active in docs
                 else None,
             }
+        if action == "get_current_context":
+            if active is None or active not in docs:
+                return {
+                    **base,
+                    "document": None,
+                    "selection": {"items": [], "total": 0, "next_offset": None},
+                }
+            request = {**request, "document_id": self._doc_id(active)}
         if action == "open_document":
             opened = self.files.open(request)
             return {**base, "document": self._summary(opened, opened)}
@@ -331,11 +353,16 @@ class Registry:
             raise DiaError("STALE_DOCUMENT_REFERENCE", "Document is closed, replaced, or unknown")
         summary = self._summary(doc, active)
         base.update(document_id=doc_id, generation=summary["generation"])
-        if action in MUTATIONS:
+        if action in MUTATIONS or action == "validate_commands":
             if request["expected_generation"] != summary["generation"]:
                 raise DiaError(
                     "GENERATION_CONFLICT",
                     "Document changed; inspect it and prepare a new operation",
+                    details={
+                        "expected_generation": request["expected_generation"],
+                        "current_generation": summary["generation"],
+                        "recovery": "Inspect current context and review a fresh plan",
+                    },
                 )
             if action in {"save_document", "save_document_as", "export_document"}:
                 result = self.files.write(doc, request)
@@ -369,6 +396,57 @@ class Registry:
             }
         objects = self._objects(doc, doc_id)
         selected = {self._object_id(doc_id, o) for o in doc.selected}
+        if action in {"get_current_context", "inspect_selection"}:
+            ids = [oid for oid in objects if oid in selected]
+            selection = page(ids, {"limit": 8, **request}, self.limits)
+            selection["items"] = [
+                self._inspect(doc_id, oid, objects[oid], selected) for oid in selection["items"]
+            ]
+            if action == "inspect_selection":
+                return {**base, **selection}
+            return {
+                **base,
+                "document": summary,
+                "selection": selection,
+                "object_count": len(objects),
+                "layer_count": len(doc.layers),
+                "active_layer": {
+                    "layer_id": summary["active_layer_id"],
+                    "name": bounded(doc.active_layer.name),
+                    "visible": bool(doc.active_layer.visible),
+                },
+                "evidence": "native_fact",
+            }
+        if action == "plan_selection":
+            from .planning import plan_selection
+
+            ids = [oid for oid in objects if oid in selected]
+            if len(ids) > 64:
+                raise DiaError("LIVE_LIMIT_EXCEEDED", "Selection plan requires at most 64 objects")
+            summaries = [self._object(doc_id, oid, objects[oid], selected) for oid in ids]
+            if request["intent"] == "set_properties":
+                for item, oid in zip(summaries, ids):
+                    descriptors = objects[oid][0].property_descriptors(self.limits.properties)
+                    item["properties"] = {
+                        "items": [
+                            {"name": desc["name"], "editable": classify_property(desc)["editable"]}
+                            for desc in descriptors["items"]
+                        ],
+                        "truncated": descriptors["truncated"],
+                    }
+            try:
+                plan = plan_selection(summaries, request["intent"], request["options"])
+            except ValueError as exc:
+                raise DiaError("INVALID_ARGUMENT", str(exc)[:512]) from exc
+            return {**base, **plan}
+        if action == "validate_commands":
+            from .validation import validate_batch
+
+            return {
+                **base,
+                "mutates": False,
+                **validate_batch(self, doc, doc_id, objects, request["commands"]),
+            }
         if action == "apply_commands":
             return self._apply(doc, doc_id, objects, request, base)
         if action == "get_dependencies":
@@ -384,6 +462,12 @@ class Registry:
                 "topology": "Use analyze_document for actual handle attachments",
             }
         if action == "analyze_document":
+            try:
+                from ..semantics import analyze_graph
+            except ImportError as exc:
+                raise DiaError(
+                    "UNSUPPORTED_LIVE_CAPABILITY", "Optional semantic analysis is unavailable"
+                ) from exc
             if len(objects) > self.limits.structure:
                 raise DiaError(
                     "LIVE_LIMIT_EXCEEDED", "Analysis requires at most the structure limit objects"
@@ -416,12 +500,43 @@ class Registry:
         if oid not in objects:
             raise DiaError("STALE_OBJECT_REFERENCE", "Object is detached, deleted, or unknown")
         obj = objects[oid][0]
+        if action == "inspect_object_neighborhood":
+            detail = self._inspect(doc_id, oid, objects[oid], selected)
+            connections = detail["connections"]
+            neighbors = {
+                h["attached_to"]["object_id"] for h in connections["handles"] if h["attached_to"]
+            }
+            neighbors.update(
+                ref for cp in connections["connection_points"] for ref in cp["connected_objects"]
+            )
+            neighbors.discard(oid)
+            present = sorted(neighbors & objects.keys())
+            result = page(present, {"limit": 8, **request}, self.limits)
+            result["items"] = [
+                self._object(doc_id, ref, objects[ref], selected) for ref in result["items"]
+            ]
+            return {
+                **base,
+                "object": detail,
+                "neighbors": result,
+                "external_neighbor_count": len(neighbors - objects.keys()),
+                "basis": "native_handle_attachments_and_connection_point_membership",
+                "scope": "one_hop",
+                "evidence": "derived_structural_fact",
+            }
         if action == "get_connections":
             return {**base, "object_id": oid, **self._connections(doc_id, obj)}
         result = self._object(doc_id, oid, objects[oid], selected, detail=True)
         if request.get("properties", False):
             result["properties"] = self._properties(obj)
         return {**base, "object": result}
+
+    def _inspect(self, doc_id, oid, entry, selected):
+        return {
+            **self._object(doc_id, oid, entry, selected, detail=True),
+            "properties": self._properties(entry[0]),
+            "connections": self._connections(doc_id, entry[0]),
+        }
 
     def _apply(self, doc, doc_id, objects, request, base):
         def resolve(oid):

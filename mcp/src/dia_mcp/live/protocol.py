@@ -49,6 +49,11 @@ ACTIONS.update(
         "summarize_document": {"document_id"},
         "analyze_document": {"document_id"},
         "get_dependencies": {"document_id"},
+        "get_current_context": set(),
+        "inspect_selection": {"document_id"},
+        "inspect_object_neighborhood": {"document_id", "object_id"},
+        "plan_selection": {"document_id", "intent", "options"},
+        "validate_commands": {"document_id", "expected_generation", "commands"},
     }
 )
 # Required capability for each request; old protocol-v1 peers can omit only optional
@@ -72,6 +77,11 @@ REQUIRED_CAPABILITY = {
     "analyze_document": "semantics.read",
     "get_dependencies": "dependencies.read",
     "prepare_operation": "objects.write",
+    "get_current_context": "context.read",
+    "inspect_selection": "context.read",
+    "inspect_object_neighborhood": "context.read",
+    "plan_selection": "plans.read",
+    "validate_commands": "commands.validate",
 }
 
 COMMAND_FIELDS = {
@@ -83,6 +93,16 @@ COMMAND_FIELDS = {
     "disconnect": ({"op", "object_id", "handle"}, set()),
     "layout": ({"op", "object_ids", "mode"}, set()),
 }
+
+
+def native_string(value, maximum):
+    if not isinstance(value, str) or not 1 <= len(value) <= maximum or "\0" in value:
+        return False
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
 
 
 def validate_commands(commands):
@@ -106,7 +126,7 @@ def validate_commands(commands):
             if name in {"handle", "point"} and (type(value) is not int or not 0 <= value < 256):
                 raise DiaError("INVALID_ARGUMENT", "Invalid native connection index")
             if name in {"object_id", "target_id", "layer_id", "type", "mode"} and (
-                not isinstance(value, str) or not 1 <= len(value) <= 256
+                not native_string(value, 256)
             ):
                 raise DiaError("INVALID_ARGUMENT", "Invalid command reference")
         if "object_ids" in command:
@@ -114,7 +134,7 @@ def validate_commands(commands):
             if (
                 not isinstance(ids, list)
                 or not 2 <= len(ids) <= 64
-                or any(not isinstance(v, str) or not 1 <= len(v) <= 256 for v in ids)
+                or any(not native_string(v, 256) for v in ids)
                 or len(set(ids)) != len(ids)
             ):
                 raise DiaError("INVALID_ARGUMENT", "layout requires 2..64 distinct object IDs")
@@ -123,20 +143,19 @@ def validate_commands(commands):
             if not isinstance(props, dict) or len(props) > 32:
                 raise DiaError("INVALID_ARGUMENT", "At most 32 scalar properties are supported")
             for name, value in props.items():
-                if (
-                    not isinstance(name, str)
-                    or not 1 <= len(name) <= 128
-                    or type(value) not in (bool, int, float, str)
-                ):
+                if not native_string(name, 128) or type(value) not in (bool, int, float, str):
                     raise DiaError("INVALID_ARGUMENT", "Only named scalar properties are supported")
                 if (isinstance(value, str) and (len(value) > 2048 or "\0" in value)) or (
                     type(value) is float and not math.isfinite(value)
                 ):
                     raise DiaError("INVALID_ARGUMENT", "Invalid property value")
+                if isinstance(value, str) and value and not native_string(value, 2048):
+                    raise DiaError("INVALID_ARGUMENT", "Invalid property text encoding")
     return commands
 
 
-PAGED = {"list_documents", "list_layers", "get_selection", "list_objects"}
+COMPACT_PAGED = {"inspect_selection", "inspect_object_neighborhood"}
+PAGED = {"list_documents", "list_layers", "get_selection", "list_objects"} | COMPACT_PAGED
 
 
 @dataclass(frozen=True)
@@ -202,8 +221,8 @@ def validate(request, limits=Limits()):
         allowed |= {"properties"}
     if set(request) - allowed or not ACTIONS[action] <= set(request):
         raise DiaError("INVALID_ARGUMENT", "Invalid live operation fields")
-    for name in ACTIONS[action] - {"expected_generation", "commands"}:
-        if not isinstance(request[name], str) or not 1 <= len(request[name]) <= 256:
+    for name in ACTIONS[action] - {"expected_generation", "commands", "options"}:
+        if not native_string(request[name], 256):
             raise DiaError("INVALID_ARGUMENT", "Invalid live reference")
     if "expected_generation" in request and (
         type(request["expected_generation"]) is not int or request["expected_generation"] < 1
@@ -213,8 +232,15 @@ def validate(request, limits=Limits()):
         raise DiaError("INVALID_ARGUMENT", "overwrite must be boolean")
     if "path" in request and "\0" in request["path"]:
         raise DiaError("INVALID_ARGUMENT", "Invalid path")
-    if action == "apply_commands":
+    if action in {"apply_commands", "validate_commands"}:
         validate_commands(request["commands"])
+    if action == "plan_selection":
+        if request["intent"] not in {"layout", "move", "set_properties"}:
+            raise DiaError(
+                "UNSUPPORTED_OPERATION", "Plan intent must be layout, move or set_properties"
+            )
+        if not isinstance(request["options"], dict):
+            raise DiaError("INVALID_ARGUMENT", "Plan options must be an object")
     if action == "history" and request["direction"] not in {"undo", "redo"}:
         raise DiaError("INVALID_ARGUMENT", "direction must be undo or redo")
     if action == "analyze_document":
@@ -230,11 +256,12 @@ def validate(request, limits=Limits()):
         }:
             raise DiaError("INVALID_ARGUMENT", "Unsupported analysis domain")
     if action in PAGED:
-        offset, limit = request.get("offset", 0), request.get("limit", limits.page)
+        maximum = min(8, limits.page) if action in COMPACT_PAGED else limits.page
+        offset, limit = request.get("offset", 0), request.get("limit", maximum)
         if type(offset) is not int or not 0 <= offset <= 1000000:
             raise DiaError("INVALID_ARGUMENT", "offset must be 0..1000000")
-        if type(limit) is not int or not 1 <= limit <= limits.page:
-            raise DiaError("INVALID_ARGUMENT", f"limit must be 1..{limits.page}")
+        if type(limit) is not int or not 1 <= limit <= maximum:
+            raise DiaError("INVALID_ARGUMENT", f"limit must be 1..{maximum}")
     if "properties" in request and type(request["properties"]) is not bool:
         raise DiaError("INVALID_ARGUMENT", "properties must be boolean")
     return request

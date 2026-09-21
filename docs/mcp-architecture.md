@@ -2,7 +2,8 @@
 
 Audit date: 2026-09-19. Repository baseline: `77fe10bc0`; upstream base:
 `ad68cc378b7a187706bc2648c48b44d16fb80819`. Source code is authoritative.
-M1–M7 are implemented. The original roadmap below is retained as design context;
+M1–M9 are implemented within the tested bounds. See [M8 reliability](m8-reliability.md)
+and [M9 workflows](m9-validation.md). The original roadmap below is design context;
 [M3–M7 implementation and acceptance](m3-m7-validation.md) is the current write contract.
 See [capability inventory](mcp-capabilities.md), [tool contract](mcp-tools.md),
 [development](mcp-development.md), [progress](progress.md) and
@@ -344,3 +345,17 @@ future writes off the GTK main thread, unsafe generic property
 conversion and silent data loss from rebuilding arbitrary documents with today's
 limited schema. Current snapshot workers avoid the live-thread problem; do not
 present a hypothetical future race as a reproduced current defect.
+
+## M9 workflow composition
+
+The live registry composes compact context/selection/neighborhood reads in one
+GTK dispatch. Their native wrappers remain call-local. Selection plans use plain
+summaries; static validation reads descriptors/ports without factory instantiation
+or execute-and-rollback simulation. Neither reserves receipts or changes history.
+The original mutation bridge remains the only executor. Capabilities `context.read`,
+`plans.read`, and `commands.validate` are additive within protocol 1.
+
+Semantic analysis and recipes are optional lazy imports, not prerequisites of
+generic registry/server imports or editing. Native facts, attachment-derived
+structure and bounded heuristics are separated. The native UML snapshot codec
+remains unchanged; compound live codecs and domain simulation remain unsupported.
