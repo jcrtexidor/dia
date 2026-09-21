@@ -89,3 +89,13 @@ the separate virtual environment, and that native SVG export produces a
 parseable 31,530-byte SVG from `samples/render-test.dia`. That upstream sample
 references two unavailable PNG files (`dia_logo.png`, `dia_gnome_icon.png`), so
 the smoke check reports those image warnings. They do not fail the export.
+
+## User package and repeatable release gate
+
+The image is also the input for `package.sh`; it preserves native resource/plugin
+paths and the separate venv in a local Ubuntu `.deb`. `package-runtime.Dockerfile`
+installs that candidate into a fresh Ubuntu base; `package-smoke.py` checks it as
+a non-root user without a checkout. Use root `task mcp:release-check` to include
+portable, build, installed, Wayland, package, documentation/version and checksum
+checks. Details: [installation](../../docs/installation.md) and
+[release validation](../../docs/release-validation.md). No release is published.

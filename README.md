@@ -6,10 +6,13 @@
 
 This is the `jcrtexidor/dia` experimental fork. It adds a
 [native operations API and local MCP server](mcp/README.md) for creating,
-connecting, moving and exporting diagrams, plus opt-in read-only inspection of a
-running Dia GUI, with an Ubuntu 26.04 container.
+connecting, moving and exporting diagrams, plus opt-in live GUI inspection,
+native editing/history/files and reviewable plans. Ubuntu 26.04 installation
+uses a local `.deb` with explicit off/read-only/read-write settings.
 The editor still uses GTK3; [GTK4 migration is a documented plan](docs/modernization/gtk4-migration.md).
 
+- [Install](docs/installation.md), [user guide](docs/user-guide.md),
+  [troubleshooting](docs/troubleshooting.md) and [security](docs/security.md)
 - [Source and embedded Python audit](docs/modernization/source-audit.md)
 - [Internal API contract](docs/modernization/api.md)
 - [Build and usage](mcp/README.md), [validation](docs/modernization/validation.md)

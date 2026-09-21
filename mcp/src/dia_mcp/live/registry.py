@@ -246,7 +246,9 @@ class Registry:
         if action in MUTATIONS or action == "prepare_operation":
             if not self.writable:
                 raise DiaError(
-                    "LIVE_WRITE_DISABLED", "Enable DIA_MCP_WRITE=1 in the GUI environment"
+                    "LIVE_WRITE_DISABLED",
+                    "Enable read/write in Dia MCP Settings and restart Dia "
+                    "(legacy: DIA_MCP_WRITE=1)",
                 )
         if action == "prepare_operation":
             return self.receipts.prepare()
@@ -304,6 +306,8 @@ class Registry:
                     else []
                 ),
                 "writable": self.writable,
+                "integration_mode": "read-write" if self.writable else "read-only",
+                "files_root": str(self.files.root) if self.files.root else None,
                 "receipt_states": [
                     "prepared",
                     "queued",

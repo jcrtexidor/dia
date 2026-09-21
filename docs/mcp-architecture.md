@@ -2,9 +2,11 @@
 
 Audit date: 2026-09-19. Repository baseline: `77fe10bc0`; upstream base:
 `ad68cc378b7a187706bc2648c48b44d16fb80819`. Source code is authoritative.
-M1–M9 are implemented within the tested bounds. See [M8 reliability](m8-reliability.md)
-and [M9 workflows](m9-validation.md). The original roadmap below is design context;
-[M3–M7 implementation and acceptance](m3-m7-validation.md) is the current write contract.
+M1–M10 are implemented within the tested bounds. See [M8 reliability](m8-reliability.md),
+[M9 workflows](m9-validation.md) and [M10 readiness](m10-validation.md).
+The original roadmap below is design context;
+[M3–M7 implementation and acceptance](m3-m7-validation.md) is the native write
+baseline, with outcome/receipt hardening documented in M8.
 See [capability inventory](mcp-capabilities.md), [tool contract](mcp-tools.md),
 [development](mcp-development.md), [progress](progress.md) and
 [upstream differences](upstream-differences.md).
@@ -170,7 +172,8 @@ flowchart TD
     Registry --> Native[Current Dia documents / layers / objects]
 ```
 
-The normal installed `mcp-live.py` plugin does nothing unless `DIA_MCP_LIVE=1`.
+The normal installed `mcp-live.py` plugin starts no listener unless effective
+local configuration enables it (saved settings or legacy `DIA_MCP_LIVE=1`).
 It imports the stdlib-only `dia_mcp.live` package and PyGObject, then defers startup
 until the GTK loop, after plugins/shapes/sheets have loaded. FastMCP stays outside
 Dia. The dedicated snapshot Python startup is unchanged and never enables live IPC.
@@ -317,7 +320,7 @@ user documents are never rebuilt using the restricted snapshot model.
 ### Versions and completed M1 discovery
 
 Existing document `api_version="1"` is the snapshot contract, not a stable native
-ABI. Package metadata and `__init__.__version__` are both 0.2.0. Dia's own version and plugin ABI are separate. The live
+ABI. Package metadata and `__init__.__version__` are both 0.3.0. Dia's own version and plugin ABI are separate. The live
 handshake must advertise its integration API version and actual capabilities,
 without pinning clients to a commit or versioning every semantic feature.
 
@@ -359,3 +362,16 @@ Semantic analysis and recipes are optional lazy imports, not prerequisites of
 generic registry/server imports or editing. Native facts, attachment-derived
 structure and bounded heuristics are separated. The native UML snapshot codec
 remains unchanged; compound live codecs and domain simulation remain unsupported.
+
+## M10 installed boundaries
+
+The Ubuntu package keeps native `/opt/dia` and external `/opt/dia-mcp-venv`
+prefixes. Distinct launchers isolate their native library/import paths; embedded
+Python sees the integration package, not the external SDK dependency tree. A
+separate GTK3 settings application avoids core Dia preference changes. Private
+user configuration is evaluated at startup; running sessions report observed
+mode/root through handshake and require restart to change them. Default is off.
+
+See [installation architecture](installation.md), [security](security.md) and
+[release/version policy](release-validation.md). Protocol 1 and snapshot API 1
+remain unchanged; dependency locks change only the local adapter project version.

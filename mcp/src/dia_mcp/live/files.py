@@ -26,7 +26,11 @@ class NativeFiles:
     @contextmanager
     def _parent(self, path):
         if self.root is None:
-            raise DiaError("LIVE_FILES_DISABLED", "Configure DIA_MCP_FILES_ROOT locally")
+            raise DiaError(
+                "LIVE_FILES_DISABLED",
+                "Configure an allowed files root in Dia MCP Settings and restart Dia "
+                "(legacy: DIA_MCP_FILES_ROOT)",
+            )
         candidate = Path(path)
         if ".." in candidate.parts:
             raise DiaError("INVALID_PATH", "Parent traversal is not allowed")

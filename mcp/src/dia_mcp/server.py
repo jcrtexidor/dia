@@ -32,7 +32,9 @@ def build_server(operations: Operations) -> FastMCP:
             "server session. Inspect geometry for actual text-expanded bounds and native ports."
             " Use list_sheets/list_object_types to discover installed native types; only those "
             "with a creatable_as marker can be created in snapshots. The opt-in "
-            "live_apply_commands supports installed native factories."
+            "live_apply_commands supports installed native factories. Start live work with "
+            "live_get_current_context and the human's selection. Review plans before applying; "
+            "static validation is not simulation. Preserve generation and prepared receipts."
         ),
     )
 
@@ -246,7 +248,7 @@ def build_server(operations: Operations) -> FastMCP:
 
     @server.tool(annotations=edit)
     def live_prepare_operation() -> dict:
-        """Reserve a one-use request_id before a GUI mutation (requires DIA_MCP_WRITE=1).
+        """Reserve a one-use request_id before a GUI mutation (requires read/write mode).
 
         Retain it to query/retry identical input after transport failure. Receipts last
         at most 30 minutes/256 operations; unknown IDs never execute mutations.

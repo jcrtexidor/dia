@@ -5,6 +5,25 @@ Keep `mcp/uv.lock`, `mcp/requirements.lock`, the pinned container base and exist
 native dependencies. No GTK4 migration or alternate build system is required.
 The supported development commands are in the root `Taskfile.yml`.
 
+## One-command bootstrap and packaged users
+
+With Docker installed and its daemon available, run from a clean checkout:
+
+```sh
+./build-aux/mcp/bootstrap.sh
+```
+
+This builds the existing Ubuntu 26 development image, runs native/MCP build
+checks and prints an isolated development-shell command. It does not install host
+packages or change global Python, Git or AI-client configuration. Docker setup is
+a prerequisite, not silently performed with sudo. Task/uv are required for the
+host portable/release workflow below; the bootstrap itself needs Docker and Bash.
+
+End users should follow [installation](installation.md), not reproduce this build
+recipe. `task mcp:package` builds a local `.deb` from the image;
+`task mcp:release-check` runs the full [release gates](release-validation.md),
+including a clean Ubuntu install. No artifacts are automatically published.
+
 ## Setup and build
 
 The current workstation is Ubuntu 26.04.1 LTS, with a Wayland session. The
@@ -53,6 +72,14 @@ is not the integration path.
 Standalone Dia remains a normal desktop application. `task mcp:serve` still starts
 isolated workers by default. M2 adds a separate opt-in live read path; snapshot
 edits do not update a GUI document. Live mutation requires a separate local opt-in.
+
+## Installed configuration
+
+Packaged users use `dia-mcp-config --gui` (or CLI `--mode`) and restart `dia-fork`.
+Settings distinguish off/read-only/read-write, trusted root and observed endpoints.
+The environment-variable examples below are retained for source/container developers,
+not the primary end-user setup. The external venv and embedded live package remain
+separate; only the package directory is exposed to embedded Python by the launcher.
 
 ## Enable native editing and files
 

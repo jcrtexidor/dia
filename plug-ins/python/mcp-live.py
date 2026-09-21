@@ -1,7 +1,8 @@
-# Optional external package; normal Dia startup does not depend on MCP.
-import os
-
-if os.environ.get("DIA_MCP_LIVE") == "1":
+# Optional external package; normal Dia and snapshot startup do not depend on MCP.
+try:
     from dia_mcp.live.plugin import enable
-
+except ModuleNotFoundError as exc:
+    if exc.name not in {"dia_mcp", "dia_mcp.live", "dia_mcp.live.plugin"}:
+        raise
+else:
     enable()

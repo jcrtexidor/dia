@@ -1,13 +1,19 @@
 """Installed GUI startup hook; enabling it never changes the snapshot startup."""
 
-import os
 import sys
 
 _listener = None
 
 
 def enable():
-    if os.environ.get("DIA_MCP_LIVE") != "1":
+    from ..config import ConfigError, effective_config
+
+    try:
+        config = effective_config()
+    except ConfigError as exc:
+        print(f"Dia live configuration error (integration disabled): {exc}", file=sys.stderr)
+        return
+    if config["mode"] == "off":
         return
     import dia
     from gi.repository import GLib
@@ -21,7 +27,12 @@ def enable():
             if not hasattr(dia, "application_version") or not hasattr(dia.Diagram, "live_state"):
                 raise RuntimeError("This Dia build lacks the M2 native lifetime hooks")
             _listener = Listener(
-                GLib, Registry(dia, writable=os.environ.get("DIA_MCP_WRITE") == "1")
+                GLib,
+                Registry(
+                    dia,
+                    writable=config["mode"] == "read-write",
+                    files_root=config["files_root"] or "",
+                ),
             )
             dia.register_shutdown(_listener.stop)
             print(f"Dia live socket: {_listener.path}", file=sys.stderr)

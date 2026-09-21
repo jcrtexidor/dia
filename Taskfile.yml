@@ -13,6 +13,21 @@ tasks:
     cmds:
       - docker build --progress=plain -f build-aux/mcp/Dockerfile -t {{.MCP_IMAGE}} .
 
+  mcp:bootstrap:
+    desc: Bootstrap the Ubuntu 26 development image without changing host packages
+    cmds:
+      - bash build-aux/mcp/bootstrap.sh --image {{.MCP_IMAGE}}
+
+  mcp:package:
+    desc: Build a local Ubuntu 26 deb from the validated image (does not publish)
+    cmds:
+      - bash build-aux/mcp/package.sh --image {{.MCP_IMAGE}} --output {{.ROOT_DIR}}/artifacts/release
+
+  mcp:release-check:
+    desc: Validate build, installed image, Wayland, clean-user deb and release metadata
+    cmds:
+      - bash build-aux/mcp/release.sh --image {{.MCP_IMAGE}} --output {{.ROOT_DIR}}/artifacts/release
+
   mcp:check:
     desc: Check Python formatting and the operations contract without GTK
     cmds:

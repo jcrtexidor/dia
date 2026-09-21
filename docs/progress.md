@@ -2,17 +2,18 @@
 
 ## Active roadmap
 
-[M8–M10](m8-m10-roadmap.md) is the next sequential roadmap, starting with M8
-reliability. M8 is complete: [reliability report](m8-reliability.md), 320 MCP
-tests, 9 native suites and 18 real Wayland GUI tests. M9 is also complete: [workflow report](m9-validation.md), 405 MCP tests and
-22 Wayland tests. M10 installation and user readiness are next.
-M1–M7 below remain the tested baseline, not work to reimplement.
+[M8–M10](m8-m10-roadmap.md) is complete, delivered sequentially:
+[M8 reliability](m8-reliability.md), [M9 workflows](m9-validation.md), and
+[M10 installation/user readiness](m10-validation.md). GTK3/Meson, native history
+and serialization, separate SDK and snapshot/live boundaries remain intact.
 
 ## Current completion
 
-M1–M7 are implemented in the fork. The latest increment completes native
-transactions, generic editing, native files, modular semantic helpers and native
-layout/context surfaces. See [M3–M7 acceptance, usage and limits](m3-m7-validation.md).
+M1–M10 are implemented in the fork within their documented bounds. M8 hardens
+lifetimes and outcomes; M9 adds compact context/plans/static validation; M10 adds
+the Ubuntu package, private settings and release/clean-user gates.
+The earlier M3–M7 increment provides native transactions, generic editing,
+files, modular helpers and layout/context surfaces. See [M3–M7 acceptance, usage and limits](m3-m7-validation.md).
 M2's original evidence remains in [m2-validation.md](m2-validation.md).
 
 - M3: atomic batches with native undo/redo and rollback, generation preconditions,
@@ -26,8 +27,9 @@ M2's original evidence remains in [m2-validation.md](m2-validation.md).
 - M7: eight native align/distribute modes, summaries, resources, prompt, operation
   timing/correlation and measured bounded-read performance.
 
-GTK3/Meson, snapshot APIs and dependency locks remain in place. Writes are a
-separate GUI opt-in (`DIA_MCP_WRITE=1`); files also require `DIA_MCP_FILES_ROOT`.
+GTK3/Meson, snapshot APIs and third-party dependency locks remain in place.
+Writes require explicit read/write mode in Settings; files additionally require
+a trusted root. Legacy `DIA_MCP_WRITE`/`DIA_MCP_FILES_ROOT` overrides remain supported.
 The external SDK remains separate from the embedded stdlib-only adapter.
 
 ## Explicit extension boundaries
@@ -41,6 +43,14 @@ not a sandbox for hostile native plugins. Snapshot reconstruction costs are
 unchanged. Runtime catalogs describe their respective GUI/worker installation.
 
 ## Latest validation
+
+M10: 390 portable / 454 installed MCP tests, 9/9 native suites, 22 real Wayland
+tests at normal scale and 22 at scale 2. Clean Ubuntu package smoke, nine-document
+local links, versions and checksums pass. 145 source/image files match. The local
+candidate `.deb` and release evidence are under `artifacts/release`; no release
+was published. See [M10 report](m10-validation.md) for hash, footprint and limits.
+
+### Previous M9 validation
 
 M9: 341 portable / 405 installed MCP tests, 9/9 native suites, 22 real
 Wayland tests. See [M9 workflows](m9-validation.md).
