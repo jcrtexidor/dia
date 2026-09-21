@@ -19,6 +19,62 @@
 #include "dia-layer.h"
 
 static GThread *live_main_thread;
+static PyObject *live_rollback_error;
+static PyObject *live_validation_error;
+
+int
+PyDia_LiveExceptionsInit (PyObject *module)
+{
+  PyObject *exception = PyErr_NewException ("dia.LiveRollbackError", PyExc_RuntimeError, NULL);
+  if (!exception) return -1;
+  if (PyModule_AddObject (module, "LiveRollbackError", exception) < 0) {
+    Py_DECREF (exception);
+    return -1;
+  }
+  /* Keep the native certificate alive even if Python removes the module attribute. */
+  Py_INCREF (exception);
+  Py_XSETREF (live_rollback_error, exception);
+  exception = PyErr_NewException ("dia.LiveValidationError", PyExc_ValueError, NULL);
+  if (!exception) return -1;
+  if (PyModule_AddObject (module, "LiveValidationError", exception) < 0) {
+    Py_DECREF (exception);
+    return -1;
+  }
+  Py_INCREF (exception);
+  Py_XSETREF (live_validation_error, exception);
+  return 0;
+}
+
+static void
+certify_rollback (void)
+{
+  PyObject *type = NULL, *value = NULL, *traceback = NULL;
+  PyObject *message = NULL, *certificate = NULL;
+
+  /* Called only after the temporary history has been reversed and restored.
+   * Allocation/formatting errors remain ordinary exceptions, hence uncertain. */
+  PyErr_Fetch (&type, &value, &traceback);
+  PyErr_NormalizeException (&type, &value, &traceback);
+  if (PyErr_Occurred ()) goto out;
+  if (value && traceback && PyException_SetTraceback (value, traceback) < 0) goto out;
+  message = value ? PyObject_Str (value)
+                  : PyUnicode_FromString ("Native command transaction was rolled back");
+  if (!message) goto out;
+  certificate = PyObject_CallFunctionObjArgs (live_rollback_error, message, NULL);
+  if (!certificate) goto out;
+  if (value) {
+    PyException_SetCause (certificate, value); /* steals value */
+    value = NULL;
+  }
+  PyErr_SetObject (live_rollback_error, certificate);
+
+out:
+  Py_XDECREF (certificate);
+  Py_XDECREF (message);
+  Py_XDECREF (traceback);
+  Py_XDECREF (value);
+  Py_XDECREF (type);
+}
 
 void
 PyDia_LiveInit (void)
@@ -29,7 +85,7 @@ PyDia_LiveInit (void)
 static int
 fail (const char *message)
 {
-  PyErr_SetString (PyExc_ValueError, message);
+  PyErr_SetString (live_validation_error, message);
   return 0;
 }
 
@@ -38,7 +94,7 @@ live_diagram (PyObject *value)
 {
   if (g_thread_self () != live_main_thread ||
       !g_main_context_is_owner (g_main_context_default ())) {
-    PyErr_SetString (PyExc_RuntimeError, "Native live commands require the GTK main context");
+    fail ("Native live commands require the GTK main context");
     return NULL;
   }
   if (!PyObject_TypeCheck (value, &PyDiaDiagram_Type)) {
@@ -342,7 +398,11 @@ PyDia_LiveApply (PyObject *self, PyObject *args)
   diagram_add_update_all (dia);
   diagram_flush (dia);
   Py_DECREF (created);
-  if (!ok) { Py_DECREF (result); return NULL; }
+  if (!ok) {
+    Py_DECREF (result);
+    certify_rollback ();
+    return NULL;
+  }
   return result;
 }
 

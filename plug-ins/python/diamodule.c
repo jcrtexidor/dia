@@ -108,8 +108,16 @@ PyDia_Diagrams(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, ":dia.diagrams"))
 	return NULL;
     ret = PyList_New(0);
-    for (tmp = dia_open_diagrams(); tmp; tmp = tmp->next)
-	PyList_Append(ret, PyDiaDiagram_New((Diagram *)tmp->data));
+    if (!ret) return NULL;
+    for (tmp = dia_open_diagrams(); tmp; tmp = tmp->next) {
+        PyObject *wrapper = PyDiaDiagram_New ((Diagram *) tmp->data);
+        if (!wrapper || PyList_Append (ret, wrapper) < 0) {
+            Py_XDECREF (wrapper);
+            Py_DECREF (ret);
+            return NULL;
+        }
+        Py_DECREF (wrapper);
+    }
     return ret;
 }
 
@@ -230,8 +238,16 @@ PyDia_RegisteredSheets(PyObject *self, PyObject *args)
 
     list = PyList_New(0);
 
-    for (items = get_sheets_list (); items != NULL; items = items->next)
-	PyList_Append (list, PyDiaSheet_New (items->data));
+    if (!list) return NULL;
+    for (items = get_sheets_list (); items != NULL; items = items->next) {
+        PyObject *wrapper = PyDiaSheet_New (items->data);
+        if (!wrapper || PyList_Append (list, wrapper) < 0) {
+            Py_XDECREF (wrapper);
+            Py_DECREF (list);
+            return NULL;
+        }
+        Py_DECREF (wrapper);
+    }
 
     return list;
 }
@@ -588,7 +604,16 @@ PyDia_RegisterShutdown (PyObject *self, PyObject *args)
   Py_RETURN_NONE;
 }
 
+static PyObject *
+PyDia_LiveIdentityCount (PyObject *self, PyObject *args)
+{
+  if (!g_main_context_is_owner (g_main_context_default ()))
+    return PyErr_Format (PyExc_RuntimeError, "Identity diagnostics require GTK main context");
+  return PyLong_FromUnsignedLong (dia_object_live_count ());
+}
+
 static PyMethodDef dia_methods[] = {
+    { "live_identity_count", PyDia_LiveIdentityCount, METH_NOARGS, "Diagnostic runtime identity count (main thread)." },
     { "live_apply", PyDia_LiveApply, METH_VARARGS, "Apply a native transaction." },
     { "live_history", PyDia_LiveHistory, METH_VARARGS, "Use native undo or redo." },
     { "live_file", PyDia_LiveFile, METH_VARARGS, "Native live document file operation." },
@@ -688,6 +713,11 @@ PyInit_dia (void)
   PyDiaDiagram_Type.tp_base = &PyDiaDiagramData_Type,
 
   module = PyModule_Create (&dia_module_def);
+  if (!module) return NULL;
+  if (PyDia_LiveExceptionsInit (module) < 0) {
+    Py_DECREF (module);
+    return NULL;
+  }
 
   PyModule_AddStringConstant (module, "application_version", dia_version_string ());
 

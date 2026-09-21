@@ -28,6 +28,7 @@ def test_eviction_and_expiry_never_authorize_replay():
     with pytest.raises(DiaError) as exc:
         receipts.run({"request_id": first}, lambda: pytest.fail("evicted operation ran"))
     assert exc.value.code == "UNKNOWN_OPERATION"
+    assert exc.value.outcome == "uncertain"
     receipts.entries[second]["created"] -= 1801
     with pytest.raises(DiaError):
         receipts.status(second)
@@ -36,7 +37,7 @@ def test_eviction_and_expiry_never_authorize_replay():
 def test_failed_and_uncertain_receipts_are_not_reexecuted():
     receipts = Receipts("session")
     for error, status in [
-        (DiaError("CONFLICT", "changed"), "failed"),
+        (DiaError("CONFLICT", "changed", outcome="not_started"), "failed"),
         (RuntimeError("after commit"), "uncertain"),
     ]:
         ticket = receipts.prepare()["request_id"]

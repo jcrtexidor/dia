@@ -51,6 +51,29 @@ ACTIONS.update(
         "get_dependencies": {"document_id"},
     }
 )
+# Required capability for each request; old protocol-v1 peers can omit only optional
+# additions, never silently execute a capability they did not advertise.
+REQUIRED_CAPABILITY = {
+    "list_documents": "documents.read",
+    "get_active_document": "documents.read",
+    "get_document": "documents.read",
+    "list_layers": "layers.read",
+    "get_selection": "selection.read",
+    "list_objects": "objects.read",
+    "get_object": "objects.read",
+    "get_connections": "connections.read",
+    "apply_commands": "objects.write",
+    "history": "history.write",
+    "open_document": "files.open",
+    "save_document": "files.write",
+    "save_document_as": "files.write",
+    "export_document": "files.write",
+    "summarize_document": "summary.read",
+    "analyze_document": "semantics.read",
+    "get_dependencies": "dependencies.read",
+    "prepare_operation": "objects.write",
+}
+
 COMMAND_FIELDS = {
     "move": ({"op", "object_id", "x", "y"}, set()),
     "set_properties": ({"op", "object_id", "properties"}, set()),

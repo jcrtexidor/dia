@@ -94,11 +94,11 @@ def gui(tmp_path):
     process = subprocess.Popen([binary, "--nosplash"], env=env, stdout=log, stderr=log)
     path = Path(runtime_env) / "dia-mcp" / f"live-{process.pid}.sock"
 
-    def command(action):
+    def command(action, **arguments):
         reply = tmp_path / "reply.json"
         reply.unlink(missing_ok=True)
         staging = tmp_path / "command.tmp"
-        staging.write_text(json.dumps({"action": action}))
+        staging.write_text(json.dumps({"action": action, **arguments}))
         staging.rename(tmp_path / "command.json")
 
         def completed():
@@ -110,8 +110,19 @@ def gui(tmp_path):
         assert result["ok"], result
         return result
 
+    def ready():
+        assert process.poll() is None, f"Dia exited before handshake: {process.returncode}"
+        if not path.exists():
+            return False
+        try:
+            return LiveClient(path, timeout=0.5).request("handshake")
+        except DiaError as exc:
+            if exc.code in {"LIVE_BACKEND_UNAVAILABLE", "REQUEST_TIMEOUT"}:
+                return False
+            raise
+
     try:
-        wait_for(path.exists)
+        wait_for(ready)
         yield LiveClient(path), command, process, path
     finally:
         if process.poll() is None:

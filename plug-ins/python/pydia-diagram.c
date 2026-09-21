@@ -56,6 +56,7 @@ PyDiaDiagram_New (Diagram *dia)
 static void
 PyDiaDiagram_Dealloc (PyDiaDiagram *self)
 {
+  g_clear_object (&self->parent.data);
   PyObject_DEL (self);
 }
 

@@ -38,6 +38,12 @@
  * Access is restricted to the editor main context, like the object model itself. */
 static GHashTable *live_ids;
 
+guint
+dia_object_live_count (void)
+{
+  return live_ids ? g_hash_table_size (live_ids) : 0;
+}
+
 const char *
 dia_object_live_id (DiaObject *obj)
 {

@@ -1,5 +1,12 @@
 # MCP Development Progress
 
+## Active roadmap
+
+[M8–M10](m8-m10-roadmap.md) is the next sequential roadmap, starting with M8
+reliability. M8 is complete: [reliability report](m8-reliability.md), 320 MCP
+tests, 9 native suites and 18 real Wayland GUI tests. M9 is next.
+M1–M7 below remain the tested baseline, not work to reimplement.
+
 ## Current completion
 
 M1–M7 are implemented in the fork. The latest increment completes native
@@ -33,6 +40,11 @@ not a sandbox for hostile native plugins. Snapshot reconstruction costs are
 unchanged. Runtime catalogs describe their respective GUI/worker installation.
 
 ## Latest validation
+
+M8: 260 portable / 320 installed MCP tests, 9/9 native suites, 18 real
+Wayland tests. See [M8 reliability](m8-reliability.md) for evidence and limits.
+
+### Previous M3–M7 validation
 
 147 portable tests; 199 tests against the installed native image; 9/9 Meson
 suites. Real Wayland: all 10 live tests passed at normal scale and all passed at

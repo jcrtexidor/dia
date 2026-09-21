@@ -2,5 +2,6 @@
 #pragma once
 #include <Python.h>
 void PyDia_LiveInit (void);
+int PyDia_LiveExceptionsInit (PyObject *module);
 PyObject *PyDia_LiveApply (PyObject *self, PyObject *args);
 PyObject *PyDia_LiveHistory (PyObject *self, PyObject *args);

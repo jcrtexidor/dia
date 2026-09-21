@@ -79,3 +79,12 @@ merging upstream equivalents of these fixes.
 Native undo stack internals, object property ABI and serializer/error semantics
 are the main future merge risks. Tests exercise actual GTK history and files,
 not only mocks of these interfaces.
+
+## M8 reliability divergences
+
+`pydia-diagram.c` releases the GObject reference acquired by its wrapper constructor;
+`diamodule.c` balances temporary diagram/sheet wrappers after list append. Native
+object-ID count is exposed for main-context diagnostics. `pydia-live.c` certifies
+preflight rejection versus completed rollback with distinct Python exception types.
+No object ABI layout or serialized file schema changed. See [M8 evidence](m8-reliability.md)
+and the [internal upstream candidate](upstream-pydia-lifetime.md).

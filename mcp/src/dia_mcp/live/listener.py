@@ -51,6 +51,7 @@ class Listener:
         self.clients = set()
         self.queue = deque()
         self.idle = None
+        self.executing = False
         self.closed = False
         self.lock = os.open(str(self.path) + ".lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
         self.sock = None
@@ -108,39 +109,62 @@ class Listener:
 
     def submit(self, client, request):
         if len(self.queue) >= self.limits.queue:
-            client.respond(error=DiaError("LIVE_QUEUE_FULL", "Live read queue is full"))
+            client.respond(
+                error=DiaError("LIVE_QUEUE_FULL", "Live queue is full", outcome="not_started")
+            )
             return
+        if request["action"] in MUTATIONS:
+            try:
+                self.registry.receipts.queued(request)
+            except DiaError as exc:
+                client.respond(error=exc)
+                return
         self.queue.append((client, request, time.monotonic() + self.limits.timeout))
-        if self.idle is None:
+        if self.idle is None and not self.executing:
             self.idle = self.glib.idle_add(self._dispatch)
 
     def _dispatch(self):
+        # Native plugins can run nested GTK loops. I/O may enqueue more work in
+        # that loop, but no second native operation may observe a partial edit.
+        if self.executing:
+            return False
         self.idle = None
         if self.closed or not self.queue:
             return False
-        client, request, deadline = self.queue.popleft()
-        if not client.closed:
-            if time.monotonic() > deadline:
-                client.respond(error=DiaError("REQUEST_TIMEOUT", "Queued live read expired"))
-            else:
-                try:
-                    result = self.registry.dispatch(request)
-                    if request["action"] not in MUTATIONS and time.monotonic() > deadline:
-                        raise DiaError("REQUEST_TIMEOUT", "Live read exceeded deadline")
-                    client.respond(result=result)
-                except DiaError as exc:
-                    client.respond(error=exc)
-                except Exception:
-                    # Do not serialize native reprs or user data in error messages.
+        self.executing = True
+        try:
+            client, request, deadline = self.queue.popleft()
+            if not client.closed:
+                if time.monotonic() > deadline:
+                    if request["action"] in MUTATIONS:
+                        self.registry.receipts.cancel(request, "REQUEST_TIMEOUT")
                     client.respond(
-                        error=DiaError("LIVE_READ_FAILED", "Dia could not inspect this state")
+                        error=DiaError(
+                            "REQUEST_TIMEOUT", "Queued live request expired", outcome="not_started"
+                        )
                     )
-        if self.queue and not self.closed:
-            self.idle = self.glib.idle_add(self._dispatch)
+                else:
+                    try:
+                        result = self.registry.dispatch(request)
+                        if request["action"] not in MUTATIONS and time.monotonic() > deadline:
+                            raise DiaError("REQUEST_TIMEOUT", "Live read exceeded deadline")
+                        client.respond(result=result)
+                    except DiaError as exc:
+                        client.respond(error=exc)
+                    except Exception:
+                        # Do not serialize native reprs or user data in error messages.
+                        client.respond(
+                            error=DiaError("LIVE_READ_FAILED", "Dia could not inspect this state")
+                        )
+        finally:
+            self.executing = False
+            if self.queue and not self.closed and self.idle is None:
+                self.idle = self.glib.idle_add(self._dispatch)
         return False
 
     def _expire(self):
         now = time.monotonic()
+        self.registry.receipts._expire()
         for client in tuple(self.clients):
             if now > client.deadline:
                 client.close()
@@ -250,7 +274,7 @@ class Connection:
             return
         value = {"protocol_version": VERSION}
         if error:
-            value["error"] = {"code": error.code, "message": str(error)}
+            value["error"] = error.record()
         else:
             value["result"] = result
         try:
@@ -271,4 +295,7 @@ class Connection:
             self.source = None
         self.sock.close()
         self.server.clients.discard(self)
+        for client, request, _ in self.server.queue:
+            if client is self and request["action"] in MUTATIONS:
+                self.server.registry.receipts.cancel(request)
         self.server.queue = deque(item for item in self.server.queue if item[0] is not self)

@@ -110,6 +110,7 @@ def test_bounded_dispatch_timeout_disconnect_and_order():
     server.limits = Limits(queue=1)
     server.queue = deque()
     server.idle = None
+    server.executing = False
     server.closed = False
     replies = []
     client = SimpleNamespace(closed=False, respond=lambda **kw: replies.append(kw))

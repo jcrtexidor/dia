@@ -64,70 +64,120 @@ class NativeFiles:
                 raise DiaError("INVALID_PATH", "Native open requires a .dia file")
             return self.dia.live_file("open", None, str(path), "dia", str(path))
 
+    @staticmethod
+    def _cleanup(fd, temporary):
+        warnings = []
+        for leftover in (temporary, temporary + "~"):
+            try:
+                os.unlink(leftover, dir_fd=fd)
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                warnings.append({"phase": "cleanup", "name": leftover, "message": str(exc)[:512]})
+        return warnings
+
     def write(self, doc, request):
-        action = request["action"]
-        exporting = action == "export_document"
-        fmt = request.get("format", "dia") if exporting else "dia"
-        if fmt not in {"dia", "svg", "png"}:
-            raise DiaError("INVALID_FORMAT", "Supported formats are dia, svg, png")
-        path = doc.filename if action == "save_document" else request["path"]
-        overwrite = request.get("overwrite", False)
-        if type(overwrite) is not bool:
-            raise DiaError("INVALID_ARGUMENT", "overwrite must be a boolean")
-        with self._parent(path) as (fd, destination, info):
-            if destination.suffix.lower() != f".{fmt}":
-                raise DiaError("INVALID_PATH", "File extension must match format")
-            if info is not None and not overwrite:
-                raise DiaError("FILE_EXISTS", "Explicit overwrite=true is required")
-            temporary = f".dia-live-{uuid4().hex}.{fmt}"
-            stage = f"/proc/self/fd/{fd}/{temporary}"
-            stage_fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600, dir_fd=fd)
-            os.close(stage_fd)
-            try:
-                self.dia.live_file("stage", doc, stage, fmt, str(destination))
-                stage_fd = os.open(temporary, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
+        # Keep publication facts outside the directory context: even descriptor
+        # cleanup can fail after publication and must not imply rollback.
+        state = {
+            "published": False,
+            "saved": False,
+            "directory_synced": False,
+            "cleanup_complete": True,
+            "warnings": [],
+            "phase": "validation",
+        }
+        try:
+            action = request["action"]
+            exporting = action == "export_document"
+            fmt = request.get("format", "dia") if exporting else "dia"
+            if fmt not in {"dia", "svg", "png"}:
+                raise DiaError("INVALID_FORMAT", "Supported formats are dia, svg, png")
+            path = doc.filename if action == "save_document" else request["path"]
+            overwrite = request.get("overwrite", False)
+            if type(overwrite) is not bool:
+                raise DiaError("INVALID_ARGUMENT", "overwrite must be a boolean")
+            with self._parent(path) as (fd, destination, info):
+                state.update(path=str(destination), format=fmt)
+                if destination.suffix.lower() != f".{fmt}":
+                    raise DiaError("INVALID_PATH", "File extension must match format")
+                if info is not None and not overwrite:
+                    raise DiaError("FILE_EXISTS", "Explicit overwrite=true is required")
+                temporary = f".dia-live-{uuid4().hex}.{fmt}"
+                stage = f"/proc/self/fd/{fd}/{temporary}"
+                state["phase"] = "stage"
                 try:
-                    staged = os.fstat(stage_fd)
-                    if not stat.S_ISREG(staged.st_mode) or staged.st_size == 0:
-                        raise DiaError(
-                            "FILE_IO_ERROR", "Serializer did not produce a nonempty file"
-                        )
-                    os.fsync(stage_fd)
-                finally:
-                    os.close(stage_fd)
-                if overwrite:
-                    os.replace(temporary, destination.name, src_dir_fd=fd, dst_dir_fd=fd)
-                else:
-                    # link publication fails atomically if another writer won the name.
-                    os.link(
-                        temporary,
-                        destination.name,
-                        src_dir_fd=fd,
-                        dst_dir_fd=fd,
-                        follow_symlinks=False,
+                    stage_fd = os.open(
+                        temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600, dir_fd=fd
                     )
-            finally:
-                for leftover in (temporary, temporary + "~"):
+                    os.close(stage_fd)
+                    self.dia.live_file("stage", doc, stage, fmt, str(destination))
+                    stage_fd = os.open(temporary, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
                     try:
-                        os.unlink(leftover, dir_fd=fd)
-                    except OSError:
-                        # Cleanup cannot turn a published file into a failed save.
-                        pass
-            # Publication is complete: only now change filename/undo saved marker.
-            if not exporting:
-                self.dia.live_file("commit", doc, str(destination), fmt, str(destination))
-            durable = True
-            try:
-                os.fsync(fd)
-            except OSError:
-                durable = False
-            return {
-                "path": str(destination),
-                "format": fmt,
-                "published": True,
-                "directory_synced": durable,
-                "saved": not exporting,
-            }
+                        staged = os.fstat(stage_fd)
+                        if not stat.S_ISREG(staged.st_mode) or staged.st_size == 0:
+                            raise DiaError(
+                                "FILE_IO_ERROR", "Serializer did not produce a nonempty file"
+                            )
+                        state["phase"] = "stage_sync"
+                        os.fsync(stage_fd)
+                    finally:
+                        os.close(stage_fd)
+                    state["phase"] = "publication"
+                    if overwrite:
+                        os.replace(temporary, destination.name, src_dir_fd=fd, dst_dir_fd=fd)
+                    else:
+                        os.link(
+                            temporary,
+                            destination.name,
+                            src_dir_fd=fd,
+                            dst_dir_fd=fd,
+                            follow_symlinks=False,
+                        )
+                    state["published"] = True
+                except Exception:
+                    warnings = self._cleanup(fd, temporary)
+                    state["warnings"].extend(warnings)
+                    state["cleanup_complete"] = not warnings
+                    raise
+                try:
+                    # Publication precedes the editor's filename/undo saved marker.
+                    state["phase"] = "commit"
+                    if not exporting:
+                        state["saved"] = None
+                        self.dia.live_file("commit", doc, str(destination), fmt, str(destination))
+                        state["saved"] = True
+                finally:
+                    # Still clean and sync when native commit raises: report every
+                    # known fact, but never retry or infer the editor's saved state.
+                    warnings = self._cleanup(fd, temporary)
+                    state["warnings"].extend(warnings)
+                    state["cleanup_complete"] = not warnings
+                    try:
+                        os.fsync(fd)
+                        state["directory_synced"] = True
+                    except OSError as exc:
+                        state["warnings"].append(
+                            {"phase": "directory_sync", "message": str(exc)[:512]}
+                        )
+                state["phase"] = "directory_close"
+            state["phase"] = "complete"
+            return state
+        except Exception as exc:
+            if state["published"]:
+                if state["saved"] is not None:
+                    # A descriptor-release failure cannot undo the confirmed
+                    # publication and native commit (or export).
+                    state["warnings"].append({"phase": state["phase"], "message": str(exc)[:512]})
+                    return state
+                raise DiaError(
+                    "FILE_POSTCOMMIT_UNCERTAIN",
+                    "File published; native saved state is uncertain. Inspect before continuing.",
+                    outcome="uncertain",
+                    details=state,
+                ) from exc
+            code = exc.code if isinstance(exc, DiaError) else "FILE_IO_ERROR"
+            raise DiaError(code, str(exc)[:512], outcome="not_started", details=state) from exc
 
     def dependencies(self, objects, limit=256):
         items = []

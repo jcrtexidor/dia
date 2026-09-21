@@ -12,6 +12,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from ..errors import DiaError
+from ..property_policy import classify_property
 from ..semantics import analyze_graph
 from .files import NativeFiles
 from .operations import Receipts
@@ -34,6 +35,7 @@ class Registry:
         self.thread = threading.get_ident()
         self._generations = {}
         self._sheets = None
+        self._sheets_truncated = False
         self.writable = writable
         self.files = NativeFiles(dia, files_root)
         self.receipts = Receipts(self.session)
@@ -106,9 +108,14 @@ class Registry:
     def _sheet_entries(self, type_name):
         if self._sheets is None:
             self._sheets = {}
+            count = 0
             for sheet in self.dia.registered_sheets():
                 for kind, description, _ in sheet.objects:
                     if kind:
+                        if count >= self.limits.objects:
+                            self._sheets_truncated = True
+                            return self._sheets.get(type_name, [])[: self.limits.structure]
+                        count += 1
                         self._sheets.setdefault(kind.name, []).append(
                             {"sheet": bounded(sheet.name), "description": bounded(description)}
                         )
@@ -132,6 +139,7 @@ class Registry:
         if detail:
             result.update(
                 sheet_entries=self._sheet_entries(obj.type.name),
+                sheet_cache_truncated=self._sheets_truncated,
                 child_count=len(obj.children),
                 group_member_count=len(obj.group_members),
                 children_truncated=len(obj.children) > self.limits.structure,
@@ -152,16 +160,16 @@ class Registry:
         values = []
         for descriptor in descriptions["items"]:
             name, kind = descriptor["name"], descriptor["type"]
+            policy = classify_property(descriptor)
             item = {
                 "name": bounded(name),
                 "type": bounded(kind),
                 "visible": descriptor["visible"],
                 "supported": False,
-                "editable": not descriptor.get("load_only", False)
-                and (descriptor["visible"] or kind == "text")
-                and kind in {"bool", "int", "enum", "real", "length", "fontsize", "string", "text"},
+                "editable": policy["editable"],
+                "classification": policy["classification"],
             }
-            if kind in {"bool", "int", "enum", "real", "length", "fontsize", "string", "text"}:
+            if policy["readable"]:
                 try:
                     value = obj.properties[name].value
                     if kind == "text":
@@ -238,8 +246,26 @@ class Registry:
         if action == "get_operation":
             return self.receipts.status(request["request_id"])
         if action in MUTATIONS:
-            return self.receipts.run(request, lambda: self._dispatch(request))
+            return self.receipts.run(request, lambda: self._mutation(request))
         return self._dispatch(request)
+
+    def _mutation(self, request):
+        try:
+            return self._dispatch(request)
+        except DiaError as exc:
+            # These checks resolve references/eligibility before entering native code.
+            if exc.outcome is None and exc.code in {
+                "LIVE_WRITE_DISABLED",
+                "GENERATION_CONFLICT",
+                "WRONG_SESSION",
+                "STALE_DOCUMENT_REFERENCE",
+                "STALE_OBJECT_REFERENCE",
+                "STALE_LAYER_REFERENCE",
+                "UNSUPPORTED_OPERATION",
+                "LIVE_LIMIT_EXCEEDED",
+            }:
+                exc.outcome = "not_started"
+            raise
 
     def _dispatch(self, request):
         action = request["action"]
@@ -251,9 +277,28 @@ class Registry:
                 "dia_version": self.dia.application_version,
                 "capabilities": CAPABILITIES
                 + ["summary.read", "semantics.read", "dependencies.read"]
-                + (["objects.write", "history.write", "layout.write"] if self.writable else [])
-                + (["files.write", "files.open"] if self.writable and self.files.root else []),
+                + (
+                    ["objects.write", "history.write", "layout.write"]
+                    if self.writable
+                    and hasattr(self.dia, "live_apply")
+                    and hasattr(self.dia, "live_history")
+                    else []
+                )
+                + (
+                    ["files.write", "files.open"]
+                    if self.writable and self.files.root and hasattr(self.dia, "live_file")
+                    else []
+                ),
                 "writable": self.writable,
+                "receipt_states": [
+                    "prepared",
+                    "queued",
+                    "executing",
+                    "committed",
+                    "rolled_back",
+                    "failed",
+                    "uncertain",
+                ],
                 "operation_receipts": {
                     "capacity": self.receipts.capacity,
                     "seconds": self.receipts.lifetime,
@@ -298,8 +343,8 @@ class Registry:
             if action == "history":
                 try:
                     result = self.dia.live_history(doc, request["direction"])
-                except (ValueError, TypeError, RuntimeError) as exc:
-                    raise DiaError("NATIVE_COMMAND_FAILED", str(exc)[:512]) from exc
+                except Exception as exc:
+                    raise self._native_error(exc) from exc
                 return {**base, "history": result, "generation": self._generation(doc, doc_id)}
         if action == "get_document":
             return {**base, "document": summary}
@@ -410,8 +455,8 @@ class Registry:
             commands.append(command)
         try:
             result = self.dia.live_apply(doc, commands)
-        except (ValueError, TypeError, RuntimeError) as exc:
-            raise DiaError("NATIVE_COMMAND_FAILED", str(exc)[:512]) from exc
+        except Exception as exc:
+            raise self._native_error(exc) from exc
         created = [self._object_id(doc_id, obj) for obj in result.get("created", [])]
         return {
             **base,
@@ -420,3 +465,14 @@ class Registry:
             "generation": self._generation(doc, doc_id),
             "committed": True,
         }
+
+    def _native_error(self, exc):
+        if isinstance(exc, getattr(self.dia, "LiveRollbackError", ())):
+            return DiaError("NATIVE_COMMAND_FAILED", str(exc)[:512], outcome="rolled_back")
+        if isinstance(exc, getattr(self.dia, "LiveValidationError", ())):
+            return DiaError("NATIVE_VALIDATION_FAILED", str(exc)[:512], outcome="not_started")
+        return DiaError(
+            "OPERATION_UNCERTAIN",
+            "Native result unavailable; inspect state and receipt",
+            outcome="uncertain",
+        )
