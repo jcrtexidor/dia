@@ -2,6 +2,30 @@
 
 ![logo](logo.png)
 
+## Experimental fork: operations API and MCP
+
+This is the `jcrtexidor/dia` experimental fork. It adds a
+[native operations API and local MCP server](mcp/README.md) for creating,
+connecting, moving and exporting diagrams, plus opt-in live GUI inspection,
+native editing/history/files and reviewable plans. Ubuntu 26.04 installation
+uses a local `.deb` with explicit off/read-only/read-write settings.
+The editor still uses GTK3; [GTK4 migration is a documented plan](docs/modernization/gtk4-migration.md).
+
+- [Install](docs/installation.md), [user guide](docs/user-guide.md),
+  [troubleshooting](docs/troubleshooting.md) and [security](docs/security.md)
+- [Source and embedded Python audit](docs/modernization/source-audit.md)
+- [Internal API contract](docs/modernization/api.md)
+- [Build and usage](mcp/README.md), [validation](docs/modernization/validation.md)
+- [Contribution guide and implementation log](docs/modernization/contributing.md)
+- [Current MCP architecture and live-integration milestones](docs/mcp-architecture.md)
+- [Runtime capability inventory](docs/mcp-capabilities.md), [tools](docs/mcp-tools.md),
+  [development](docs/mcp-development.md) and [progress](docs/progress.md)
+
+These fork additions were developed with AI assistance at the fork owner's
+request. GNOME Dia's upstream policy below excludes AI-generated contributions;
+these changes are maintained in this fork and are not submitted upstream.
+The following sections retain upstream's project information and policy.
+
 ## About
 
 Dia is a program for drawing diagrams, and is Free Software.

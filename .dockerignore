@@ -1,0 +1,11 @@
+.git
+build
+build-release
+mcp/.venv
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/*.egg-info
+mcp/dist
+mcp/exports
+artifacts
