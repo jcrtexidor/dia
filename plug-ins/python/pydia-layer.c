@@ -345,7 +345,20 @@ PyDiaLayer_GetVisible (PyDiaLayer *self, void *closure)
 }
 
 
+static PyObject *
+PyDiaLayer_GetLiveId (PyDiaLayer *self, void *closure)
+{
+  char *id = g_object_get_data (G_OBJECT (self->layer), "dia-live-id");
+  if (!id) {
+    id = g_uuid_string_random ();
+    g_object_set_data_full (G_OBJECT (self->layer), "dia-live-id", id, g_free);
+  }
+  return PyUnicode_FromString (id);
+}
+
 static PyGetSetDef PyDiaLayer_GetSetters[] = {
+  { "live_id", (getter) PyDiaLayer_GetLiveId, NULL,
+    "Main-thread-only ephemeral layer identity.", NULL },
   { "extents", (getter) PyDiaLayer_GetExtents, NULL,
     "Rectangle covering all object's bounding boxes.", NULL },
   { "name", (getter) PyDiaLayer_GetName, NULL,

@@ -26,6 +26,8 @@
 
 #include "pydia.h"
 #include "pydia-diagram.h"
+#include "pydia-live.h"
+#include "pydia-live-files.h"
 #include "pydia-display.h"
 #include "pydia-layer.h"
 #include "pydia-object.h"
@@ -45,9 +47,11 @@
 #include "pydia-sheet.h"
 
 #include "lib/dialib.h"
+#include "dia-version-info.h"
 #include "lib/object.h"
 #include "lib/group.h"
 #include "app/diagram.h"
+#include "app/dia-application.h"
 #include "app/display.h"
 #include "app/load_save.h"
 
@@ -104,8 +108,16 @@ PyDia_Diagrams(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, ":dia.diagrams"))
 	return NULL;
     ret = PyList_New(0);
-    for (tmp = dia_open_diagrams(); tmp; tmp = tmp->next)
-	PyList_Append(ret, PyDiaDiagram_New((Diagram *)tmp->data));
+    if (!ret) return NULL;
+    for (tmp = dia_open_diagrams(); tmp; tmp = tmp->next) {
+        PyObject *wrapper = PyDiaDiagram_New ((Diagram *) tmp->data);
+        if (!wrapper || PyList_Append (ret, wrapper) < 0) {
+            Py_XDECREF (wrapper);
+            Py_DECREF (ret);
+            return NULL;
+        }
+        Py_DECREF (wrapper);
+    }
     return ret;
 }
 
@@ -226,8 +238,16 @@ PyDia_RegisteredSheets(PyObject *self, PyObject *args)
 
     list = PyList_New(0);
 
-    for (items = get_sheets_list (); items != NULL; items = items->next)
-	PyList_Append (list, PyDiaSheet_New (items->data));
+    if (!list) return NULL;
+    for (items = get_sheets_list (); items != NULL; items = items->next) {
+        PyObject *wrapper = PyDiaSheet_New (items->data);
+        if (!wrapper || PyList_Append (list, wrapper) < 0) {
+            Py_XDECREF (wrapper);
+            Py_DECREF (list);
+            return NULL;
+        }
+        Py_DECREF (wrapper);
+    }
 
     return list;
 }
@@ -325,8 +345,17 @@ PyDia_import_data (const gchar* filename, DiagramData *dia, DiaContext *ctx, voi
     arg = Py_BuildValue ("(sO)", filename, diaobj);
     if (arg) {
       PyObject *res = PyObject_CallObject (func, arg);
+      if (res) {
+        /* Historical importers omit a return value. Keep None successful,
+         * but propagate an explicit false result and truth-testing errors. */
+        int success = res == Py_None ? 1 : PyObject_IsTrue (res);
+        if (success < 0) {
+          PyErr_Print ();
+        } else {
+          bRet = success;
+        }
+      }
       ON_RES(res, TRUE);
-      bRet = !!res;
     }
     Py_XDECREF (arg);
 
@@ -542,7 +571,54 @@ PyDia_Message (PyObject *self, PyObject *args)
 }
 
 
+static void
+PyDia_Shutdown (DiaApplication *app, gpointer user_data)
+{
+  PyGILState_STATE gil = PyGILState_Ensure ();
+  PyObject *result = PyObject_CallObject ((PyObject *) user_data, NULL);
+  ON_RES (result, FALSE);
+  PyGILState_Release (gil);
+}
+
+static void
+PyDia_ShutdownFree (gpointer user_data, GClosure *closure)
+{
+  PyGILState_STATE gil = PyGILState_Ensure ();
+  Py_DECREF ((PyObject *) user_data);
+  PyGILState_Release (gil);
+}
+
+static PyObject *
+PyDia_RegisterShutdown (PyObject *self, PyObject *args)
+{
+  PyObject *callback;
+  if (!PyArg_ParseTuple (args, "O:register_shutdown", &callback))
+    return NULL;
+  if (!PyCallable_Check (callback)) {
+    PyErr_SetString (PyExc_TypeError, "Shutdown callback must be callable");
+    return NULL;
+  }
+  Py_INCREF (callback);
+  g_signal_connect_data (dia_application_get_default (), "shutdown",
+                         G_CALLBACK (PyDia_Shutdown), callback, PyDia_ShutdownFree, 0);
+  Py_RETURN_NONE;
+}
+
+static PyObject *
+PyDia_LiveIdentityCount (PyObject *self, PyObject *args)
+{
+  if (!g_main_context_is_owner (g_main_context_default ()))
+    return PyErr_Format (PyExc_RuntimeError, "Identity diagnostics require GTK main context");
+  return PyLong_FromUnsignedLong (dia_object_live_count ());
+}
+
 static PyMethodDef dia_methods[] = {
+    { "live_identity_count", PyDia_LiveIdentityCount, METH_NOARGS, "Diagnostic runtime identity count (main thread)." },
+    { "live_apply", PyDia_LiveApply, METH_VARARGS, "Apply a native transaction." },
+    { "live_history", PyDia_LiveHistory, METH_VARARGS, "Use native undo or redo." },
+    { "live_file", PyDia_LiveFile, METH_VARARGS, "Native live document file operation." },
+    { "register_shutdown", PyDia_RegisterShutdown, METH_VARARGS,
+      "register_shutdown(Callback: func) -> None. Main-thread notification after confirmed exit." },
     { "group_create", PyDia_GroupCreate, METH_VARARGS,
       "group_create(List of Object: objs) -> Object."
       "  Create a group containing the given list of dia.Object(s)" },
@@ -631,9 +707,19 @@ PyInit_dia (void)
 {
   PyObject *module;
 
+  PyDia_LiveInit ();
+  PyDia_LiveFilesInit ();
+
   PyDiaDiagram_Type.tp_base = &PyDiaDiagramData_Type,
 
   module = PyModule_Create (&dia_module_def);
+  if (!module) return NULL;
+  if (PyDia_LiveExceptionsInit (module) < 0) {
+    Py_DECREF (module);
+    return NULL;
+  }
+
+  PyModule_AddStringConstant (module, "application_version", dia_version_string ());
 
   ADD_TYPE (Display);
   ADD_TYPE (Layer);

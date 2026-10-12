@@ -22,6 +22,7 @@
 #include <glib/gi18n-lib.h>
 
 #include "pydia-object.h"
+#include "group.h"
 #include "pydia-cpoint.h"
 #include "pydia-handle.h"
 #include "pydia-geometry.h"
@@ -266,7 +267,50 @@ PyDiaObject_MoveHandle (PyDiaObject *self, PyObject *args)
 }
 
 
+/* Descriptor-only inspection must not call object_prop_by_name/get_props:
+ * even constructing an ordinary PyDiaProperty fetches its native value. */
+static PyObject *
+PyDiaObject_PropertyDescriptors (PyDiaObject *self, PyObject *args)
+{
+  int limit = 32;
+  int total = 0;
+  const PropDescription *descs = NULL;
+  PyObject *items;
+
+  if (!PyArg_ParseTuple (args, "|i:Object.property_descriptors", &limit))
+    return NULL;
+  if (limit < 1 || limit > 256) {
+    PyErr_SetString (PyExc_ValueError, "Descriptor limit must be 1..256");
+    return NULL;
+  }
+  if (self->object->ops->describe_props)
+    descs = dia_object_describe_properties (self->object);
+  if (descs) {
+    while (descs[total].name)
+      total++;
+  }
+  items = PyList_New (MIN (total, limit));
+  if (!items)
+    return NULL;
+  for (int i = 0; i < MIN (total, limit); i++) {
+    PyObject *item = Py_BuildValue ("{s:s,s:s,s:O,s:O}",
+      "name", descs[i].name, "type", descs[i].type,
+      "visible", (descs[i].flags & PROP_FLAG_VISIBLE) ? Py_True : Py_False,
+      "load_only", (descs[i].flags & (PROP_FLAG_LOAD_ONLY | PROP_FLAG_WIDGET_ONLY))
+                   ? Py_True : Py_False);
+    if (!item) {
+      Py_DECREF (items);
+      return NULL;
+    }
+    PyList_SET_ITEM (items, i, item);
+  }
+  return Py_BuildValue ("{s:N,s:i,s:O}", "items", items, "total", total,
+                        "truncated", total > limit ? Py_True : Py_False);
+}
+
 static PyMethodDef PyDiaObject_Methods[] = {
+    { "property_descriptors", (PyCFunction)PyDiaObject_PropertyDescriptors, METH_VARARGS,
+      "property_descriptors(int: limit=32) -> dict. Read descriptors without fetching values." },
     { "destroy", (PyCFunction)PyDiaObject_Destroy, METH_VARARGS,
       "destroy() -> None."
       "  Release the object. Must not be called when already added to a group or layer." },
@@ -325,6 +369,18 @@ PyDiaObject_GetAttr (PyObject *obj, PyObject *arg)
     return Py_BuildValue ("[sssss]",
                           "bounding_box", "connections", "handles", "parent",
                           "properties", "type");
+  } else if (!g_strcmp0 (attr, "live_id")) {
+    return PyUnicode_FromString (dia_object_live_id (self->object));
+  } else if (!g_strcmp0 (attr, "position")) {
+    return PyDiaPoint_New (&self->object->position);
+  } else if (!g_strcmp0 (attr, "children") || !g_strcmp0 (attr, "group_members")) {
+    GList *items = !g_strcmp0 (attr, "children") ? self->object->children :
+                  (IS_GROUP (self->object) ? group_objects (self->object) : NULL);
+    PyObject *ret = PyTuple_New (g_list_length (items));
+    int i = 0;
+    for (GList *l = items; l; l = l->next)
+      PyTuple_SetItem (ret, i++, PyDiaObject_New (l->data));
+    return ret;
   } else if (!g_strcmp0 (attr, "type")) {
     return PyDiaObjectType_New (self->object->type);
   } else if (!g_strcmp0 (attr, "bounding_box")) {

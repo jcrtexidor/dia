@@ -26,4 +26,6 @@ void            dia_application_diagram_change          (DiaApplication *self,
                                                          gpointer        object);
 GListModel     *dia_application_get_diagrams            (DiaApplication *self);
 
+void            dia_application_shutdown                (DiaApplication *self);
+
 G_END_DECLS

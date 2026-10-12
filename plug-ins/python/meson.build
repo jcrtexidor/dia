@@ -13,6 +13,8 @@ sources = files(
     'pydia-handle.c',
     'pydia-image.c',
     'pydia-layer.c',
+    'pydia-live.c',
+    'pydia-live-files.c',
     'pydia-menuitem.c',
     'pydia-object.c',
     'pydia-paperinfo.c',
@@ -27,6 +29,7 @@ sources = files(
 
 python_scripts = [
     'aobjects.py',
+    'mcp-live.py',
     'allprops.py',
     'codegen.py',
     'diasvg.py',

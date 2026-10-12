@@ -39,6 +39,12 @@
 
 G_BEGIN_DECLS
 
+/* Main-context-only, ephemeral identity for live inspection. Never persisted. */
+guint dia_object_live_count (void);
+const char *dia_object_live_id (DiaObject *obj);
+void dia_object_live_invalidate (DiaObject *obj);
+
+
 #define DIA_TYPE_EXCHANGE_OBJECT_CHANGE dia_exchange_object_change_get_type ()
 G_DECLARE_FINAL_TYPE (DiaExchangeObjectChange,
                       dia_exchange_object_change,
