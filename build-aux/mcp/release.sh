@@ -12,12 +12,12 @@ while (($#)); do
       shift 2 ;;
     -h|--help)
       echo 'Usage: bash build-aux/mcp/release.sh [--image TAG] [--output EMPTY_DIRECTORY]'
-      echo 'Requires Docker daemon, task, uv and Python >=3.12; installs nothing on the host.'
+      echo 'Requires Docker daemon, task, uv, Cargo and Python >=3.12; installs nothing on the host.'
       exit 0 ;;
     *) echo "Unknown argument: $1" >&2; exit 2 ;;
   esac
 done
-for executable in docker task uv python3; do
+for executable in docker task uv cargo python3; do
   command -v "$executable" >/dev/null || { echo "Required host command missing: $executable" >&2; exit 1; }
 done
 python3 -c 'import sys; assert sys.version_info >= (3, 12), "Python >=3.12 required"'
@@ -86,7 +86,7 @@ else
   record wayland skipped wayland.log "$reason"
 fi
 bash "$root/build-aux/mcp/package.sh" --image "$image" --output "$output" \
-  --version '0.98.0+mcp0.3.0-1' 2>&1 | tee "$output/package.log"
+  --version '0.98.0+mcp0.3.0-2' 2>&1 | tee "$output/package.log"
 shopt -s nullglob
 packages=("$output"/*.deb)
 [[ ${#packages[@]} -eq 1 ]] || { echo 'Expected exactly one .deb artifact.' >&2; exit 1; }

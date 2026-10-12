@@ -36,7 +36,7 @@ def candidate(tmp_path):
     write("mcp/src/dia_mcp/models.py", 'api_version: Literal["1"] = "1"\n')
     for document in release.DOCS:
         write(document, "# Release guide\n[Install](installation.md#local)\n")
-    filename = "dia-mcp-fork_0.98.0+mcp0.3.0-1_amd64.deb"
+    filename = "dia-mcp-fork_0.98.0+mcp0.3.0-2_amd64.deb"
     package = output / filename
     package.write_bytes(b"synthetic package bytes for checksum guard")
     (output / "SHA256SUMS").write_text(f"{release.digest(package)}  {filename}\n")

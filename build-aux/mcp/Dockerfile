@@ -29,6 +29,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       python3-gi \
       python3-gi-cairo \
       python3-venv \
+      cargo \
+      rustc \
       shared-mime-info \
       xauth \
       xvfb \
@@ -45,6 +47,7 @@ RUN python3 -m venv --system-site-packages /opt/dia-mcp-venv \
 
 COPY . /src/dia
 WORKDIR /src/dia
+RUN cargo build --locked --release --manifest-path mcp/rust/Cargo.toml
 
 # Pin only the build copy: upstream's wrap continues to track main in the repo.
 RUN sed -i "s/^revision = .*/revision = ${XPM_PIXBUF_REVISION}/" \
@@ -57,7 +60,7 @@ RUN sed -i "s/^revision = .*/revision = ${XPM_PIXBUF_REVISION}/" \
     && printf '%s\n' /opt/dia/lib > /etc/ld.so.conf.d/dia.conf \
     && ldconfig
 
-ENV PATH="/opt/dia-mcp-venv/bin:/opt/dia/bin:${PATH}"
+ENV PATH="/src/dia/mcp/rust/target/release:/opt/dia-mcp-venv/bin:/opt/dia/bin:${PATH}"
 ENV NO_AT_BRIDGE=1
 
 RUN pip install --no-cache-dir --no-deps ./mcp \
@@ -66,4 +69,4 @@ RUN pip install --no-cache-dir --no-deps ./mcp \
     && python -m pip check
 
 WORKDIR /workspace
-CMD ["xvfb-run", "-a", "dia-mcp", "--workspace", "/workspace"]
+CMD ["xvfb-run", "-a", "/src/dia/mcp/rust/target/release/dia-mcp", "--workspace", "/workspace"]

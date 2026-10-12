@@ -40,7 +40,8 @@ waiting for Xvfb to become ready; when run directly as PID 1 it can remain
 blocked before starting Dia or Python. Docker's init process also forwards
 termination signals and reaps child processes.
 
-The separate virtual environment `/opt/dia-mcp-venv` contains `mcp==1.30.0`
+The external stdio MCP process is the Rust binary. The separate virtual environment
+`/opt/dia-mcp-venv` contains the private Python operations worker and `mcp==1.30.0`
 and `pytest==9.1.1`. Runtime SDK dependencies come from
 `mcp/requirements.lock`, verified by pip with `--require-hashes`. The local MCP
 package is installed from `./mcp` with `--no-deps`. The environment can see

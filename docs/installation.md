@@ -1,8 +1,8 @@
 # Install Dia with local MCP on Ubuntu 26
 
 The primary package is **dia-mcp-fork**, for Ubuntu 26.04 amd64 and Python 3.14.
-It contains the GTK3 Dia fork, native plugins/resources, the external MCP adapter
-and its locked Python dependencies. It coexists with distribution Dia: use **Dia
+It contains the GTK3 Dia fork, native plugins/resources, the Rust stdio MCP server
+and a private Python operations worker with locked dependencies. It coexists with distribution Dia: use **Dia
 Fork** in Applications or `dia-fork`, not an unrelated `dia` executable.
 
 Build artifacts are local candidates, not an automatically published or signed
@@ -10,7 +10,7 @@ release. Obtain the `.deb` and `SHA256SUMS` from the same trusted build, then:
 
 ```sh
 sha256sum -c SHA256SUMS
-sudo apt install ./dia-mcp-fork_0.98.0+mcp0.3.0-1_amd64.deb
+sudo apt install ./dia-mcp-fork_0.98.0+mcp0.3.0-2_amd64.deb
 ```
 
 APT installs declared Ubuntu runtime dependencies. Package installation does not
@@ -75,11 +75,12 @@ the adapter never guesses among running Dia instances.
 | --- | --- |
 | Ubuntu `.deb` | Primary: preserves `/opt/dia` resource/plugin paths and the Python 3.14 venv, declares GTK/GI/native dependencies and installs distinct launchers |
 | Source/container | Supported development alternative; see [development](mcp-development.md). Containers need explicit display/runtime sharing for GUI access |
-| Python wheel alone | External adapter only; does not provide the fork's native lifetime, command or file APIs |
+| Python wheel alone | Private operations worker only; the Rust MCP executable and native Dia integration are packaged separately |
 | AppImage | Not produced: Python embedding, image loaders and native resource paths require additional relocation/runtime work |
 | Flatpak | Not produced: private runtime/socket exposure to external MCP clients needs a deliberate sandbox/portal design |
 
-The `.deb` preserves `/opt/dia` and `/opt/dia-mcp-venv`; it is not relocatable.
+The `.deb` preserves `/opt/dia`, `/opt/dia-mcp/bin/dia-mcp` and
+`/opt/dia-mcp-venv`; it is not relocatable.
 Python ABI, GTK plugin discovery, loaders and installed native resources are tested
 in a fresh Ubuntu runtime. Custom user sheets/plugins remain in Dia's normal
 locations (`~/.dia`); they are trusted native inputs, not packaged or sandboxed by

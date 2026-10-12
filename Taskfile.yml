@@ -29,12 +29,15 @@ tasks:
       - bash build-aux/mcp/release.sh --image {{.MCP_IMAGE}} --output {{.ROOT_DIR}}/artifacts/release
 
   mcp:check:
-    desc: Check Python formatting and the operations contract without GTK
+    desc: Check Rust transport, Python formatting and operations without GTK
     cmds:
       - uv sync --directory mcp --locked
       - uv run --directory mcp --locked ruff check .
       - uv run --directory mcp --locked ruff format --check .
+      - uv run --directory mcp --locked python -m dia_mcp.protocol_catalog --check
+      - cargo build --locked --manifest-path mcp/rust/Cargo.toml
       - uv run --directory mcp --locked pytest -q -m 'not native'
+      - cargo test --locked --manifest-path mcp/rust/Cargo.toml
 
   mcp:test:
     desc: Test installed native Dia, Python API and MCP stdio in the built image

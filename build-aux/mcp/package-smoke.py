@@ -236,7 +236,7 @@ def acceptance(root):
     require(shutil.which("cc") is None, "Fresh runtime must not contain build tools")
     library_env = dict(os.environ, LD_LIBRARY_PATH="/opt/dia/lib")
     elf_count = 0
-    for prefix in (Path("/opt/dia"), Path("/opt/dia-mcp-venv")):
+    for prefix in (Path("/opt/dia"), Path("/opt/dia-mcp-venv"), Path("/opt/dia-mcp")):
         for path in prefix.rglob("*"):
             if not path.is_file() or path.is_symlink():
                 continue

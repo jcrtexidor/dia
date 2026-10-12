@@ -30,7 +30,7 @@ VERSIONS = {
     "adapter": "0.3.0",
     "live": 1,
     "snapshot": "1",
-    "package": "0.98.0+mcp0.3.0-1",
+    "package": "0.98.0+mcp0.3.0-2",
 }
 
 
@@ -86,7 +86,7 @@ def source_versions(root):
         "adapter": adapter,
         "live": live,
         "snapshot": snapshot[1],
-        "package": f"{match[1]}+mcp{adapter}-1",
+        "package": f"{match[1]}+mcp{adapter}-2",
     }
     require(
         versions == VERSIONS and type(live) is int,

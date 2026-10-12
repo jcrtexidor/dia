@@ -1,0 +1,1674 @@
+{
+  "tools": [
+    {
+      "name": "get_capabilities",
+      "description": "Describe MCP creation types and limits; use list tools for installed native types.",
+      "inputSchema": {
+        "properties": {},
+        "title": "get_capabilitiesArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_sheets",
+      "description": "Discover native worker sheets with names, descriptions and entry counts.\n\nRead-only, fresh worker inventory, not the open GUI. Follow next_offset for more.",
+      "inputSchema": {
+        "properties": {
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "list_sheetsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_object_types",
+      "description": "Discover registered Dia types, optionally filtered by an exact list_sheets name.\n\nIncludes native version, sheet labels and creatable_as (object/connection/null).\nInstalled types with null are not creatable in snapshots; live generic creation\nis separate. Follow next_offset.\nThis queries a fresh worker, not the open GUI; no objects are instantiated.",
+      "inputSchema": {
+        "properties": {
+          "sheet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sheet"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "list_object_typesArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_handshake",
+      "description": "Connect to the configured running Dia GUI; return version, capabilities and limits.",
+      "inputSchema": {
+        "properties": {},
+        "title": "live_handshakeArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_current_context",
+      "description": "Start here for the running GUI: active document/generation, layer and selection.\n\nUp to eight selected objects include safe properties and native attachments.\nNo active document returns document=null. Follow selection.next_offset with\nlive_inspect_selection; use the returned generation when reviewing edits.",
+      "inputSchema": {
+        "properties": {},
+        "title": "live_get_current_contextArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_inspect_selection",
+      "description": "Inspect what the human selected, with safe properties and actual attachments.\n\nBounded to eight objects per page; compare generation across pages. Selection\nis the user's pointing mechanism, not consent to mutate.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 8,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_inspect_selectionArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_inspect_object_neighborhood",
+      "description": "Inspect one object and its directly attached neighbors (max eight per page).\n\nReturns native handles/connection points, safe properties, and actual one-hop\nconnectivity. Visual touching, direction and domain semantics are not inferred.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 8,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id",
+          "object_id"
+        ],
+        "title": "live_inspect_object_neighborhoodArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_plan_selection",
+      "description": "Plan changes to the current selection without modifying it (1..64 objects).\n\nintent=layout with options={mode: native layout mode}; move with {dx,dy}\nin centimeters; set_properties with {properties: scalar property map}.\nReview commands/assumptions, optionally live_validate_commands, then prepare\nand apply using the returned generation. Never silently refresh a stale plan.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "intent": {
+            "title": "Intent",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": true,
+            "title": "Options",
+            "type": "object"
+          }
+        },
+        "required": [
+          "document_id",
+          "intent",
+          "options"
+        ],
+        "title": "live_plan_selectionArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_validate_commands",
+      "description": "Statically check a proposed batch without executing factories or native changes.\n\nChecks IDs, descriptors, known ports and eligibility. valid=true means no\nknown static rejection, not a guarantee: inspect complete/deferred/issues.\nNative plugins/ranges and changes to dynamic ports remain authoritative at apply.\nDoes not reserve a receipt, alter history, simulate, or execute-and-rollback.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expected_generation": {
+            "title": "Expected Generation",
+            "type": "integer"
+          },
+          "commands": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Commands",
+            "type": "array"
+          }
+        },
+        "required": [
+          "document_id",
+          "expected_generation",
+          "commands"
+        ],
+        "title": "live_validate_commandsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_list_documents",
+      "description": "List open GUI documents, distinct from MCP-owned snapshot documents.",
+      "inputSchema": {
+        "properties": {
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "live_list_documentsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_active_document",
+      "description": "Read the actual active GUI document, or null when there is none.",
+      "inputSchema": {
+        "properties": {},
+        "title": "live_get_active_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_document",
+      "description": "Read a live document summary, modified status and conservative generation.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_get_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_list_layers",
+      "description": "Read GUI layers in native order with visibility and active layer.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_list_layersArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_selection",
+      "description": "Explain what the user selected in Dia using current object IDs and geometry.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_get_selectionArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_list_objects",
+      "description": "Read bounded summaries of arbitrary native types, including group members.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_list_objectsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_object",
+      "description": "Inspect a live object, relations, sheets and optional safe properties.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "properties": {
+            "type": "boolean",
+            "default": false,
+            "title": "Properties"
+          }
+        },
+        "required": [
+          "document_id",
+          "object_id"
+        ],
+        "title": "live_get_objectArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_connections",
+      "description": "Read actual native handle attachments and connection points, not visual proximity.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "object_id"
+        ],
+        "title": "live_get_connectionsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_plan_objects",
+      "description": "Preview generic create commands for flowchart, UML, database or network objects.\n\nnodes contain x,y and optional type,label. Does not mutate; apply returned\ncommands using a prepared operation and a current document generation.\nInspect created native handles before planning connections.",
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Nodes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "domain",
+          "nodes"
+        ],
+        "title": "live_plan_objectsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_prepare_operation",
+      "description": "Reserve a one-use request_id before a GUI mutation (requires read/write mode).\n\nRetain it to query/retry identical input after transport failure. Receipts last\nat most 30 minutes/256 operations; unknown IDs never execute mutations.",
+      "inputSchema": {
+        "properties": {},
+        "title": "live_prepare_operationArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_operation",
+      "description": "Query a reserved operation receipt after success, failure or lost response.",
+      "inputSchema": {
+        "properties": {
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id"
+        ],
+        "title": "live_get_operationArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_apply_commands",
+      "description": "Apply 1..64 commands as one native undo transaction.\n\nop=create: type,x,y,optional properties/layer_id; move: object_id,x,y;\nset_properties: object_id,properties (safe scalar/text values only);\ndelete: object_id (disconnect first); connect: object_id,handle,target_id,point;\ndisconnect: object_id,handle; layout: object_ids,mode (left,center,right,top,\nmiddle,bottom,distribute_horizontal,distribute_vertical).\nIDs must exist before the batch; create returns IDs for subsequent transactions.\nRead current generation first. After failure reread IDs/state; rollback may\ninvalidate runtime IDs. Duplicate identical request_id returns its receipt.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expected_generation": {
+            "title": "Expected Generation",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "commands": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Commands",
+            "type": "array"
+          }
+        },
+        "required": [
+          "document_id",
+          "expected_generation",
+          "request_id",
+          "commands"
+        ],
+        "title": "live_apply_commandsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_history",
+      "description": "Undo or redo a native transaction; direction is undo or redo.\n\nThis is the GUI's shared history, including the user's edits. Read state first.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expected_generation": {
+            "title": "Expected Generation",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "expected_generation",
+          "request_id",
+          "direction"
+        ],
+        "title": "live_historyArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_open_document",
+      "description": "Open a .dia file under DIA_MCP_FILES_ROOT in a new GUI document.\n\nNative importers can read referenced resources. Use trusted local files.",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "request_id"
+        ],
+        "title": "live_open_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_save_document",
+      "description": "Save natively to the current filename; existing files require overwrite=true.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expected_generation": {
+            "title": "Expected Generation",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "overwrite": {
+            "default": false,
+            "title": "Overwrite",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id",
+          "expected_generation",
+          "request_id"
+        ],
+        "title": "live_save_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_save_document_as",
+      "description": "Save native data under DIA_MCP_FILES_ROOT and update GUI filename after publication.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expected_generation": {
+            "title": "Expected Generation",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "overwrite": {
+            "default": false,
+            "title": "Overwrite",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id",
+          "expected_generation",
+          "request_id",
+          "path"
+        ],
+        "title": "live_save_document_asArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_export_document",
+      "description": "Export native dia/svg/png under DIA_MCP_FILES_ROOT; preserve GUI dirty state.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "expected_generation": {
+            "title": "Expected Generation",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "format": {
+            "default": "svg",
+            "title": "Format",
+            "type": "string"
+          },
+          "overwrite": {
+            "default": false,
+            "title": "Overwrite",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id",
+          "expected_generation",
+          "request_id",
+          "path"
+        ],
+        "title": "live_export_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_get_dependencies",
+      "description": "Report declared native file properties; completeness/existence are not guaranteed.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_get_dependenciesArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_summarize_document",
+      "description": "Summarize object types, layers, selection and current generation without mutation.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_summarize_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "live_analyze_document",
+      "description": "Analyze actual attachments and mixed domains (at most 256 objects).\n\nReports connected components, isolated objects, supported UML relationships\nand explicit semantic limitations. This is not electrical simulation.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "domain": {
+            "default": "auto",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "live_analyze_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_document",
+      "description": "Create an empty session document; return its document.id.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "default": "Diagram",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "title": "create_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_object",
+      "description": "Create a native labeled shape; return object_id and actual geometry in cm.",
+      "inputSchema": {
+        "$defs": {
+          "UMLAttribute": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Type",
+                "type": "string"
+              },
+              "value": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Value",
+                "type": "string"
+              },
+              "visibility": {
+                "default": "private",
+                "enum": [
+                  "public",
+                  "private",
+                  "protected",
+                  "package"
+                ],
+                "title": "Visibility",
+                "type": "string"
+              },
+              "class_scope": {
+                "default": false,
+                "title": "Class Scope",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "UMLAttribute",
+            "type": "object"
+          },
+          "UMLClassProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "stereotype": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Stereotype",
+                "type": "string"
+              },
+              "abstract": {
+                "default": false,
+                "title": "Abstract",
+                "type": "boolean"
+              },
+              "attributes": {
+                "items": {
+                  "$ref": "#/$defs/UMLAttribute"
+                },
+                "maxItems": 30,
+                "title": "Attributes",
+                "type": "array"
+              },
+              "operations": {
+                "items": {
+                  "$ref": "#/$defs/UMLOperation"
+                },
+                "maxItems": 30,
+                "title": "Operations",
+                "type": "array"
+              }
+            },
+            "title": "UMLClassProperties",
+            "type": "object"
+          },
+          "UMLOperation": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Type",
+                "type": "string"
+              },
+              "visibility": {
+                "default": "public",
+                "enum": [
+                  "public",
+                  "private",
+                  "protected",
+                  "package"
+                ],
+                "title": "Visibility",
+                "type": "string"
+              },
+              "class_scope": {
+                "default": false,
+                "title": "Class Scope",
+                "type": "boolean"
+              },
+              "inheritance": {
+                "default": "leaf",
+                "enum": [
+                  "abstract",
+                  "polymorphic",
+                  "leaf"
+                ],
+                "title": "Inheritance",
+                "type": "string"
+              },
+              "parameters": {
+                "items": {
+                  "$ref": "#/$defs/UMLParameter"
+                },
+                "maxItems": 20,
+                "title": "Parameters",
+                "type": "array"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "UMLOperation",
+            "type": "object"
+          },
+          "UMLParameter": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Type",
+                "type": "string"
+              },
+              "value": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Value",
+                "type": "string"
+              },
+              "kind": {
+                "default": "unspecified",
+                "enum": [
+                  "unspecified",
+                  "in",
+                  "out",
+                  "inout"
+                ],
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "UMLParameter",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "type": {
+            "default": "Flowchart - Box",
+            "enum": [
+              "Flowchart - Box",
+              "Flowchart - Ellipse",
+              "Flowchart - Diamond",
+              "UML - Class",
+              "Electric - contact_o",
+              "Electric - contact_f",
+              "Electric - relay",
+              "Electric - lamp",
+              "Electric - connpoint",
+              "Pneum - DEJack",
+              "Pneum - dist52",
+              "Pneum - presspn",
+              "Pneum - drain"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "x": {
+            "default": 0,
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "default": 0,
+            "title": "Y",
+            "type": "number"
+          },
+          "width": {
+            "default": 4,
+            "title": "Width",
+            "type": "number"
+          },
+          "height": {
+            "default": 2,
+            "title": "Height",
+            "type": "number"
+          },
+          "text": {
+            "default": "",
+            "title": "Text",
+            "type": "string"
+          },
+          "properties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/UMLClassProperties"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "flip_horizontal": {
+            "default": false,
+            "title": "Flip Horizontal",
+            "type": "boolean"
+          },
+          "flip_vertical": {
+            "default": false,
+            "title": "Flip Vertical",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "create_objectArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "connect_objects",
+      "description": "Attach native endpoints; inspect connection_points to select exact terminal indices.\n\nExplicit indices require the corresponding port=auto. UML generalization points from\ntarget (subclass) to source (superclass). UML symbols control their own arrowheads.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "source_port": {
+            "default": "auto",
+            "enum": [
+              "auto",
+              "north",
+              "east",
+              "south",
+              "west",
+              "center"
+            ],
+            "title": "Source Port",
+            "type": "string"
+          },
+          "target_port": {
+            "default": "auto",
+            "enum": [
+              "auto",
+              "north",
+              "east",
+              "south",
+              "west",
+              "center"
+            ],
+            "title": "Target Port",
+            "type": "string"
+          },
+          "arrow": {
+            "default": true,
+            "title": "Arrow",
+            "type": "boolean"
+          },
+          "type": {
+            "default": "Standard - Line",
+            "enum": [
+              "Standard - Line",
+              "Standard - ZigZagLine",
+              "UML - Generalization",
+              "UML - Association"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "source_connection": {
+            "anyOf": [
+              {
+                "maximum": 1023,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Connection"
+          },
+          "target_connection": {
+            "anyOf": [
+              {
+                "maximum": 1023,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target Connection"
+          },
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "source",
+          "target"
+        ],
+        "title": "connect_objectsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "update_object",
+      "description": "Update supplied object fields; properties replaces the entire UML property set.\n\nOmitted/null fields stay unchanged. Send properties={} to reset UML members.\nGeometry and attached connectors are rebuilt before the change is committed.",
+      "inputSchema": {
+        "$defs": {
+          "UMLAttribute": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Type",
+                "type": "string"
+              },
+              "value": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Value",
+                "type": "string"
+              },
+              "visibility": {
+                "default": "private",
+                "enum": [
+                  "public",
+                  "private",
+                  "protected",
+                  "package"
+                ],
+                "title": "Visibility",
+                "type": "string"
+              },
+              "class_scope": {
+                "default": false,
+                "title": "Class Scope",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "UMLAttribute",
+            "type": "object"
+          },
+          "UMLClassProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "stereotype": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Stereotype",
+                "type": "string"
+              },
+              "abstract": {
+                "default": false,
+                "title": "Abstract",
+                "type": "boolean"
+              },
+              "attributes": {
+                "items": {
+                  "$ref": "#/$defs/UMLAttribute"
+                },
+                "maxItems": 30,
+                "title": "Attributes",
+                "type": "array"
+              },
+              "operations": {
+                "items": {
+                  "$ref": "#/$defs/UMLOperation"
+                },
+                "maxItems": 30,
+                "title": "Operations",
+                "type": "array"
+              }
+            },
+            "title": "UMLClassProperties",
+            "type": "object"
+          },
+          "UMLOperation": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Type",
+                "type": "string"
+              },
+              "visibility": {
+                "default": "public",
+                "enum": [
+                  "public",
+                  "private",
+                  "protected",
+                  "package"
+                ],
+                "title": "Visibility",
+                "type": "string"
+              },
+              "class_scope": {
+                "default": false,
+                "title": "Class Scope",
+                "type": "boolean"
+              },
+              "inheritance": {
+                "default": "leaf",
+                "enum": [
+                  "abstract",
+                  "polymorphic",
+                  "leaf"
+                ],
+                "title": "Inheritance",
+                "type": "string"
+              },
+              "parameters": {
+                "items": {
+                  "$ref": "#/$defs/UMLParameter"
+                },
+                "maxItems": 20,
+                "title": "Parameters",
+                "type": "array"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "UMLOperation",
+            "type": "object"
+          },
+          "UMLParameter": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Type",
+                "type": "string"
+              },
+              "value": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Value",
+                "type": "string"
+              },
+              "kind": {
+                "default": "unspecified",
+                "enum": [
+                  "unspecified",
+                  "in",
+                  "out",
+                  "inout"
+                ],
+                "title": "Kind",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "title": "UMLParameter",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Text"
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Width"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Height"
+          },
+          "properties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/UMLClassProperties"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "flip_horizontal": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Flip Horizontal"
+          },
+          "flip_vertical": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Flip Vertical"
+          }
+        },
+        "required": [
+          "document_id",
+          "object_id"
+        ],
+        "title": "update_objectArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "move_object",
+      "description": "Move a shape to x,y in cm and rebuild attached connection geometry.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "document_id",
+          "object_id",
+          "x",
+          "y"
+        ],
+        "title": "move_objectArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "inspect_document",
+      "description": "Read current logical IDs, revision, objects, connections and native geometry.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "inspect_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "export_diagram",
+      "description": "Export using Dia. filename is a basename such as workflow.svg; no paths.\n\nExisting files are preserved unless overwrite=true. Returns path, size and SHA256.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "format": {
+            "default": "svg",
+            "enum": [
+              "dia",
+              "svg",
+              "png"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "overwrite": {
+            "default": false,
+            "title": "Overwrite",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document_id",
+          "filename"
+        ],
+        "title": "export_diagramArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "close_document",
+      "description": "Discard session state for a document. Export first to preserve the diagram.",
+      "inputSchema": {
+        "properties": {
+          "document_id": {
+            "title": "Document Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "close_documentArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "dia://live/documents",
+      "name": "live_documents_resource",
+      "description": "First page of live documents; follow next_offset with live_list_documents.",
+      "mimeType": "text/plain"
+    },
+    {
+      "uri": "dia://live/context",
+      "name": "live_context_resource",
+      "description": "Compact active GUI context and the first eight selected objects.",
+      "mimeType": "text/plain"
+    },
+    {
+      "uri": "dia://live/capabilities",
+      "name": "live_capabilities_resource",
+      "description": "Actual GUI protocol, capabilities, write mode and resource limits.",
+      "mimeType": "text/plain"
+    }
+  ],
+  "resourceTemplates": [
+    {
+      "uriTemplate": "dia://live/documents/{document_id}/summary",
+      "name": "live_summary_resource",
+      "description": "Current native document summary.",
+      "mimeType": "text/plain"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "inspect_live_selection",
+      "description": "Explain the user's selected objects or review a proposed layout.",
+      "arguments": []
+    },
+    {
+      "name": "explain_live_diagram",
+      "description": "Inspect and explain a GUI document using evidence from native attachments.",
+      "arguments": [
+        {
+          "name": "document_id",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

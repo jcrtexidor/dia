@@ -3,7 +3,7 @@
 set -euo pipefail
 image=dia-mcp:ubuntu26
 output=
-version=0.98.0+mcp0.3.0-1
+version=0.98.0+mcp0.3.0-2
 owner_uid=$(id -u)
 owner_gid=$(id -g)
 while (($#)); do
@@ -52,6 +52,7 @@ assert Path('/opt/dia-mcp-venv/bin/dia-mcp-config').is_file(), 'Config entrypoin
 PY
 mkdir -p "$payload/opt" "$payload/DEBIAN" "$work/debian"
 cp -a /opt/dia /opt/dia-mcp-venv "$payload/opt/"
+install -Dm755 /src/dia/mcp/rust/target/release/dia-mcp "$payload/opt/dia-mcp/bin/dia-mcp"
 # Virtualenv shebangs intentionally preserve their installed absolute prefix.
 ln -sfn /usr/bin/python3.14 "$payload/opt/dia-mcp-venv/bin/python3"
 mkdir -p "$payload/opt/dia/share/dia/mcp-python"
@@ -71,10 +72,11 @@ cat > "$payload/usr/bin/dia-mcp" <<'MCP'
 unset PYTHONHOME PYTHONPATH VIRTUAL_ENV DIA_PYTHON_PATH
 export LD_LIBRARY_PATH=/opt/dia/lib
 export PYTHONDONTWRITEBYTECODE=1
+export DIA_MCP_PYTHON=/opt/dia-mcp-venv/bin/python
 if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
-  exec xvfb-run -a /opt/dia-mcp-venv/bin/dia-mcp --dia-binary /opt/dia/bin/dia "$@"
+  exec xvfb-run -a /opt/dia-mcp/bin/dia-mcp --dia-binary /opt/dia/bin/dia "$@"
 fi
-exec /opt/dia-mcp-venv/bin/dia-mcp --dia-binary /opt/dia/bin/dia "$@"
+exec /opt/dia-mcp/bin/dia-mcp --dia-binary /opt/dia/bin/dia "$@"
 MCP
 cat > "$payload/usr/bin/dia-mcp-config" <<'CONFIG'
 #!/bin/sh
@@ -117,7 +119,8 @@ Fork source and documentation: https://github.com/jcrtexidor/dia
 Run dia-fork for the editor. MCP access defaults off. Configure it per user using
 Dia MCP Settings or dia-mcp-config --mode read-only. Restart Dia after changes.
 Use read-write with an explicit files root only when editing is desired.
-The MCP SDK is isolated in /opt/dia-mcp-venv. Source and license notices bundled
+The Rust MCP server runs from /opt/dia-mcp/bin; the Python operations worker and
+its dependencies remain isolated in /opt/dia-mcp-venv. Source and license notices bundled
 with Python distributions remain in their dist-info directories.
 No service, global Python installation, or network listener is installed.
 DOC
@@ -186,7 +189,7 @@ manifest={'package':'dia-mcp-fork','version':sys.argv[4],'architecture':'amd64',
           'sha256':hashlib.sha256(artifact.read_bytes()).hexdigest(),
           'file_count':len(files),'payload_bytes':sum(p.stat().st_size for p in files),
           'prefixes':{prefix:sum(p.stat().st_size for p in files if p.is_relative_to(root/prefix))
-                      for prefix in ('opt/dia','opt/dia-mcp-venv')},
+                      for prefix in ('opt/dia','opt/dia-mcp-venv','opt/dia-mcp')},
           'versions':{'native':'0.98.0','adapter':'0.3.0','live':1,'snapshot':'1'}}
 output.write_text(json.dumps(manifest,indent=2)+'\n')
 PY

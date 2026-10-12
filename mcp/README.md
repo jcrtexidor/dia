@@ -1,14 +1,20 @@
 # Dia operations MCP — versión 0.3.0 del fork
 
-Integración local `stdio` con el SDK MCP 1.30.0, separada del Python embebido de
-Dia. El editor conserva GTK3, Meson, su modelo, historial y serialización nativos.
+El proceso MCP externo y su transporte `stdio` están implementados en Rust.
+Un proceso Python privado conserva `Operations`, los modelos y el acceso a PyDia;
+no habla MCP con el cliente. El editor conserva GTK3, Meson, su modelo, historial
+y serialización nativos. La interfaz entre Rust y Python usa JSON por tuberías
+locales; `protocol-catalog.json` fija las herramientas, recursos y prompts expuestos.
+Al cambiar el contrato, regenerarlo con
+`uv run --directory mcp --locked python -m dia_mcp.protocol_catalog`
+y comprobarlo con `task mcp:check`.
 
 - **Live:** inspección de la GUI, selección, contexto, planes, validación estática,
   transacciones nativas y archivos, con acceso explícito y generaciones/recibos.
 - **Snapshot:** creación y exportación aisladas, con catálogo de creación acotado;
   sus IDs y cambios no modifican la ventana abierta.
 
-La versión ofrece 37 herramientas, cuatro recursos concretos, una plantilla de
+La versión ofrece 37 herramientas, tres recursos concretos, una plantilla de
 recurso y dos prompts. Los dominios semánticos son auxiliares opcionales; objetos
 instalados desconocidos para MCP siguen disponibles mediante operaciones genéricas.
 
@@ -35,7 +41,8 @@ task mcp:test
 task mcp:release-check
 ```
 
-Las dependencias se conservan en `uv.lock` y `requirements.lock`; no modificar el
+Las dependencias Python se conservan en `uv.lock` y `requirements.lock`; las de
+Rust, en `rust/Cargo.lock`. `task mcp:check` requiere Cargo y uv. No modificar el
 Python global. El contenedor compila Dia e incluye pruebas nativas; las pruebas
 portables no las sustituyen. La automatización genera artefactos locales y no
 publica releases.

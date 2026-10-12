@@ -11,6 +11,7 @@ mcp/.pytest_cache/
 mcp/.ruff_cache/
 mcp/dist/
 mcp/exports/
+mcp/rust/target/
 __pycache__/
 *.egg-info/
 artifacts/

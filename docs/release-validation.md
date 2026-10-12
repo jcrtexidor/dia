@@ -9,7 +9,7 @@ locally; automation does not tag, upload or publish a release.
 | Python adapter | 0.3.0 | MCP package and user-facing workflow/configuration release |
 | Live protocol | 1 | JSON/Unix transport contract; required capabilities negotiate additive features |
 | Snapshot API | 1 | Isolated document/operations contract |
-| Ubuntu package | 0.98.0+mcp0.3.0-1 | Native + adapter version and packaging revision; Ubuntu 26.04 amd64/Python 3.14 |
+| Ubuntu package | 0.98.0+mcp0.3.0-2 | Native + adapter version and Rust transport packaging revision; Ubuntu 26.04 amd64/Python 3.14 |
 
 They do not increment together mechanically. Additive tools/capabilities can retain
 protocol 1; incompatible wire semantics require a protocol change. Native plugin

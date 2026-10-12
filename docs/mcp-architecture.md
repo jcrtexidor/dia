@@ -175,8 +175,10 @@ flowchart TD
 The normal installed `mcp-live.py` plugin starts no listener unless effective
 local configuration enables it (saved settings or legacy `DIA_MCP_LIVE=1`).
 It imports the stdlib-only `dia_mcp.live` package and PyGObject, then defers startup
-until the GTK loop, after plugins/shapes/sheets have loaded. FastMCP stays outside
-Dia. The dedicated snapshot Python startup is unchanged and never enables live IPC.
+until the GTK loop, after plugins/shapes/sheets have loaded. The external MCP
+stdio process is Rust; a private Python operations worker retains FastMCP's
+tool metadata and dispatch, outside Dia. The dedicated snapshot Python startup
+is unchanged and never enables live IPC.
 `Operations.inspect_live` delegates to `LiveClient`; MCP handlers manage neither
 sockets nor native wrappers. The nine `live_*` tools cannot modify documents.
 
